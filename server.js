@@ -28,11 +28,18 @@ server.listen(port, function() {
   console.log("Starting server on port "+port);
 });
 
-/*
+//CLASSES ------------------------------------------------------
+class Player {
+  constructor(name){
+    this.name = name;
+    this.connected = true; //because when we make one of these, it's triggered by a connected player
+  }
+}
+
 
 //STORAGE ------------------------------------------------------
 
-let players = {}; //holds Player objects, keys are player names (not socket ids)
+let players = {}; //holds Player objects, keys are player names (not socket ids, since socket ids change when you disconnect then reconnect)
 let id_to_name = {}; //maps socket ids to names. If a name isn't in here, player is disconnected
 
 let game = undefined; //undefined means no game currently going on
@@ -76,11 +83,6 @@ io.on("connection", function(socket) {
 			player.connected = false;
 			delete id_to_name[socket.id];
 
-			//remove from busy_clients if there
-			let index = busy_clients.indexOf(player.name);
-			if(index != -1){
-				busy_clients.splice(index, 1);
-			}
 		}
 		io.sockets.emit("player_connection", players);
 	});
@@ -88,4 +90,3 @@ io.on("connection", function(socket) {
 	socket.on("get_state", function(callback){
 		callback(players, game); //if game is undefined, tells them no game currently happening
 	});
-*/

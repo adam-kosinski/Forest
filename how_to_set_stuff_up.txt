@@ -26,13 +26,19 @@ npm-debug.log
 
 Copy all the files from this directory into your git repository.
 
+git push
+  Get all these changes into git
+
 
 heroku local
   Runs the program locally
 
 
+To deploy to the internet:
+
 heroku create name-of-app
-  creates a new app on heroku
+  creates a new app on heroku (run only once)
+
 
 git push heroku master
-  updates web app to match local one
+  updates web app to match local one (run whenever want to update changes)

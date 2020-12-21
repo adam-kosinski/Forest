@@ -16,7 +16,7 @@ function registerName(){
 	if(!my_name){
 		throw new Error("Name entry canceled, leaving webpage blank");
 	}
-	
+
 	socket.emit("new player", my_name, function(success){
 		console.log("Name registration success:",success);
 		if(!success){
@@ -64,5 +64,5 @@ socket.on("player_connection", function(players){
 		}
 	}
 
-	//indicate disconnected in game GUI if game active
+	//indicate disconnected in game GUI if game active TODO
 });
