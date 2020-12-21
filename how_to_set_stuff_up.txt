@@ -1,0 +1,38 @@
+Make sure you have Node, Git, and Heroku CLI installed
+
+Create a git repository. After linking with the remote, inside there do:
+
+npm init
+  Creates the package.json file press enter a bunch
+  Make sure the main file is "server.js"
+
+npm install --save express socket.io
+
+Make sure the node version is right in package.json
+(from this article: https://devcenter.heroku.com/articles/deploying-nodejs)
+Add:
+"engines": {
+  "node": "14.x"
+}
+
+
+Edit .gitignore:
+
+/node_modules
+npm-debug.log
+.DS_Store
+/*.env
+
+
+Copy all the files from this directory into your git repository.
+
+
+heroku local
+  Runs the program locally
+
+
+heroku create name-of-app
+  creates a new app on heroku
+
+git push heroku master
+  updates web app to match local one
