@@ -48,6 +48,15 @@ socket.emit("get_state", function(players, game){
 });
 
 
+//debug
+function getState(){
+	socket.emit("get_state", function(players, game){
+		console.log("Players", players);
+		console.log("Game", game);
+	});
+}
+
+
 
 
 //socket event handlers

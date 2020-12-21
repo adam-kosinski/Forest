@@ -90,3 +90,9 @@ io.on("connection", function(socket) {
 	socket.on("get_state", function(callback){
 		callback(players, game); //if game is undefined, tells them no game currently happening
 	});
+
+
+
+
+
+});

@@ -25,6 +25,8 @@ npm-debug.log
 
 
 Copy all the files from this directory into your git repository.
+Change the title in the index.html file to reflect the game's name
+
 
 git push
   Get all these changes into git
