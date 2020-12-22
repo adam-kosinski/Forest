@@ -4,8 +4,7 @@ function updateClientElement(data){
   let element = document.getElementById(data.id);
 
   if(!element){
-    //make it
-    console.log("make element");
+    console.warn("Couldn't find element to update, id = '" + data.id + "'");
   }
   else {
     //update it

@@ -38,7 +38,7 @@ socket.on("connect", function(){
 
 
 //check if a game is going on
-socket.emit("get_state", function(players, game){
+socket.emit("get_state", function(player_statuses, game){
 	if(game){
 		game_active = true;
 		console.log("game already started");
@@ -63,6 +63,7 @@ function updateServerElement(element, ...style_properties){
 	let data = {
 		tagName: element.tagName.toLowerCase(),
 		id: element.id,
+		parentId: element.parentElement.id,
 		className: element.className,
 		style: {}
 	};
@@ -81,8 +82,8 @@ function updateServerElement(element, ...style_properties){
 
 //debug -----------------------------------------------
 function getState(){
-	socket.emit("get_state", function(players, game){
-		console.log("Players", players);
+	socket.emit("get_state", function(player_statuses, game){
+		console.log("Player Statuses", player_statuses);
 		console.log("Game", game);
 	});
 }
@@ -93,11 +94,11 @@ function getState(){
 
 // SOCKET EVENT HANDLERS ---------------------------------
 
-socket.on("player_connection", function(players){
+socket.on("player_connection", function(player_statuses){
 	//update player display on home screen
 	player_display.innerHTML = "";
-	for(let name in players){
-		if(players[name].connected){
+	for(let name in player_statuses){
+		if(player_statuses[name].connected){
 			let div = document.createElement("div");
 			div.id = name + "_home_screen";
 			div.textContent = name;
@@ -116,6 +117,5 @@ socket.on("start_game", function(){
 
 
 socket.on("update_client_element", function(data){
-	console.log("update_client_element", data);
 	updateClientElement(data);
 });
