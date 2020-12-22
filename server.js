@@ -71,7 +71,7 @@ io.on("connection", function(socket) {
 			players[name].connected = true;
 			callback(true); //successful
 		}
-		io.sockets.emit("player_connection", players);
+		io.emit("player_connection", players);
 	});
 
 	//mark player as disconnected when they leave
@@ -84,7 +84,7 @@ io.on("connection", function(socket) {
 			delete id_to_name[socket.id];
 
 		}
-		io.sockets.emit("player_connection", players);
+		io.emit("player_connection", players);
 	});
 
 	socket.on("get_state", function(callback){
