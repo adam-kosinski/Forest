@@ -1,15 +1,20 @@
 //SERVER SETUP --------------------------------------------------------------------------------
 
 // Dependencies
-var express = require("express");
-var http = require("http");
-var path = require("path");
-var socketIO = require("socket.io");
+let express = require("express");
+let http = require("http");
+let path = require("path");
+let socketIO = require("socket.io");
+
+let classes = require("./classes");
+let Player = classes.Player;
+let Game = classes.Game;
+let Element = classes.Element;
 
 //app stuff
-var app = express();
-var server = http.Server(app);
-var io = socketIO(server);
+let app = express();
+let server = http.Server(app);
+let io = socketIO(server);
 
 app.set("port", 5000);
 app.use("/static", express.static(__dirname + "/static"));
@@ -28,13 +33,7 @@ server.listen(port, function() {
   console.log("Starting server on port "+port);
 });
 
-//CLASSES ------------------------------------------------------
-class Player {
-  constructor(name){
-    this.name = name;
-    this.connected = true; //because when we make one of these, it's triggered by a connected player
-  }
-}
+
 
 
 //STORAGE ------------------------------------------------------
@@ -46,8 +45,12 @@ let game = undefined; //undefined means no game currently going on
 
 
 
-// WEBSOCKET HANDLERS -------------------------------------------
+// WEBSOCKET HANDLERS --------------------------------------------------------------------------------------------------------------------
 io.on("connection", function(socket) {
+
+
+  // PLAYER CONNECTIONS ----------------------------------------------
+
 
 	//when a new player joins, check if player exists. If they don't, create new player. If they do, only allow join if that player was disconnected
 	socket.on("new player", function(name, callback){
@@ -92,6 +95,62 @@ io.on("connection", function(socket) {
 	});
 
 
+
+
+  // STATE UPDATES -------------------------------------------------------------------
+
+  socket.on("start_game", function(){
+    game = new Game();
+    console.log("Game starting");
+    console.log(game);
+    io.emit("start_game");
+  });
+
+
+  socket.on("update_server_element", function(data){
+    if(!game){return;} //element storage only occurs during a game
+
+    let update = {id: data.id, style: {}}; //stores stuff to tell clients to update
+
+    if(game.elements.hasOwnProperty(data.id)){
+      //then check if there's a difference between the updated version and the one we have
+      let storage = game.elements[data.id];
+      let different = false;
+
+      //tagName should never change, but just in case...
+      if(data.tagName != storage.tagName) {
+        console.log("Tagnames don't match", data, storage);
+        return;
+      }
+
+      if(data.className != storage.className) {
+        update.className = data.className;
+        storage.className = data.className;
+        different = true;
+      }
+
+      for(let prop in data.style){
+        if(data.style[prop] != storage.style[prop]) {
+          update.style[prop] = data.style[prop];
+          storage.style[prop] = data.style[prop];
+          different = true;
+        }
+      }
+
+      if(!different){return;}
+    }
+    else {
+      //element isn't tracked yet, start tracking
+      let element = new Element(data.tagName, data.id, data.className, data.style);
+      game.elements[data.id] = element;
+      update = element;
+      console.log("New element", element);
+    }
+
+    //update all clients except the sender
+    socket.broadcast.emit("update_client_element", update);
+
+  });
 
 
 
