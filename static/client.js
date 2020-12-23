@@ -45,7 +45,7 @@ socket.emit("get_state", function(player_statuses, game){
 		console.log("game already started");
 	}
 	else {
-		//home_screen.style.display = "block";
+		home_screen.style.display = "block";
 	}
 });
 
@@ -112,7 +112,10 @@ socket.on("player_connection", function(player_statuses){
 
 socket.on("start_game", function(game){
 	game_active = true;
+
+	home_screen.style.display = "none";
 	initGameDisplay(game); //display.js
+
 	console.log("Game starting");
 });
 

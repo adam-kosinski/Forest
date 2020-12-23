@@ -21,6 +21,9 @@ function updateClientElement(data){
 
 
 function initGameDisplay(game){
+
+  game_div.style.display = "block";
+
   //board background image
   let img = document.createElement("img");
   img.src = "./static/unfinished_map.jpg";

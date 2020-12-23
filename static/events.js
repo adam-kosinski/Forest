@@ -1,4 +1,4 @@
-
+document.addEventListener("click", handleClick);
 document.addEventListener("mousedown", handleMousedown);
 document.addEventListener("mousemove", handleMousemove);
 document.addEventListener("mouseup", handleMouseup);
@@ -10,6 +10,15 @@ let drag_offset_start; // {top: y, left: x} -what the element's offsets were at 
 let drag_mouse_start; // {x: pageX, y: pageY} - what the mouse's coords were at drag start
 
 let game_board_scale = 1; //bigger is more zoomed in
+
+
+
+
+function handleClick(e){
+  if(e.target.id == "start_button"){
+    socket.emit("start_game");
+  }
+}
 
 
 function handleMousedown(e){

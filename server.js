@@ -10,6 +10,7 @@ let classes = require("./classes");
 let PlayerStatus = classes.PlayerStatus;
 let Game = classes.Game;
 let Element = classes.Element;
+let Map = classes.Map;
 
 //app stuff
 let app = express();
@@ -100,7 +101,14 @@ io.on("connection", function(socket) {
   // STATE UPDATES -------------------------------------------------------------------
 
   socket.on("start_game", function(){
-    game = new Game();
+    let connected_player_names = [];
+    for(let name in player_statuses){
+      if(player_statuses[name].connected){
+        connected_player_names.push(name);
+      }
+    }
+
+    game = new Game(connected_player_names);
     console.log("Game starting");
     console.log(game);
     io.emit("start_game", game);
