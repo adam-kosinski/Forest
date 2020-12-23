@@ -103,7 +103,7 @@ io.on("connection", function(socket) {
     game = new Game();
     console.log("Game starting");
     console.log(game);
-    io.emit("start_game");
+    io.emit("start_game", game);
   });
 
 

@@ -16,3 +16,18 @@ function updateClientElement(data){
     }
   }
 }
+
+
+
+
+function initGameDisplay(game){
+  //board background image
+  let img = document.createElement("img");
+  img.src = "./static/unfinished_map.jpg";
+  img.id = "map_image";
+  game_board.appendChild(img);
+
+
+  //debug
+  game_board.appendChild(document.getElementById("test"));
+}
