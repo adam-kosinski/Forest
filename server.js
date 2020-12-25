@@ -6,9 +6,11 @@ let http = require("http");
 let path = require("path");
 let socketIO = require("socket.io");
 
+let game_file = require("./game");
+let Game = game_file.Game;
+
 let classes = require("./classes");
 let PlayerStatus = classes.PlayerStatus;
-let Game = classes.Game;
 let Element = classes.Element;
 let Map = classes.Map;
 
@@ -125,7 +127,11 @@ io.on("connection", function(socket) {
       let storage = game.elements[data.id];
       let different = false;
 
-      //tagName and parentId should never change, just check className and style (id is used as the "name", so has to be the same)
+      //tagName and parentId should never change, just check className and style
+      //(id is used as the "name", so has to be the same)
+
+      //never track the 'draggable' class
+      data.className = data.className.replace("draggable","").replace(/ +/g, " "); //second one to remove any extra whitespace
 
       if(data.className != storage.className) {
         update.className = data.className;
@@ -154,6 +160,14 @@ io.on("connection", function(socket) {
     //update all clients except the sender
     socket.broadcast.emit("update_client_element", update);
 
+  });
+
+
+
+  socket.on("walk", function(destination){
+    let name = id_to_name[socket.id];
+    game.players[name].location = destination;
+    socket.emit("update_player_state", game); //send only to the client who sent this, since only they need to keep track of their position
   });
 
 

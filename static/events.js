@@ -8,6 +8,7 @@ document.addEventListener("mousewheel", handleMousewheel);
 let drag_element; //undefined means not currently dragging (same for next two)
 let drag_offset_start; // {top: y, left: x} -what the element's offsets were at drag start
 let drag_mouse_start; // {x: pageX, y: pageY} - what the mouse's coords were at drag start
+let drag_place; //id of node we're "over" (near), undefined if none
 
 let game_board_scale = 1; //bigger is more zoomed in
 
@@ -18,6 +19,8 @@ function handleClick(e){
   if(e.target.id == "start_button"){
     socket.emit("start_game");
   }
+
+  console.log(e.offsetX, e.offsetY);
 }
 
 
@@ -43,6 +46,15 @@ function handleMousedown(e){
       x: e.pageX,
       y: e.pageY
     };
+
+    //compute adjacent places so we know if player is allowed to go there
+    adj_places = [];
+    for(let c=0; c<map.adj_matrix[me.location].length; c++){
+      if(map.adj_matrix[me.location][c] == 1){
+        adj_places.push(c);
+      }
+    }
+    console.log("adj_places",adj_places);
   }
 
 }
@@ -68,19 +80,69 @@ function handleMousemove(e){
     if(drag_element.classList.contains("tracked")){
       updateServerElement(drag_element,"top","left"); //client.js
     }
-  }
 
-/*  top = topstart + dmouse
-  top = topstart + mousenow - mousestart
-*/}
+    //if dragging my token, show if over my location or an adjacent one
+    if(drag_element == my_token){
+      let style = getComputedStyle(my_token);
+      let x = Number(style.left.split("px")[0]);
+      let y = Number(style.top.split("px")[0]);
+      //my location node
+      let my_place = map.places[me.location].pos;
+      if(Math.hypot(x-my_place.x, y-my_place.y) <= place_radius){
+        document.getElementById("node_"+me.location).style.boxShadow = "0 0 10px 5px white";
+        drag_place = me.location;
+      }
+      else {
+        document.getElementById("node_"+me.location).style.boxShadow = "none";
+        drag_place = undefined;
+
+        //adjacent nodes - do inside the else so that my location gets priority in case of overlap
+        //first clear styling, then stop at the first location I'm at (in case of overlap)
+        for(let i=0; i<adj_places.length; i++){
+          document.getElementById("node_"+adj_places[i]).style.boxShadow = "none";
+        }
+        for(let i=0; i<adj_places.length; i++){
+          let node_pos = map.places[adj_places[i]].pos;
+          if(Math.hypot(x-node_pos.x, y-node_pos.y) <= place_radius){
+            document.getElementById("node_"+adj_places[i]).style.boxShadow = "0 0 10px 5px yellow";
+            drag_place = adj_places[i];
+            break;
+          }
+        }
+      }
+    }
+
+    console.log("drag_place",drag_place)
+
+  }
+}
 
 function handleMouseup(e){
 
   //drag and drop
-  //TODO - check if valid drag (for player walking) - if not, reset to initial position before forgetting that
+  if(drag_element == my_token){
+    //check if invalid drag
+    if(drag_place == undefined){
+      //reset to initial position
+      drag_element.style.left = drag_offset_start.left + "px";
+      drag_element.style.top = drag_offset_start.top + "px";
+      updateServerElement(my_token, "left", "top");
+    }
+    else {
+      //tell the server we're at a new position
+      socket.emit("walk", drag_place);
+    }
+  }
   drag_element = undefined;
   drag_offset_start = undefined;
   drag_mouse_start = undefined;
+  drag_place = undefined;
+
+  //clear node highlighting
+  let nodes = document.getElementsByClassName("node");
+  for(let i=0; i<nodes.length; i++){
+    nodes[i].style.boxShadow = "none";
+  }
 }
 
 

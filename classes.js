@@ -6,23 +6,14 @@ class PlayerStatus {
   }
 }
 
-class Game {
-  constructor(player_names){
-
-    this.players = {}; //keys are player names
-
-    //Storage object for tracked elements. Keys are element ids, values are Element objects
-    this.elements = {};
-    this.map = new Map();
-  }
-}
 
 class Player {
-  constructor(name, species){
+  constructor(name, species, location){
     this.name = name;
     this.species = species; //this influences how much certain animals trust you, as well as your skills
     this.energy = 10;
     this.max_energy = 10;
+    this.location = location; //id of the starting place
 
     //below things are defined during game generation
     this.skills = []; //skill objects
@@ -58,14 +49,30 @@ class Element {
 
 class Map {
   constructor(){
-    this.adj_matrix = [];
-    this.places = [];
+    this.adj_matrix = [
+      [0,1,0,0,0,0,0],
+      [1,0,1,0,0,0,0],
+      [0,1,0,1,0,0,0],
+      [0,0,1,0,1,0,1],
+      [0,0,0,1,0,1,1],
+      [0,0,0,0,1,0,0],
+      [0,0,0,1,1,0,0]
+    ];
+    this.places = [
+      new Place("0", {x:89,y:126}, "Prickly Pines"),
+      new Place("1", {x:254,y:105}, "Prickly Pines"),
+      new Place("2", {x:401,y:137}, "Prickly Pines"),
+      new Place("3", {x:501,y:212}, "Prickly Pines"),
+      new Place("4", {x:408,y:273}, "Prickly Pines"),
+      new Place("5", {x:323,y:270}, "Prickly Pines"),
+      new Place("6", {x:486,y:333}, "Prickly Pines")
+    ];
   }
 }
 
 
 class Place {
-  constructor(name, pos, region, animal){
+  constructor(name, pos, region, animal=undefined){
     //constants
     this.name = name;
     this.pos = pos; //{x:_, y:_} -unscaled coords for position on the game_board
@@ -100,7 +107,6 @@ class Quest {
 
 // EXPORT CLASSES SO OTHER FILES CAN USE THEM  ------------------------------------------------------------------
 exports.PlayerStatus = PlayerStatus;
-exports.Game = Game;
 exports.Player = Player;
 exports.Skill = Skill;
 exports.Element = Element;

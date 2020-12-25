@@ -1,5 +1,9 @@
 /* z-index table
 
+game_board - undefined
+- background image, canvas, nodes, added in order to ensure correct viewing
+- .player_token: 10 (11 for my player token)
+
 */
 
 
@@ -78,17 +82,25 @@ p {
 
 
 #map_image {
-	height: 750px;
+	height: 1125px;
+}
+
+.node {
+	height: 15px;
+	width: 15px;
+	border-radius: 15px;
+	background-color: bisque;
+	opacity: 0.6;
+	transform: translate(-50%, -50%);
 }
 
 
-/* test ----------------------------------*/
-
-#test {
-	height: 20px;
-	width: 20px;
-	border-radius: 25px;
-	background-color: yellow;
-	border: 2px solid black;
+.player_token {
+	height: 30px;
+	width: 30px;
+	border-radius: 30px;
+	background-color: saddlebrown;
+	border: 3px solid black;
 	z-index: 10;
+	transform: translate(-50%, -50%);
 }

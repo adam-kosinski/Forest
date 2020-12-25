@@ -8,7 +8,7 @@ let id; //id of the socket
 //send a new player message to the server, and pick name
 function registerName(){
 	//my_name declared in globals.js
-	my_name = prompt("Please enter a name (< 11 characters or display problems happen):"); //TODO: make this a GUI thing not a prompt
+	my_name = prompt("Please enter a name:"); //TODO: make this a GUI thing not a prompt
 	if(my_name===""){
 		registerName();
 		return;
@@ -41,7 +41,7 @@ socket.on("connect", function(){
 socket.emit("get_state", function(player_statuses, game){
 	if(game){
 		game_active = true;
-		initGameDisplay();
+		initGameDisplay(game);
 		console.log("game already started");
 	}
 	else {
@@ -112,6 +112,7 @@ socket.on("player_connection", function(player_statuses){
 
 socket.on("start_game", function(game){
 	game_active = true;
+	map = game.map;
 
 	home_screen.style.display = "none";
 	initGameDisplay(game); //display.js
@@ -122,4 +123,9 @@ socket.on("start_game", function(game){
 
 socket.on("update_client_element", function(data){
 	updateClientElement(data);
+});
+
+
+socket.on("update_player_state", function(game){
+	me = game.players[my_name];
 });
