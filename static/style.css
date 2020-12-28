@@ -76,10 +76,11 @@ p {
 	display: none;
 }
 
+#game_div * {
+	font-family: Bilbo, serif;
+}
 
 /* game board ---------------------------------------*/
-
-
 
 #map_image {
 	height: 1125px;
@@ -103,4 +104,73 @@ p {
 	border: 3px solid black;
 	z-index: 10;
 	transform: translate(-50%, -50%);
+}
+
+/* place info panel -------------------------------------*/
+
+#place_info {
+	height: 100vh;
+	width: 20vw;
+	left: 100vw;
+	transform: translate(-100%, 0);
+	background-color: bisque;
+	border-left: 5px solid burlywood;
+	text-align: center;
+	font-size: 2.5vh;
+}
+
+#place_info * {
+	position: relative;
+}
+
+#place_title {
+	height: 12vh;
+	width: 90%;
+	left: 5%;
+	border-bottom: 1px solid burlywood;
+	background-color: inherit;
+	position: fixed;
+	z-index: 5;
+}
+
+#place_name_display {
+	margin: 0.5vh;
+	font-size: 2em;
+}
+
+#place_scroll_container {
+	height: 100vh;
+	padding: 0 1vw 0 1vw;
+	overflow-y: auto;
+}
+
+#thing_display {
+	border-bottom: 1px solid burlywood;
+	min-height: 15vh;
+	padding: 1.5vh 0 1.5vh 0;
+	margin-top: 12vh;
+}
+
+#item_display_title {
+	margin: 1vh;
+}
+
+#item_display div, #thing_display div {
+	width: 4vw;
+	height: 4vw;
+	border-radius: 6vh;
+	border: 1px solid burlywood;
+	background-color: beige;
+	margin: 0 0.75vw 3vh 0.75vw;
+	display: inline-block;
+	font-size: 0.4em;
+}
+
+#item_display div *, #thing_display div * {
+	position: absolute;
+	font-family: serif;
+	top: 110%;
+	left: 0;
+	right: 0;
+	margin: auto;
 }

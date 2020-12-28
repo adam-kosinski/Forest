@@ -128,4 +128,5 @@ socket.on("update_client_element", function(data){
 
 socket.on("update_player_state", function(game){
 	me = game.players[my_name];
+	updatePlaceInfo(); //display.js
 });

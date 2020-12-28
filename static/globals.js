@@ -8,7 +8,10 @@ let start_button = document.getElementById("start_button");
 let game_div = document.getElementById("game_div");
 let game_board = document.getElementById("game_board");
 
-
+let place_name_display = document.getElementById("place_name_display");
+let region_name_display = document.getElementById("region_name_display");
+let item_display = document.getElementById("item_display");
+let thing_display = document.getElementById("thing_display");
 
 let my_name;
 let board_aspect_ratio = 959/750; // width/height, determined by the background image's dimensions

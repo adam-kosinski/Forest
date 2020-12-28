@@ -3,6 +3,7 @@
 	<head>
 		<title>Forest</title>
 		<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bilbo"/>
 		<script src="/socket.io/socket.io.js"></script>
 	</head>
 	<body>
@@ -16,6 +17,18 @@
 		<div id="game_div">
 
 			<div id="game_board" class="draggable"></div>
+
+			<div id="place_info">
+				<div id="place_title">
+					<p id="place_name_display"></p>
+					<p id="region_name_display"></p>
+				</div>
+				<div id="place_scroll_container">
+					<div id="thing_display"></div>
+					<p id="item_display_title">Items</p>
+					<div id="item_display"></div>
+					</div>
+			</div>
 
 		</div>
 

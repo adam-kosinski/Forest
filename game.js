@@ -5,9 +5,11 @@ let Skill = classes.Skill;
 let Element = classes.Element;
 let Map = classes.Map;
 let Place = classes.Place;
-let Discovery = classes.Discovery;
 let Knowledge = classes.Knowledge;
 let Quest = classes.Quest;
+
+let items = require("./items");
+let things = require("./things");
 
 
 
@@ -27,6 +29,30 @@ class Game {
       let token = new Element("div", player.name+"_token", "game_board", "player_token tracked", {left:pos.x+"px", top:pos.y+"px"});
       this.elements[token.id] = token;
     }
+
+    //add trees
+    for(let i=0; i<this.map.places.length; i++){
+      let place = this.map.places[i];
+
+      if(place.region == "Prickly Pines"){
+        let n_pine_trees = Math.ceil(Math.random()*3);
+        for(let n=0; n<n_pine_trees; n++){
+          place.things.push(new things.Tree("Pine"));
+        }
+      }
+    }
+
+    /*
+    let tree = new things.Tree("oak");
+    let p = this.players[player_names[0]];
+
+    console.log("can take", tree.items[0].canTake(p));
+    tree.climb_up(p);
+    console.log(tree);
+    console.log("can take", tree.items[0].canTake(p));
+    tree.climb_down(p);
+    console.log(tree);
+    */
   }
 }
 

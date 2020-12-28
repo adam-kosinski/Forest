@@ -59,12 +59,12 @@ class Map {
       [0,0,0,1,1,0,0]
     ];
     this.places = [
-      new Place("0", {x:89,y:126}, "Prickly Pines"),
+      new Place("0", {x:89,y:126}, "Roaring Rapids"),
       new Place("1", {x:254,y:105}, "Prickly Pines"),
       new Place("2", {x:401,y:137}, "Prickly Pines"),
       new Place("3", {x:501,y:212}, "Prickly Pines"),
       new Place("4", {x:408,y:273}, "Prickly Pines"),
-      new Place("5", {x:323,y:270}, "Prickly Pines"),
+      new Place("5", {x:323,y:270}, "Roaring Rapids"),
       new Place("6", {x:486,y:333}, "Prickly Pines")
     ];
   }
@@ -80,15 +80,16 @@ class Place {
     this.animal = animal; //who lives here, undefined if no one
 
     //these are defined during game generation
-    this.discoveries = []; //Potential discoveries to be made here, either by searching or just being there. List can change over time
+
+    this.items = []; //objects, see items.js
+    this.things = []; //objects, see things.js
+
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
-}
-
-class Discovery {
-  constructor(){
-
+  search(player, focus=undefined){
+    //player: Player object of the searching player
+    //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
   }
 }
 
@@ -105,6 +106,7 @@ class Quest {
 }
 
 
+
 // EXPORT CLASSES SO OTHER FILES CAN USE THEM  ------------------------------------------------------------------
 exports.PlayerStatus = PlayerStatus;
 exports.Player = Player;
@@ -112,6 +114,5 @@ exports.Skill = Skill;
 exports.Element = Element;
 exports.Map = Map;
 exports.Place = Place;
-exports.Discovery = Discovery;
 exports.Knowledge = Knowledge;
 exports.Quest = Quest;

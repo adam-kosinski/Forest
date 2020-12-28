@@ -18,6 +18,24 @@ function updateClientElement(data){
 }
 
 
+function updatePlaceInfo(){
+  let place = map.places[me.location];
+
+  place_name_display.textContent = place.name;
+  region_name_display.textContent = place.region;
+
+  //things
+  thing_display.innerHTML = "";
+  for(let i=0; i<place.things.length; i++){
+    let div = document.createElement("div");
+    div.id = me.location + "-thing-" + i;
+    let p = document.createElement("p");
+    p.textContent = place.things[i].name;
+    div.appendChild(p);
+    thing_display.appendChild(div);
+  }
+}
+
 
 
 function initGameDisplay(game){
@@ -88,4 +106,7 @@ function initGameDisplay(game){
   my_token.classList.add("draggable");
   my_token.style.zIndex = 11;
 
+
+  //place info
+  updatePlaceInfo(); //this file
 }

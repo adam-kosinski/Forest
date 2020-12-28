@@ -20,7 +20,7 @@ function handleClick(e){
     socket.emit("start_game");
   }
 
-  console.log(e.offsetX, e.offsetY);
+  //console.log(e.offsetX, e.offsetY);
 }
 
 
@@ -54,7 +54,6 @@ function handleMousedown(e){
         adj_places.push(c);
       }
     }
-    console.log("adj_places",adj_places);
   }
 
 }
@@ -82,7 +81,7 @@ function handleMousemove(e){
     }
 
     //if dragging my token, show if over my location or an adjacent one
-    if(drag_element == my_token){
+    if(my_token && drag_element == my_token){
       let style = getComputedStyle(my_token);
       let x = Number(style.left.split("px")[0]);
       let y = Number(style.top.split("px")[0]);
@@ -112,15 +111,13 @@ function handleMousemove(e){
       }
     }
 
-    console.log("drag_place",drag_place)
-
   }
 }
 
 function handleMouseup(e){
 
   //drag and drop
-  if(drag_element == my_token){
+  if(my_token && drag_element == my_token){
     //check if invalid drag
     if(drag_place == undefined){
       //reset to initial position
