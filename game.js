@@ -33,11 +33,18 @@ class Game {
       this.elements[token.id] = token;
     }
 
-    //add trees
+
     for(let i=0; i<this.map.places.length; i++){
       let place = this.map.places[i];
 
       if(place.region == "Prickly Pines"){
+        //forest floor
+        let forest_floor = new things.ForestFloor("PricklyPines", function(){
+          let hole = new things.Hole();
+          place.things.push(hole);
+        });
+        place.things.push(forest_floor);
+        //add trees
         let n_pine_trees = Math.ceil(Math.random()*3);
         for(let n=0; n<n_pine_trees; n++){
           let tree = new things.Tree("Pine");

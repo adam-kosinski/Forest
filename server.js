@@ -188,6 +188,8 @@ io.on("connection", function(socket) {
     action = action.toLowerCase().replace(" ","_");
     let player = game.players[id_to_name[socket.id]];
     object[action](player);
+
+    io.emit("update_state", game); //in case the action changed something
   });
 
 

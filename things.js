@@ -30,7 +30,7 @@ exclusive: true/false, assumed false if not specified. If true, once a player st
 */
 
 class Tree {
-  constructor(species){
+  constructor(species, logPlace){
     this.species = species;
     this.items_on_top = {};
     this.climbed_by = []; //array of player names who are currently in this tree
@@ -41,7 +41,7 @@ class Tree {
     this.visible = true;
 
     if(this.alive){
-      //make some alive leaves
+      //make some alive leaves up high
       let green_leaves = new items.Leaf(this.species, true, "Green", Math.floor(Math.random()*25)+50);
       green_leaves.canTake = function(player){
         return this.climbed_by.includes(player.name) ? "yes" : "You need to climb the tree to take this.";
@@ -50,7 +50,7 @@ class Tree {
       console.log(green_leaves);
     }
 
-    //make some dead leaves
+    //make some dead leaves on the ground
     let dead_leaves = new items.Leaf(this.species, false, "Brown", Math.floor(Math.random()*25)+50);
     this.items.push(dead_leaves);
 
@@ -70,17 +70,52 @@ class Tree {
 }
 
 /*
-alive_tree = {
-  climbed: false
-
-  //can make alive leaves that are visible from the ground but that require climbing to access
-  //same thing with nuts, fruits
-  //occasionally green leaves also on the ground
-  //more commonly nuts on the ground
-  //also lots of dead leaves on the ground, really easy to access
-  //bark on the tree, not sure about accessing it
-  //
+Tree notes
+  same thing with nuts, fruits
+  occasionally green leaves also on the ground
+  more commonly nuts on the ground
+  also lots of dead leaves on the ground, really easy to access
+  bark on the tree, not sure about accessing it
 }
 */
 
+
+class ForestFloor {
+  constructor(region, makeHole){
+    this.name = "Forest Floor";
+    this.items = [];
+    this.visible = true;
+
+    this.makeHole = makeHole;
+  }
+  getInteractions(){
+    return {
+      actions: ["Dig"],
+      messages: []
+    }
+  }
+  dig(player){
+    console.log(player.name + " dug!");
+    this.makeHole();
+  }
+}
+
+
+class Hole {
+  constructor(){
+    this.name = "Hole";
+    this.items = [];
+    this.visible = true;
+  }
+  getInteractions(){
+    return {
+      actions: [],
+      messages: ["An empty hole."]
+    }
+  }
+}
+
+
 exports.Tree = Tree;
+exports.ForestFloor = ForestFloor;
+exports.Hole = Hole;

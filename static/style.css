@@ -160,7 +160,7 @@ p {
 }
 
 #item_display > div, #thing_display > div {
-	margin: 0 0.75vw 3vh 0.75vw;
+	margin: 0 0.65vw 3vh 0.65vw;
 	display: inline-block;
 	vertical-align: top;
 }

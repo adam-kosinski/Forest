@@ -229,19 +229,6 @@ function handleContextmenu(e){
         contextmenu.appendChild(menu_item);
       }
     });
-
-    /*for(let i=0; i<thing.actions.length; i++){
-      let menu_item = document.createElement("div");
-      menu_item.className = "action";
-      menu_item.textContent = thing.actions[i];
-      menu_item.addEventListener("click", function(){
-        socket.emit("thing_action", Number(split[0]), Number(split[2]), thing.actions[i]);
-      });
-      contextmenu.appendChild(menu_item);
-    }*/
-  }
-  else if(e.target.classList.contains("item")){
-
   }
   else {
     clearTimeout(size_timeout); //otherwise might get some errors when it tries to use the size of something that's not displayed
