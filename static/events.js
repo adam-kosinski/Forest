@@ -4,6 +4,11 @@ document.addEventListener("mousemove", handleMousemove);
 document.addEventListener("mouseup", handleMouseup);
 document.addEventListener("mousewheel", handleMousewheel);
 
+document.addEventListener("contextmenu", handleContextmenu);
+document.addEventListener("keypress", handleKeypress);
+document.addEventListener("keydown", handleKeydown);
+window.addEventListener("resize", handleWindowResize);
+
 
 let drag_element; //undefined means not currently dragging (same for next two)
 let drag_offset_start; // {top: y, left: x} -what the element's offsets were at drag start
@@ -19,7 +24,9 @@ function handleClick(e){
   if(e.target.id == "start_button"){
     socket.emit("start_game");
   }
-
+  if(e.button == 0){ //left click
+    contextmenu.style.display = "none";
+  }
   //console.log(e.offsetX, e.offsetY);
 }
 
@@ -169,4 +176,94 @@ function handleMousewheel(e){
     game_board.style.left = left + (m_offset_x*initial_scale) - (m_offset_x*game_board_scale) + "px";
     game_board.style.top = top + (m_offset_y*initial_scale) - (m_offset_y*game_board_scale) + "px";
   }
+}
+
+
+
+function handleContextmenu(e){
+  if(disable_contextmenu){e.preventDefault();}
+  else {return;}
+
+  contextmenu.innerHTML = "";
+  contextmenu.style.opacity = 0; //hacky trick to get computed width (can't get computed width while display is none)
+  contextmenu.style.display = "block";
+
+  //position the contextmenu now that we know its computed width and height
+  let size_timeout = setTimeout(function(){
+    let width = Number(getComputedStyle(contextmenu).width.split("px")[0]);
+    let left_offset = Math.min(0, window.innerWidth - (width + e.pageX));
+    contextmenu.style.left = e.pageX + left_offset + "px";
+
+    let height = Number(getComputedStyle(contextmenu).height.split("px")[0]);
+    let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
+    contextmenu.style.top = e.pageY + top_offset + "px";
+
+    contextmenu.style.opacity = 1;
+  }, 100);
+
+  //contextmenu for things
+  if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
+    let split = e.target.id.split("-");
+    let place_idx = Number(split[0]);
+    let type = split[1]; //"thing" or "item"
+    let idx = Number(split[2]);
+
+    socket.emit("get_interactions", place_idx, type, idx, function(interactions){
+      let actions = interactions.actions;
+      let messages = interactions.messages;
+
+      //add actions to contextmenu
+      for(let i=0; i<actions.length; i++){
+        let menu_item = document.createElement("div");
+        menu_item.className = "action";
+        menu_item.textContent = actions[i];
+        menu_item.addEventListener("click", function(){
+          socket.emit("action", place_idx, type, idx, actions[i]);
+        });
+        contextmenu.appendChild(menu_item);
+      }
+      //add messages to contextmenu
+      for(let i=0; i<messages.length; i++){
+        let menu_item = document.createElement("div");
+        menu_item.textContent = messages[i];
+        contextmenu.appendChild(menu_item);
+      }
+    });
+
+    /*for(let i=0; i<thing.actions.length; i++){
+      let menu_item = document.createElement("div");
+      menu_item.className = "action";
+      menu_item.textContent = thing.actions[i];
+      menu_item.addEventListener("click", function(){
+        socket.emit("thing_action", Number(split[0]), Number(split[2]), thing.actions[i]);
+      });
+      contextmenu.appendChild(menu_item);
+    }*/
+  }
+  else if(e.target.classList.contains("item")){
+
+  }
+  else {
+    clearTimeout(size_timeout); //otherwise might get some errors when it tries to use the size of something that's not displayed
+    contextmenu.style.display = "none";
+  }
+}
+
+
+function handleKeypress(e){
+  if(e.key == "~"){
+    disable_contextmenu = !disable_contextmenu;
+    console.log("Disable contextmenu:", disable_contextmenu);
+  }
+}
+
+
+function handleKeydown(e){
+  if(e.key == "Escape"){
+    contextmenu.style.display = "none";
+  }
+}
+
+function handleWindowResize(e){
+  contextmenu.style.display = "none";
 }

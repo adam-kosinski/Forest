@@ -165,9 +165,29 @@ io.on("connection", function(socket) {
 
 
   socket.on("walk", function(destination){
-    let name = id_to_name[socket.id];
-    game.players[name].location = destination;
-    socket.emit("update_player_state", game); //send only to the client who sent this, since only they need to keep track of their position
+    let player = game.players[id_to_name[socket.id]];
+    game.map.places[player.location].leave(player);
+    player.location = destination;
+    io.emit("update_state", game);
+
+    console.log("walk",player.name,socket.id,id_to_name);
+  });
+
+
+  //interactions for things and items, shown in the contextmenu
+  socket.on("get_interactions", function(place_idx, type, idx, callback){
+    //type is "thing" or "item"
+    let object = game.map.places[place_idx][type+"s"][idx];
+    let player = game.players[id_to_name[socket.id]];
+    callback(object.getInteractions(player));
+  });
+
+  //actions for things and items
+  socket.on("action", function(place_idx, type, idx, action){
+    let object = game.map.places[place_idx][type+"s"][idx];
+    action = action.toLowerCase().replace(" ","_");
+    let player = game.players[id_to_name[socket.id]];
+    object[action](player);
   });
 
 

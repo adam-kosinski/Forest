@@ -18,8 +18,11 @@ html, body {
 
 body * {
 	position: absolute;
-	font-family: sans-serif;
 	user-select: none;
+}
+
+body {
+	font-family: sans-serif;
 }
 
 p {
@@ -76,7 +79,7 @@ p {
 	display: none;
 }
 
-#game_div * {
+#game_div {
 	font-family: Bilbo, serif;
 }
 
@@ -104,6 +107,7 @@ p {
 	border: 3px solid black;
 	z-index: 10;
 	transform: translate(-50%, -50%);
+	cursor: move;
 }
 
 /* place info panel -------------------------------------*/
@@ -155,22 +159,49 @@ p {
 	margin: 1vh;
 }
 
-#item_display div, #thing_display div {
-	width: 4vw;
-	height: 4vw;
-	border-radius: 6vh;
-	border: 1px solid burlywood;
-	background-color: beige;
+#item_display > div, #thing_display > div {
 	margin: 0 0.75vw 3vh 0.75vw;
 	display: inline-block;
-	font-size: 0.4em;
+	vertical-align: top;
 }
 
-#item_display div *, #thing_display div * {
-	position: absolute;
+div.item, div.thing {
+	width: 4vw;
+	height: 4vw;
+	border-radius: 4vw;
+	border: 1px solid burlywood;
+	background-color: beige;
+}
+
+div.item + p, div.thing + p {
+	width: 4vw;
 	font-family: serif;
-	top: 110%;
+	top: 0.5vw;
 	left: 0;
 	right: 0;
 	margin: auto;
+	font-size: 0.8vw;
+}
+
+
+/* contextmenu ------------------------------------------*/
+
+#contextmenu {
+	display: none;
+	background-color: white;
+	border: 1px solid lightgray;
+	box-shadow: 2px 2px 5px 0 #0005;
+}
+
+#contextmenu div {
+	font-family: sans-serif;
+	position: static;
+	border-bottom: 1px solid lightgray;
+	padding: 5px;
+	white-space: nowrap;
+}
+
+#contextmenu div.action:hover {
+	background-color: lightskyblue;
+	cursor: pointer;
 }

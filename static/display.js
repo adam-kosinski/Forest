@@ -24,15 +24,46 @@ function updatePlaceInfo(){
   place_name_display.textContent = place.name;
   region_name_display.textContent = place.region;
 
+
   //things
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
+
+    let thing = place.things[i];
+    if(!thing.visible && thing.found_by && !thing.found_by.includes(my_name)) {
+      continue;
+    }
+
     let div = document.createElement("div");
-    div.id = me.location + "-thing-" + i;
+    let circle = document.createElement("div");
+    circle.id = me.location + "-thing-" + i;
+    circle.className = "thing";
+    div.appendChild(circle);
     let p = document.createElement("p");
     p.textContent = place.things[i].name;
     div.appendChild(p);
     thing_display.appendChild(div);
+  }
+
+
+  //items
+  item_display.innerHTML = "";
+  for(let i=0; i<place.items.length; i++){
+
+    let item = place.items[i];
+    if(!item.visible && item.found_by && !item.found_by.includes(my_name)) {
+      continue;
+    }
+
+    let div = document.createElement("div");
+    let circle = document.createElement("div");
+    circle.className = "item";
+    circle.id = me.location + "-item-" + i;
+    div.appendChild(circle);
+    let p = document.createElement("p");
+    p.textContent = place.items[i].name + " (" + item.quantity + ")";
+    div.appendChild(p);
+    item_display.appendChild(div);
   }
 }
 

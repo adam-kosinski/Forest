@@ -1,3 +1,6 @@
+//TODO: consolidate identical generated items
+
+
 let classes = require("./classes");
 let PlayerStatus = classes.PlayerStatus;
 let Player = classes.Player;
@@ -37,7 +40,9 @@ class Game {
       if(place.region == "Prickly Pines"){
         let n_pine_trees = Math.ceil(Math.random()*3);
         for(let n=0; n<n_pine_trees; n++){
-          place.things.push(new things.Tree("Pine"));
+          let tree = new things.Tree("Pine");
+          place.things.push(tree);
+          place.items = place.items.concat(tree.items);
         }
       }
     }
