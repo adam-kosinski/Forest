@@ -32,9 +32,8 @@ exclusive: true/false, assumed false if not specified. If true, once a player st
 class Tree {
   constructor(species, logPlace){
     this.species = species;
-    this.items_on_top = {};
-    this.climbed_by = []; //array of player names who are currently in this tree
     this.alive = Math.random() > 0.2;
+    this.climbed_by = []; //player names, this is tree specific. player.climbed is for player-specific (used to consolidate items)
 
     this.name = (this.alive ? "" : "Dead ") + species + " Tree";
     this.items = [];
@@ -44,7 +43,7 @@ class Tree {
       //make some alive leaves up high
       let green_leaves = new items.Leaf(this.species, true, "Green", Math.floor(Math.random()*25)+50);
       green_leaves.canTake = function(player){
-        return this.climbed_by.includes(player.name) ? "yes" : "You need to climb the tree to take this.";
+        return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
       }.bind(this);
       this.items.push(green_leaves);
       console.log(green_leaves);
@@ -61,6 +60,7 @@ class Tree {
     return out;
   }
   climb(player){
+    player.climbed.push(this.name);
     this.climbed_by.push(player.name);
     console.log(player.name + " climbed " + this.name + "!");
   }
@@ -81,12 +81,23 @@ Tree notes
 
 
 class ForestFloor {
-  constructor(region, makeHole){
+  constructor(region, pushThing, pushItem){
+    /*
+    Can consider adding the argument
+    underground_data: {
+      empty: {prob: 0-1.0}
+      item: {prob: 0-1.0, quantity: int}
+      item2: {prob: 0-1.0, quantity: int}
+      etc.
+    }
+    */
+
     this.name = "Forest Floor";
     this.items = [];
     this.visible = true;
 
-    this.makeHole = makeHole;
+    this.pushThing = pushThing;
+    this.pushItem = pushItem;
   }
   getInteractions(){
     return {
@@ -96,7 +107,8 @@ class ForestFloor {
   }
   dig(player){
     console.log(player.name + " dug!");
-    this.makeHole();
+    let hole = new Hole();
+    this.pushThing(hole);
   }
 }
 

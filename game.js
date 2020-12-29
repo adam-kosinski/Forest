@@ -39,17 +39,18 @@ class Game {
 
       if(place.region == "Prickly Pines"){
         //forest floor
-        let forest_floor = new things.ForestFloor("PricklyPines", function(){
-          let hole = new things.Hole();
-          place.things.push(hole);
-        });
+        let forest_floor = new things.ForestFloor(
+          "PricklyPines",
+          function(thing){place.things.push(thing);},
+          function(item){place.items.push(item);}
+        );
         place.things.push(forest_floor);
         //add trees
         let n_pine_trees = Math.ceil(Math.random()*3);
         for(let n=0; n<n_pine_trees; n++){
           let tree = new things.Tree("Pine");
           place.things.push(tree);
-          place.items = place.items.concat(tree.items);
+          tree.items.forEach(item => place.addItem(item));
         }
       }
     }

@@ -14,7 +14,9 @@ class Player {
     this.energy = 10;
     this.max_energy = 10;
     this.location = location; //index of the starting place
-    this.occupied_with = undefined; //can be a thing object, used to reset things we are no longer interacting with
+    //this.occupied_with = undefined; //can be a thing object, used to reset things we are no longer interacting with
+    this.climbed = []; //names of things this player has climbed, gets reset when moving
+    this.items = [];
 
     //below things are defined during game generation
     this.skills = []; //skill objects
@@ -22,6 +24,18 @@ class Player {
 
     //the more an animal trusts you, the more they will tell you / the more quests they will give. Keys are NPC animal names, values are trust level
     this.trust = {};
+  }
+  give(item){
+    //used to give this player items
+    //check if player already has this item
+    for(let i=0; i<this.items.length; i++){
+      if(this.items[i].sameAs(item)){
+        this.items[i].quantity++;
+        return;
+      }
+    }
+    //they don't have it, add it
+    this.items.push(item);
   }
 }
 
@@ -85,6 +99,16 @@ class Place {
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
+  addItem(item){
+    //function to check if place already has an item, and consolidate the items if yes
+    for(let i=0; i<this.items.length; i++){
+      if(this.items[i].sameAs(item)){
+        this.items[i].quantity += item.quantity;
+        return;
+      }
+    }
+    this.items.push(item);
+  }
   search(player, focus=undefined){
     //player: Player object of the searching player
     //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
@@ -92,6 +116,7 @@ class Place {
   leave(player){
     //runs when a player leaves this place
     console.log(player.name + " left " + this.name);
+    player.climbed = [];
     for(let i=0; i<this.things.length; i++){
       if(this.things[i].leave){this.things[i].leave(player);}
     }

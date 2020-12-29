@@ -18,51 +18,48 @@ function updateClientElement(data){
 }
 
 
+function makeThingOrItem(type, object, id){
+  //type is "thing" or "item"
+
+  let div = document.createElement("div");
+  div.className = type + "-container";
+  let circle = document.createElement("div");
+  circle.id = id;
+  circle.className = type;
+  div.appendChild(circle);
+  let p = document.createElement("p");
+  p.textContent = object.name + (type=="item"? " ("+object.quantity+")" : "");
+  div.appendChild(p);
+  return div;
+}
+
+
 function updatePlaceInfo(){
   let place = map.places[me.location];
 
   place_name_display.textContent = place.name;
   region_name_display.textContent = place.region;
 
-
   //things
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
-
     let thing = place.things[i];
     if(!thing.visible && thing.found_by && !thing.found_by.includes(my_name)) {
       continue;
     }
-
-    let div = document.createElement("div");
-    let circle = document.createElement("div");
-    circle.id = me.location + "-thing-" + i;
-    circle.className = "thing";
-    div.appendChild(circle);
-    let p = document.createElement("p");
-    p.textContent = place.things[i].name;
-    div.appendChild(p);
+    let div = makeThingOrItem("thing", thing, me.location + "-thing-" + i);
     thing_display.appendChild(div);
   }
-
 
   //items
   item_display.innerHTML = "";
   for(let i=0; i<place.items.length; i++){
-
     let item = place.items[i];
     if(!item.visible && item.found_by && !item.found_by.includes(my_name)) {
       continue;
     }
-
-    let div = document.createElement("div");
-    let circle = document.createElement("div");
-    circle.className = "item";
-    circle.id = me.location + "-item-" + i;
-    div.appendChild(circle);
-    let p = document.createElement("p");
-    p.textContent = place.items[i].name + " (" + item.quantity + ")";
-    div.appendChild(p);
+    if(item.quantity < 1){continue;}
+    let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
   }
 }
@@ -139,5 +136,5 @@ function initGameDisplay(game){
 
 
   //place info
-  updatePlaceInfo(); //this file
+  updatePlaceInfo(); //see this file
 }
