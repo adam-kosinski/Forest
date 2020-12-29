@@ -48,6 +48,7 @@ class Item {
     else {
       out.actions.push("Take");
     }
+    messages.push("Weight " + this.weight);
     return out;
   }
   sameAs(item){

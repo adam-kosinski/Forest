@@ -3,6 +3,9 @@
 game_board - undefined
 - background image, canvas, nodes, added in order to ensure correct viewing
 - .player_token: 10 (11 for my player token)
+- #place_info: 20
+- #contextmenu: 25
+- #inventory: 15
 
 */
 
@@ -121,6 +124,7 @@ p {
 	border-left: 5px solid burlywood;
 	text-align: center;
 	font-size: 2.5vh;
+	z-index: 20;
 }
 
 #place_info * {
@@ -190,7 +194,8 @@ div.item + p, div.thing + p {
 	display: none;
 	background-color: white;
 	border: 1px solid lightgray;
-	box-shadow: 2px 2px 5px 0 #0005;
+	box-shadow: 2px 2px 5px 0 rgba(0,0,0,0.3);
+	z-index: 25;
 }
 
 #contextmenu div {
@@ -204,4 +209,121 @@ div.item + p, div.thing + p {
 #contextmenu div.action:hover {
 	background-color: lightskyblue;
 	cursor: pointer;
+}
+
+
+/* inventory ---------------------------------------------*/
+
+#inventory {
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,0,0,0.75);
+	z-index: 15;
+	display: none;
+}
+
+#inventory_display {
+	width: 70vw;
+	height: 90vh;
+	left: 5vw;
+	top: 5vh;
+	background-color: bisque;
+	border: 5px solid saddlebrown;
+}
+
+#inventory_display table {
+	border-collapse: collapse;
+	width: 100%;
+	height: 100%;
+	background-color: saddlebrown;
+}
+
+#inventory_display table * {
+	position: static;
+}
+
+#inventory_display h1 {
+	font-size: 5.1vh;
+	font-weight: normal;
+	color: white;
+	text-align: center;
+	position: relative;
+	top: -1vh;
+}
+
+#inventory_title {
+	left: calc(0.5*(70vw - 33.6vh));
+	transform: translate(-50%, 0);
+}
+
+#inventory_display tr:first-child td:first-child {
+	height: 18vh;
+	width: 32vh; /*We're scaling only by height changes, except for the inventory item title*/
+	background-image: url("./images/goal_title.svg");
+}
+#inventory_display tr td:nth-child(2) {
+	width: 1.6vh;
+	background-image: url("./images/divider.svg");
+	outline: 1px solid black;
+}
+#inventory_display tr:first-child td:nth-child(3) {
+	width: 16.2vh;
+	background-image: url("./images/inventory_title_left.svg");
+}
+#inventory_display tr:first-child td:nth-child(4) {
+	background-image: url("./images/inventory_title_center.svg");
+	background-size: auto 18vh;
+}
+#inventory_display tr:first-child td:nth-child(5) {
+	width: 9.8vh;
+	background-image: url("./images/inventory_title_right.svg");
+}
+#inventory_display tr:nth-child(2) td:first-child {
+	background-image: url("./images/goal_item_background.svg");
+	background-attachment: local;
+	background-size: contain;
+}
+#inventory_display tr:nth-child(2) td:nth-child(3) {
+	background-image: url("./images/parchment.svg");
+}
+
+#inventory_display td {
+	background-size: cover;
+}
+
+.wreath {
+	height: 11.2vh;
+	top: -2vh;
+}
+
+#wreath_left {
+	left: -6vh;
+}
+
+#wreath_right {
+	transform: scaleX(-1);
+	right: -6vh;
+}
+
+.vines {
+	width: 40vh;
+	top: 9.8vh;
+}
+
+#vines_tile {
+	top: 9.8vh;
+	left: 32vh;
+	background-image: url("./images/vines_tile.svg");
+	position: absolute;
+	height: 17.6vh;
+	width: calc(100% - 62vh);
+	background-size: cover;
+}
+
+#vines_left {
+	left: -3.7vh;
+}
+
+#vines_right {
+	right: -5vh;
 }

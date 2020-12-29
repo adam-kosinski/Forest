@@ -15,7 +15,10 @@ let thing_display = document.getElementById("thing_display");
 
 let contextmenu = document.getElementById("contextmenu");
 
+let inventory = document.getElementById("inventory");
 
+
+//constants
 
 let my_name;
 let board_aspect_ratio = 959/750; // width/height, determined by the background image's dimensions

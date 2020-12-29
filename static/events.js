@@ -242,12 +242,17 @@ function handleKeypress(e){
     disable_contextmenu = !disable_contextmenu;
     console.log("Disable contextmenu:", disable_contextmenu);
   }
+  if(e.key == " "){
+    //TODO update inventory display
+    inventory.style.display = getComputedStyle(inventory).display == "block" ? "none" : "block";
+  }
 }
 
 
 function handleKeydown(e){
   if(e.key == "Escape"){
     contextmenu.style.display = "none";
+    inventory.style.display = "none";
   }
 }
 
