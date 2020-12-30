@@ -21,11 +21,30 @@ let game_board_scale = 1; //bigger is more zoomed in
 
 
 function handleClick(e){
-  if(e.target.id == "start_button"){
-    socket.emit("start_game");
+  if(elementPartOf(e.target, "start_button")){
+    //fade to dark slowly and then back to light to start the game
+    dark_fade.style.display = "block";
+    let opacity = 0;
+    let sign = 1; //increase opacity at first
+
+    let interval = setInterval(function(){
+      opacity += sign*0.05;
+      dark_fade.style.opacity = opacity;
+
+      if(opacity >= 1.5){ //if the opacity is > 1, element rendered fully opaque. This is a hack to get it to stay dark for a second before lightening up again
+        home_screen.style.display = "none";
+        socket.emit("start_game");
+        sign = -1;
+      }
+      if(opacity <= 0){
+        dark_fade.style.display = "none";
+        clearInterval(interval);
+      }
+    }, 50);
   }
   if(e.button == 0){ //left click
-    contextmenu.style.display = "none";
+    hide(contextmenu);
+    //contextmenu.style.display = "none";
   }
   //console.log(e.offsetX, e.offsetY);
 }
@@ -198,8 +217,9 @@ function handleContextmenu(e){
     let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
     contextmenu.style.top = e.pageY + top_offset + "px";
 
-    contextmenu.style.opacity = 1;
-  }, 100);
+    //contextmenu.style.opacity = 1;
+    show(contextmenu);
+  }, 20);
 
   //contextmenu for things
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
@@ -238,24 +258,25 @@ function handleContextmenu(e){
 
 
 function handleKeypress(e){
-  if(e.key == "~"){
+  if(e.key == "~" && game_active){
     disable_contextmenu = !disable_contextmenu;
     console.log("Disable contextmenu:", disable_contextmenu);
   }
-  if(e.key == " "){
+  if(e.key == " " && game_active){
     //TODO update inventory display
-    inventory.style.display = getComputedStyle(inventory).display == "block" ? "none" : "block";
+    getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
   }
 }
 
 
 function handleKeydown(e){
   if(e.key == "Escape"){
-    contextmenu.style.display = "none";
-    inventory.style.display = "none";
+    //contextmenu.style.display = "none";
+    hide(contextmenu);
+    hide(inventory);
   }
 }
 
 function handleWindowResize(e){
-  contextmenu.style.display = "none";
+  hide(contextmenu);
 }

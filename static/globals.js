@@ -4,6 +4,7 @@
 let home_screen = document.getElementById("home_screen");
 let player_display = document.getElementById("player_display");
 let start_button = document.getElementById("start_button");
+let dark_fade = document.getElementById("dark_fade");
 
 let game_div = document.getElementById("game_div");
 let game_board = document.getElementById("game_board");
@@ -16,6 +17,7 @@ let thing_display = document.getElementById("thing_display");
 let contextmenu = document.getElementById("contextmenu");
 
 let inventory = document.getElementById("inventory");
+let inventory_items = document.getElementById("inventory_items");
 
 
 //constants

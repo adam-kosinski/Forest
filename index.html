@@ -9,9 +9,16 @@
 	<body>
 
 		<div id="home_screen">
-			<h1>Welcome!</h1>
+			<div id="home_screen_gradient"></div>
+			<h1>The Great Scavenger Hunt</h1>
 			<div id="player_display"></div>
-			<button id="start_button">Start Game</button>
+			<div id="start_button">
+				<img class="flip no_blur" src="./static/images/start_game_symbol.png"/>
+				<img class="flip blur" src="./static/images/start_game_symbol_blur.png"/>
+				<p>Start Game</p>
+				<img class="no_blur" src="./static/images/start_game_symbol.png"/>
+				<img class="blur" src="./static/images/start_game_symbol_blur.png"/>
+			</div>
 		</div>
 
 		<div id="game_div">
@@ -45,6 +52,7 @@
 								<td></td>
 								<td></td>
 								<td colspan="3">
+									<div id="inventory_items"></div>
 								</td>
 							</tr>
 						</tbody>
@@ -57,9 +65,10 @@
 				</div>
 			</div>
 
-			<div id="contextmenu"></div>
-
 		</div>
+
+		<div id="contextmenu"></div>
+		<div id="dark_fade"></div>
 
 		<script src="/static/globals.js"></script>
 		<script src="/static/util.js"></script>

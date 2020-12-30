@@ -1,12 +1,15 @@
 /* z-index table
 
-game_board - undefined
-- background image, canvas, nodes, added in order to ensure correct viewing
-- .player_token: 10 (11 for my player token)
-- #place_info: 20
-- #contextmenu: 25
-- #inventory: 15
+game div
+	game_board - undefined
+	- background image, canvas, nodes, added in order to ensure correct viewing
+	- .player_token: 10 (11 for my player token)
+	#place_info: 20
+	#inventory: 15
 
+#contextmenu: 25
+
+#dark_fade: 50
 */
 
 
@@ -25,7 +28,7 @@ body * {
 }
 
 body {
-	font-family: sans-serif;
+	font-family: Bilbo, serif;
 }
 
 p {
@@ -38,7 +41,9 @@ p {
 	display: none;
 	width: 100vw;
 	height: 100vh;
-	background-color: lightblue;
+	background-image: url("./images/wondrous_woods.jpg");
+	background-size: cover;
+	background-position: center;
 	position: fixed;
 }
 
@@ -49,12 +54,21 @@ p {
 	text-align: center;
 }
 
+#home_screen_gradient {
+	width: 100%;
+	height: 100%;
+	background-image: radial-gradient(transparent, black);
+}
+
 #home_screen h1 {
-	top: 10px;
+	bottom: 7vh;
+	font-weight: normal;
+	font-size: 10vh;
+	color: white;
+	text-shadow: 0 0 15px;
 }
 
 #player_display {
-	background-color: white;
 	width: 80vw;
 	height: 20vh;
 	top: 60vh;
@@ -67,23 +81,63 @@ p {
 	padding: 5px;
 	display: inline-block;
 	margin: 10px;
+	font-size: 36px;
 }
 
 #start_button {
-	width: 200px;
-	font-size: 24px;
-	top: 85vh;
+	width: 50vh;;
+	height: 4vh;
+	font-size: 4vh;
+	bottom: 4vh;
 	cursor: pointer;
+	color: white;
+	text-shadow: 0 0 15px;
 }
 
+#start_button * {
+	display: inline-block;
+	vertical-align: middle;
+	position: relative;
+	margin: 0 0.5vh 0 0.5vh;
+}
+
+#start_button img {
+	height: 4vh;
+}
+
+#start_button img.flip {
+	transform: scaleX(-1);
+}
+
+#start_button img.blur {
+	display: none;
+}
+
+#start_button:hover {
+	font-weight: bold;
+}
+
+#start_button:hover img.no_blur {
+	display: none;
+}
+
+#start_button:hover img.blur {
+	display: inline-block;
+}
+
+/* dark fade --------------------------------------------*/
+#dark_fade {
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: 0;
+	display: none;
+	z-index: 50;
+}
 
 /* game div --------------------------------------------*/
 #game_div {
 	display: none;
-}
-
-#game_div {
-	font-family: Bilbo, serif;
 }
 
 /* game board ---------------------------------------*/
@@ -136,7 +190,6 @@ p {
 	width: 90%;
 	left: 5%;
 	border-bottom: 1px solid burlywood;
-	background-color: inherit;
 	position: fixed;
 	z-index: 5;
 }
@@ -163,7 +216,8 @@ p {
 	margin: 1vh;
 }
 
-#item_display > div, #thing_display > div {
+/*note: the below item/thing styling is also used for the inventory*/
+div.item-container, div.thing-container {
 	margin: 0 0.65vw 3vh 0.65vw;
 	display: inline-block;
 	vertical-align: top;
@@ -206,6 +260,10 @@ div.item + p, div.thing + p {
 	white-space: nowrap;
 }
 
+#contextmenu div:not(.action) {
+	background-color: #eee;
+}
+
 #contextmenu div.action:hover {
 	background-color: lightskyblue;
 	cursor: pointer;
@@ -217,7 +275,7 @@ div.item + p, div.thing + p {
 #inventory {
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0,0,0,0.75);
+	background-color: rgba(0,30,18,0.75);
 	z-index: 15;
 	display: none;
 }
@@ -227,7 +285,7 @@ div.item + p, div.thing + p {
 	height: 90vh;
 	left: 5vw;
 	top: 5vh;
-	background-color: bisque;
+	background-color: saddlebrown;
 	border: 5px solid saddlebrown;
 }
 
@@ -327,3 +385,17 @@ div.item + p, div.thing + p {
 #vines_right {
 	right: -5vh;
 }
+
+#inventory_items {
+	max-width: 100%;
+	height: 100%;
+	padding: 7.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
+	text-align: center;
+	overflow-y: auto;
+}
+
+#inventory #inventory_items * {
+	position: relative;
+}
+
+/*item styling for the inventory uses the same rules as the placeInfo board, see above*/

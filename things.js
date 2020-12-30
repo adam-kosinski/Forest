@@ -57,6 +57,9 @@ class Tree {
   getInteractions(player){
     let out = {actions:[], messages:[]};
     if(this.alive && !this.climbed_by.includes(player.name)){out.actions.push("Climb")}
+    if(!this.alive){
+      out.messages.push(["It's dead.", "Dead as a doorknob."][Math.floor(Math.random()*2)]);
+    }
     return out;
   }
   climb(player){

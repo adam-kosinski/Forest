@@ -66,6 +66,18 @@ function updatePlaceInfo(){
 
 
 
+function updateInventory(){
+  inventory_items.innerHTML = "";
+  for(let i=0; i<me.items.length; i++){
+    let item = me.items[i];
+    let div = makeThingOrItem("item", item, "my-item-" + i);
+    inventory_items.appendChild(div);
+  }
+}
+
+
+
+
 function initGameDisplay(game){
   map = game.map; //map is a global variable
   me = game.players[my_name];
@@ -137,4 +149,34 @@ function initGameDisplay(game){
 
   //place info
   updatePlaceInfo(); //see this file
+  updateInventory(); //see this file
+}
+
+
+
+
+
+//show and hide opacity animations
+
+function animateOpacity(element, show, finishFunc=undefined){
+  //show = true/false, if false means hide
+  let opacity = show ? 0 : 1;
+  element.style.opacity = opacity;
+  let interval = setInterval(function(){
+    opacity += (show ? 1 : -1)*0.2;
+    element.style.opacity = opacity;
+    if(opacity >= 1 || opacity <= 0){
+      clearInterval(interval);
+      if(finishFunc){finishFunc();}
+    }
+  }, 20);
+}
+
+function show(element){
+  element.style.display = "block";
+  animateOpacity(element, true);
+}
+
+function hide(element){
+  animateOpacity(element, false, function(){element.style.display = "none";});
 }

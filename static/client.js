@@ -114,8 +114,8 @@ socket.on("start_game", function(game){
 	game_active = true;
 	map = game.map;
 
-	home_screen.style.display = "none";
 	initGameDisplay(game); //display.js
+	//note: home screen removal is handled in events.js along with the dark fade animation starting the game
 
 	console.log("Game starting");
 });
@@ -130,4 +130,5 @@ socket.on("update_state", function(game){
 	me = game.players[my_name];
 	map = game.map;
 	updatePlaceInfo(); //display.js
+	updateInventory(); //display.js
 });
