@@ -99,10 +99,23 @@ socket.on("player_connection", function(player_statuses){
 	player_display.innerHTML = "";
 	for(let name in player_statuses){
 		if(player_statuses[name].connected){
+
+			//make a player display for them
 			let div = document.createElement("div");
 			div.id = name + "_home_screen";
-			div.textContent = name;
+			div.className = "connected_player";
+			let avatar = document.createElement("div");
+			let scroll = document.createElement("img");
+			scroll.src = "/static/images/scroll.svg";
+			let name_display = document.createElement("p");
+			name_display.textContent = name;
+			div.appendChild(avatar);
+			div.appendChild(scroll);
+			div.appendChild(name_display);
 			player_display.appendChild(div);
+			setTimeout(function(){ //seems like a delay is needed for curved text, maybe circletype is using computed values
+				new CircleType(name_display).radius(0.085*window.innerHeight);
+			},10);
 		}
 	}
 

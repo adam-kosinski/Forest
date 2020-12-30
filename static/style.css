@@ -45,6 +45,7 @@ p {
 	background-size: cover;
 	background-position: center;
 	position: fixed;
+	text-align: center;
 }
 
 #home_screen * {
@@ -70,18 +71,45 @@ p {
 
 #player_display {
 	width: 80vw;
-	height: 20vh;
-	top: 60vh;
+	height: 60vh;
+	top: 10vh;
 }
 
-#player_display div { /*divs will be added to the player display wrapper div as players join*/
+.connected_player { /*divs will be added to the player display wrapper div as players join*/
+	width: 36vh;
+	height: 20vh;
 	position: relative;
-	width: 100px;
-	border: 1px solid gray;
-	padding: 5px;
 	display: inline-block;
-	margin: 10px;
+	padding: 2vh 0 1vh 0;
+	color: white;
 	font-size: 36px;
+}
+
+.connected_player img {
+	width: 36vh;
+	transform: scaleX(0.75);
+	top: 13vh;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+.connected_player > div {
+	width: 16vh;
+	height: 18vh;
+	border-radius: 15vh;
+	background-color: #fff8;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+.connected_player p {
+	
+}
+
+.connected_player p * {
+	position: static;
 }
 
 #start_button {
@@ -277,7 +305,6 @@ div.item + p, div.thing + p {
 	height: 100vh;
 	background-color: rgba(0,30,18,0.75);
 	z-index: 15;
-	display: none;
 }
 
 #inventory_display {

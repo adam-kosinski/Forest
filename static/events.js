@@ -258,7 +258,7 @@ function handleContextmenu(e){
 
 
 function handleKeypress(e){
-  if(e.key == "~" && game_active){
+  if(e.key == "~"){
     disable_contextmenu = !disable_contextmenu;
     console.log("Disable contextmenu:", disable_contextmenu);
   }
