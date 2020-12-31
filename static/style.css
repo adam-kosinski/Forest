@@ -220,16 +220,25 @@ p {
 	position: relative;
 }
 
+#place_info #place_info_darkener {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.7);
+}
+
 #place_title {
 	height: 9vh;
 	width: 85%;
-	position: fixed;
 	z-index: 5;
 	background-color: #fffa;
 	box-shadow: 0 0 2.1vh 2.1vh #fffa;
-	margin: 1.5vw;
 	color: black;
 	border-radius: 3vh;
+	left: 0;
+	right: 0;
+	margin: auto;
+	margin-top: 2vh;
 }
 
 #place_name_display {
@@ -237,19 +246,25 @@ p {
 	font-size: 2em;
 }
 
+#place_info #top_line {
+	border-top: 1px solid burlywood;
+	position: absolute;
+	width: 18vw;
+	top: 14vh;
+	left: 1vw;
+}
+
 #place_scroll_container {
-	height: 100vh;
+	height: 85.5vh;
+	margin-top: 3.5vh;
 	padding: 0 1vw 0 1vw;
 	overflow-y: auto;
-	background-color: rgba(0,0,0,0.7);
 }
 
 #thing_display {
-	border-top: 1px solid burlywood;
 	border-bottom: 1px solid burlywood;
 	min-height: 15vh;
 	padding: 1.5vh 0 1.5vh 0;
-	margin-top: 15vh;
 }
 
 #item_display_title {
