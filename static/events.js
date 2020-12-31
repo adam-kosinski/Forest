@@ -22,29 +22,10 @@ let game_board_scale = 1; //bigger is more zoomed in
 
 function handleClick(e){
   if(elementPartOf(e.target, "start_button")){
-    //fade to dark slowly and then back to light to start the game
-    dark_fade.style.display = "block";
-    let opacity = 0;
-    let sign = 1; //increase opacity at first
-
-    let interval = setInterval(function(){
-      opacity += sign*0.05;
-      dark_fade.style.opacity = opacity;
-
-      if(opacity >= 1.5){ //if the opacity is > 1, element rendered fully opaque. This is a hack to get it to stay dark for a second before lightening up again
-        home_screen.style.display = "none";
-        socket.emit("start_game");
-        sign = -1;
-      }
-      if(opacity <= 0){
-        dark_fade.style.display = "none";
-        clearInterval(interval);
-      }
-    }, 50);
+    socket.emit("start_game");
   }
   if(e.button == 0){ //left click
     hide(contextmenu);
-    //contextmenu.style.display = "none";
   }
   //console.log(e.offsetX, e.offsetY);
 }
@@ -74,10 +55,12 @@ function handleMousedown(e){
     };
 
     //compute adjacent places so we know if player is allowed to go there
-    adj_places = [];
-    for(let c=0; c<map.adj_matrix[me.location].length; c++){
-      if(map.adj_matrix[me.location][c] == 1){
-        adj_places.push(c);
+    if(!am_spectator){
+      adj_places = []; //global var
+      for(let c=0; c<map.adj_matrix[me.location].length; c++){
+        if(map.adj_matrix[me.location][c] == 1){
+          adj_places.push(c);
+        }
       }
     }
   }
@@ -204,31 +187,16 @@ function handleContextmenu(e){
   else {return;}
 
   contextmenu.innerHTML = "";
-  contextmenu.style.opacity = 0; //hacky trick to get computed width (can't get computed width while display is none)
-  contextmenu.style.display = "block";
-
-  //position the contextmenu now that we know its computed width and height
-  let size_timeout = setTimeout(function(){
-    let width = Number(getComputedStyle(contextmenu).width.split("px")[0]);
-    let left_offset = Math.min(0, window.innerWidth - (width + e.pageX));
-    contextmenu.style.left = e.pageX + left_offset + "px";
-
-    let height = Number(getComputedStyle(contextmenu).height.split("px")[0]);
-    let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
-    contextmenu.style.top = e.pageY + top_offset + "px";
-
-    //contextmenu.style.opacity = 1;
-    show(contextmenu);
-  }, 20);
 
   //contextmenu for things
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
     let split = e.target.id.split("-");
-    let place_idx = Number(split[0]);
+    let where = split[0]; //a place idx or "my"
+    if(where != "my"){where = Number(where);}
     let type = split[1]; //"thing" or "item"
     let idx = Number(split[2]);
 
-    socket.emit("get_interactions", place_idx, type, idx, function(interactions){
+    socket.emit("get_interactions", where, type, idx, function(interactions){
       let actions = interactions.actions;
       let messages = interactions.messages;
 
@@ -238,7 +206,7 @@ function handleContextmenu(e){
         menu_item.className = "action";
         menu_item.textContent = actions[i];
         menu_item.addEventListener("click", function(){
-          socket.emit("action", place_idx, type, idx, actions[i]);
+          socket.emit("action", where, type, idx, actions[i]);
         });
         contextmenu.appendChild(menu_item);
       }
@@ -251,9 +219,28 @@ function handleContextmenu(e){
     });
   }
   else {
-    clearTimeout(size_timeout); //otherwise might get some errors when it tries to use the size of something that's not displayed
-    contextmenu.style.display = "none";
+    contextmenu.style.display = "none"; //hide it in case it was showing
+    return; //and skip showing it (below)
   }
+
+  //show the contextmenu
+
+  contextmenu.style.opacity = 0; //hacky trick to get computed width (can't get computed width while display is none)
+  contextmenu.style.display = "block";
+
+  //now that we know its computed width and height, position it so it doesn't go off screen
+  let size_timeout = setTimeout(function(){
+    let width = Number(getComputedStyle(contextmenu).width.split("px")[0]);
+    let left_offset = Math.min(0, window.innerWidth - (width + e.pageX));
+    contextmenu.style.left = e.pageX + left_offset + "px";
+
+    let height = Number(getComputedStyle(contextmenu).height.split("px")[0]);
+    let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
+    contextmenu.style.top = e.pageY + top_offset + "px";
+
+    //contextmenu.style.opacity = 1;
+    show(contextmenu);
+  }, 20);
 }
 
 
@@ -263,8 +250,8 @@ function handleKeypress(e){
     console.log("Disable contextmenu:", disable_contextmenu);
   }
   if(e.key == " " && game_active){
-    //TODO update inventory display
     getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
+    //we'll let spectators view the inventory board, that way they can see what stuff there is to find
   }
 }
 

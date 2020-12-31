@@ -1,3 +1,5 @@
+let server = require("./server"); //used to get the game object
+
 /*
 "Items" are collected as part of the scavenger hunt
 This is not to be confused with "things," which is everything else that can be placed at a location
@@ -19,6 +21,7 @@ Each class is required to have the below member variables and methods
         - actions are stuff the player can do, messages are any information relating to the item to show the player
         - for each possible action, there needs to be a method with the same name, taking a player state as an argument
         - (will convert action name to lowercase, and replace spaces with underscores to get method name, see server.js)
+    copy(): returns a copy, basically just calling the constructor with the same arguments. Used by the main Item class for several things
 
 Sometimes not specified:
 
@@ -37,17 +40,27 @@ Sometimes not specified:
 
 
 class Item {
-  constructor(){}
+  constructor(){
+    this.owned_by = undefined; //if a player name, implies it's in their inventory
+  }
   getInteractions(player){
     let out = {actions:[], messages:[]};
-    if(this.canTake){
-      let result = this.canTake(player);
-      if(result == "yes"){out.actions.push("Take")}
-      else {out.messages.push(result)}
+
+    if(!this.owned_by){
+      if(this.canTake){
+        let result = this.canTake(player);
+        if(result == "yes"){out.actions.push("Take")}
+        else {out.messages.push(result)}
+      }
+      else {
+        out.actions.push("Take");
+      }
     }
-    else {
-      out.actions.push("Take");
+    else if(player.name == this.owned_by){
+      out.actions.push("Drop One");
+      out.actions.push("Drop All");
     }
+
     out.messages.push("Weight " + this.weight);
     return out;
   }
@@ -62,6 +75,32 @@ class Item {
       if(this.tags[i] != item.tags[i]){return false;}
     }
     return true;
+  }
+  take(player){
+    //for items the player finds in the forest
+    let item = this.copy(); //methods added later not copied - that's what we want
+    item.quantity = 1; //don't copy the quantity!
+    item.owned_by = player.name;
+    player.give(item);
+    this.quantity--;
+  }
+  drop_one(player){
+    let item = this.copy();
+    item.quantity = 1; //only drop one!
+    item.visible = true; //dropped items are pretty obvious
+    let place = server.getGame().map.places[player.location];
+    place.addItem(item);
+    this.quantity--;
+    console.log("dropped one!");
+  }
+  drop_all(player){
+    let item = this.copy();
+    //no need to change the quantity here, we're dropping it all
+    item.visible = true; //dropped items are pretty obvious
+    let place = server.getGame().map.places[player.location];
+    place.addItem(item);
+    this.quantity = 0;
+    console.log("dropped all!");
   }
 }
 
@@ -85,12 +124,11 @@ class Leaf extends Item {
     this.weight = 1;
     this.visible = true; //may change
   }
-  take(player){
-    //for items the player finds in the forest
-    player.give(new Leaf(this.species, this.alive, this.color, 1));
-    this.quantity--;
-    console.log(player.name, player.items);
+  copy(){
+    //doesn't copy anything not created in the constructor (e.g. a canTake() method added by a Thing generating the item)
+    return new Leaf(this.species, this.alive, this.color, this.quantity);
   }
 }
 
+exports.Item = Item;
 exports.Leaf = Leaf;

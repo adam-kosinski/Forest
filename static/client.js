@@ -40,6 +40,11 @@ socket.on("connect", function(){
 //check if a game is going on
 socket.emit("get_state", function(player_statuses, game){
 	if(game){
+		console.log(game);
+		if(!game.players.hasOwnProperty(my_name)){
+			am_spectator = true;
+			alert("The name you entered does not match a current player. You will be able to watch as a spectator until this game finishes.");
+		}
 		game_active = true;
 		initGameDisplay(game);
 		console.log("game already started");
@@ -114,7 +119,7 @@ socket.on("player_connection", function(player_statuses){
 			div.appendChild(name_display);
 			player_display.appendChild(div);
 			setTimeout(function(){ //seems like a delay is needed for curved text, maybe circletype is using computed values
-				new CircleType(name_display).radius(0.085*window.innerHeight);
+				new CircleType(name_display).radius(0.15*window.innerHeight);
 			},10);
 		}
 	}
@@ -124,13 +129,29 @@ socket.on("player_connection", function(player_statuses){
 
 
 socket.on("start_game", function(game){
+	console.log("Game starting");
 	game_active = true;
 	map = game.map;
 
-	initGameDisplay(game); //display.js
-	//note: home screen removal is handled in events.js along with the dark fade animation starting the game
+	//fade to dark slowly and then back to light to start the game
+	dark_fade.style.display = "block";
+	let opacity = 0;
+	let sign = 1; //increase opacity at first
 
-	console.log("Game starting");
+	let interval = setInterval(function(){
+		opacity += sign*0.05;
+		dark_fade.style.opacity = opacity;
+
+		if(opacity >= 1.5){ //if the opacity is > 1, element rendered fully opaque. This is a hack to get it to stay dark for a second before lightening up again
+			home_screen.style.display = "none";
+			initGameDisplay(game); //display.js
+			sign = -1;
+		}
+		if(opacity <= 0){
+			dark_fade.style.display = "none";
+			clearInterval(interval);
+		}
+	}, 50);
 });
 
 

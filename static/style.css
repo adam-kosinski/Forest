@@ -81,8 +81,7 @@ p {
 	position: relative;
 	display: inline-block;
 	padding: 2vh 0 1vh 0;
-	color: white;
-	font-size: 36px;
+	font-size: 3vh;
 }
 
 .connected_player img {
@@ -104,12 +103,14 @@ p {
 	margin: auto;
 }
 
-.connected_player p {
-	
+#home_screen .connected_player p {
+	width: 0; /*seems to center the circletype*/
+	top: 14.9vh;
+	left: 2vh;
 }
 
 .connected_player p * {
-	position: static;
+	position: static; /*Otherwise all the letters of the circletype are on top of each other*/
 }
 
 #start_button {
@@ -192,6 +193,9 @@ p {
 	border: 3px solid black;
 	z-index: 10;
 	transform: translate(-50%, -50%);
+}
+
+.player_token.draggable {
 	cursor: move;
 }
 
@@ -203,10 +207,13 @@ p {
 	left: 100vw;
 	transform: translate(-100%, 0);
 	background-color: bisque;
-	border-left: 5px solid burlywood;
+	border-left: 2px solid burlywood;
+	border-right: 2px solid burlywood;
 	text-align: center;
 	font-size: 2.5vh;
+	color: white;
 	z-index: 20;
+	background-size: cover;
 }
 
 #place_info * {
@@ -214,16 +221,19 @@ p {
 }
 
 #place_title {
-	height: 12vh;
-	width: 90%;
-	left: 5%;
-	border-bottom: 1px solid burlywood;
+	height: 9vh;
+	width: 85%;
 	position: fixed;
 	z-index: 5;
+	background-color: #fffa;
+	box-shadow: 0 0 2.1vh 2.1vh #fffa;
+	margin: 1.5vw;
+	color: black;
+	border-radius: 3vh;
 }
 
 #place_name_display {
-	margin: 0.5vh;
+	margin-top: 0.5vh;
 	font-size: 2em;
 }
 
@@ -231,13 +241,15 @@ p {
 	height: 100vh;
 	padding: 0 1vw 0 1vw;
 	overflow-y: auto;
+	background-color: rgba(0,0,0,0.7);
 }
 
 #thing_display {
+	border-top: 1px solid burlywood;
 	border-bottom: 1px solid burlywood;
 	min-height: 15vh;
 	padding: 1.5vh 0 1.5vh 0;
-	margin-top: 12vh;
+	margin-top: 15vh;
 }
 
 #item_display_title {
@@ -391,7 +403,7 @@ div.item + p, div.thing + p {
 }
 
 .vines {
-	width: 40vh;
+	height: 37.6vh;
 	top: 9.8vh;
 }
 
@@ -401,7 +413,7 @@ div.item + p, div.thing + p {
 	background-image: url("./images/vines_tile.svg");
 	position: absolute;
 	height: 17.6vh;
-	width: calc(100% - 62vh);
+	width: calc(100% - 34vh);
 	background-size: cover;
 }
 
@@ -416,7 +428,7 @@ div.item + p, div.thing + p {
 #inventory_items {
 	max-width: 100%;
 	height: 100%;
-	padding: 7.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
+	padding: 9.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
 	text-align: center;
 	overflow-y: auto;
 }

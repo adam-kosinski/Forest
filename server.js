@@ -175,23 +175,29 @@ io.on("connection", function(socket) {
 
 
   //interactions for things and items, shown in the contextmenu
-  socket.on("get_interactions", function(place_idx, type, idx, callback){
+  socket.on("get_interactions", function(where, type, idx, callback){
+    //where is a place idx or "my"
     //type is "thing" or "item"
-    let object = game.map.places[place_idx][type+"s"][idx];
     let player = game.players[id_to_name[socket.id]];
+    let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
     callback(object.getInteractions(player));
   });
 
   //actions for things and items
-  socket.on("action", function(place_idx, type, idx, action){
-    let object = game.map.places[place_idx][type+"s"][idx];
+  socket.on("action", function(where, type, idx, action){
+    //where is a place idx or "my"
+    //type is "thing" or "item"
     action = action.toLowerCase().replace(" ","_");
     let player = game.players[id_to_name[socket.id]];
-    object[action](player);
+    let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
 
+    object[action](player);
     io.emit("update_state", game); //in case the action changed something
   });
 
 
 
 });
+
+
+exports.getGame = function(){return game;}

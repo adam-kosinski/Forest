@@ -71,12 +71,12 @@ class Map {
       [0,0,0,1,1,0,0]
     ];
     this.places = [
-      new Place("0", {x:89,y:126}, "Roaring Rapids"),
-      new Place("1", {x:254,y:105}, "Prickly Pines"),
+      new Place("0", {x:89,y:126}, "Waterfall of Wisdom"),
+      new Place("Cliffside Grove", {x:254,y:105}, "Prickly Pines"),
       new Place("2", {x:401,y:137}, "Prickly Pines"),
       new Place("3", {x:501,y:212}, "Prickly Pines"),
       new Place("4", {x:408,y:273}, "Prickly Pines"),
-      new Place("5", {x:323,y:270}, "Roaring Rapids"),
+      new Place("5", {x:323,y:270}, "Waterfall of Wisdom"),
       new Place("6", {x:486,y:333}, "Prickly Pines")
     ];
   }

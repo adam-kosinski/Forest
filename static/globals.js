@@ -30,6 +30,7 @@ let place_radius = 50; //px around a place's center where a token is considered 
 //game-state variables, need to reset these if ending a game --------------------------
 
 let game_active = false;
+let am_spectator = false;
 let map; //copy of the server's map
 let me; //stores a copy of my player state object that the server has
 let my_token; //DOM reference

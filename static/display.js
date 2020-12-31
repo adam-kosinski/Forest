@@ -35,10 +35,26 @@ function makeThingOrItem(type, object, id){
 
 
 function updatePlaceInfo(){
+  if(am_spectator){
+    place_info.style.display = "none";
+    return;
+  }
+
   let place = map.places[me.location];
 
   place_name_display.textContent = place.name;
   region_name_display.textContent = place.region;
+
+  //background
+  let url = "/static/images/";
+  let position = "";
+  switch(place.region.toLowerCase()){
+    case "prickly pines": url += "prickly_pines.jpg"; position = "right"; break;
+    case "waterfall of wisdom": url += "waterfall_of_wisdom.jpg"; position = "left"; break;
+    case "roaring rapids": url += "roaring_rapids.jpg"; position = "center"; break;
+  }
+  place_info.style.backgroundImage = "url('" + url + "')";
+  place_info.style.backgroundPosition = position;
 
   //things
   thing_display.innerHTML = "";
@@ -67,11 +83,24 @@ function updatePlaceInfo(){
 
 
 function updateInventory(){
+  //we'll let spectators view the inventory board, that way they can see what stuff there is to find
+
   inventory_items.innerHTML = "";
-  for(let i=0; i<me.items.length; i++){
-    let item = me.items[i];
-    let div = makeThingOrItem("item", item, "my-item-" + i);
-    inventory_items.appendChild(div);
+  if(!am_spectator){
+    for(let i=0; i<me.items.length; i++){
+      let item = me.items[i];
+      if(item.quantity < 1){continue;}
+      let div = makeThingOrItem("item", item, "my-item-" + i);
+      inventory_items.appendChild(div);
+    }
+  }
+  else {
+    //tell the spectator they don't have an inventory
+    let h1 = document.createElement("h1");
+    h1.textContent = "N/A";
+    h1.style.fontSize = "15vh";
+    h1.style.color = "black";
+    inventory_items.appendChild(h1);
   }
 }
 
@@ -83,6 +112,7 @@ function initGameDisplay(game){
   me = game.players[my_name];
 
   game_div.style.display = "block";
+  place_info.style.display = "block"; //in case we were a spectator last round and this is hidden
 
   //board background image
   let img = document.createElement("img");
@@ -142,9 +172,11 @@ function initGameDisplay(game){
   }
 
   //only my token is draggable, also make it appear on top of other player tokens
-  my_token = document.getElementById(my_name+"_token"); //global variable
-  my_token.classList.add("draggable");
-  my_token.style.zIndex = 11;
+  if(!am_spectator){
+    my_token = document.getElementById(my_name+"_token"); //global variable
+    my_token.classList.add("draggable");
+    my_token.style.zIndex = 11;
+  }
 
 
   //place info

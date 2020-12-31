@@ -1,4 +1,6 @@
 let items = require("./items");
+let server = require("./server"); //used to get the game object
+
 
 /*
 "Things" are anything that can be placed at a location that is not an item. They cannot be picked up.
@@ -46,7 +48,6 @@ class Tree {
         return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
       }.bind(this);
       this.items.push(green_leaves);
-      console.log(green_leaves);
     }
 
     //make some dead leaves on the ground
@@ -84,7 +85,7 @@ Tree notes
 
 
 class ForestFloor {
-  constructor(region, pushThing, pushItem){
+  constructor(region){
     /*
     Can consider adding the argument
     underground_data: {
@@ -93,14 +94,12 @@ class ForestFloor {
       item2: {prob: 0-1.0, quantity: int}
       etc.
     }
+    Or just have this constructor generate that stuff
     */
 
     this.name = "Forest Floor";
     this.items = [];
     this.visible = true;
-
-    this.pushThing = pushThing;
-    this.pushItem = pushItem;
   }
   getInteractions(){
     return {
@@ -111,7 +110,7 @@ class ForestFloor {
   dig(player){
     console.log(player.name + " dug!");
     let hole = new Hole();
-    this.pushThing(hole);
+    server.getGame().map.places[player.location].things.push(hole);
   }
 }
 

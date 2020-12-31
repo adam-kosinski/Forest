@@ -23,6 +23,10 @@ class Game {
     this.elements = {};  //Storage object for tracked elements. Keys are element ids, values are Element objects
     this.map = new Map();
 
+    for(let class_name in items){
+      items[class_name].drop_one = function(){console.log("yay")}
+    }
+
     //fill out players
     for(let i=0; i<player_names.length; i++){
       let player = new Player(player_names[i], "squirrel", 1);
@@ -39,12 +43,7 @@ class Game {
 
       if(place.region == "Prickly Pines"){
         //forest floor
-        let forest_floor = new things.ForestFloor(
-          "PricklyPines",
-          function(thing){place.things.push(thing);},
-          function(item){place.items.push(item);}
-        );
-        place.things.push(forest_floor);
+        place.things.push(new things.ForestFloor("Prickly Pines"));
         //add trees
         let n_pine_trees = Math.ceil(Math.random()*3);
         for(let n=0; n<n_pine_trees; n++){
