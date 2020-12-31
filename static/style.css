@@ -284,6 +284,7 @@ div.item, div.thing {
 	border-radius: 4vw;
 	border: 1px solid burlywood;
 	background-color: beige;
+	background-size: cover;
 }
 
 div.item + p, div.thing + p {

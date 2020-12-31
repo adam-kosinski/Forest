@@ -26,6 +26,9 @@ function makeThingOrItem(type, object, id){
   let circle = document.createElement("div");
   circle.id = id;
   circle.className = type;
+  if(object.img_src){
+    circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.img_src + "')";
+  }
   div.appendChild(circle);
   let p = document.createElement("p");
   p.textContent = object.name + (type=="item"? " ("+object.quantity+")" : "");

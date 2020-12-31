@@ -13,6 +13,7 @@ let Quest = classes.Quest;
 
 let items = require("./items");
 let things = require("./things");
+let animals = require("./animals");
 
 
 
@@ -22,12 +23,10 @@ class Game {
     this.players = {}; //keys are player names
     this.elements = {};  //Storage object for tracked elements. Keys are element ids, values are Element objects
     this.map = new Map();
+    this.animals = {}; //animal_name: animal_object - filled below
 
-    for(let class_name in items){
-      items[class_name].drop_one = function(){console.log("yay")}
-    }
 
-    //fill out players
+    //add player objects
     for(let i=0; i<player_names.length; i++){
       let player = new Player(player_names[i], "squirrel", 1);
       this.players[player.name] = player;
@@ -36,6 +35,15 @@ class Game {
       let token = new Element("div", player.name+"_token", "game_board", "player_token tracked", {left:pos.x+"px", top:pos.y+"px"});
       this.elements[token.id] = token;
     }
+
+
+    //add animals
+    for(let i=0; i<this.map.places.length; i++){
+      if(this.map.places[i].name == "Bear Den"){
+        this.map.places[i].things.push(new things.BearDen());
+      }
+    }
+    this.animals.bear = new animals.Bear();
 
 
     for(let i=0; i<this.map.places.length; i++){
@@ -54,17 +62,6 @@ class Game {
       }
     }
 
-    /*
-    let tree = new things.Tree("oak");
-    let p = this.players[player_names[0]];
-
-    console.log("can take", tree.items[0].canTake(p));
-    tree.climb_up(p);
-    console.log(tree);
-    console.log("can take", tree.items[0].canTake(p));
-    tree.climb_down(p);
-    console.log(tree);
-    */
   }
 }
 

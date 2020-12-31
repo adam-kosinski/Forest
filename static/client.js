@@ -166,3 +166,8 @@ socket.on("update_state", function(game){
 	updatePlaceInfo(); //display.js
 	updateInventory(); //display.js
 });
+
+
+socket.on("hello", function(){
+	console.log("I heard hello!");
+});

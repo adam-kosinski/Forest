@@ -73,7 +73,7 @@ class Map {
     this.places = [
       new Place("0", {x:89,y:126}, "Waterfall of Wisdom"),
       new Place("Cliffside Grove", {x:254,y:105}, "Prickly Pines"),
-      new Place("2", {x:401,y:137}, "Prickly Pines"),
+      new Place("Bear Den", {x:401,y:137}, "Prickly Pines"),
       new Place("3", {x:501,y:212}, "Prickly Pines"),
       new Place("4", {x:408,y:273}, "Prickly Pines"),
       new Place("5", {x:323,y:270}, "Waterfall of Wisdom"),
@@ -84,12 +84,11 @@ class Map {
 
 
 class Place {
-  constructor(name, pos, region, animal=undefined){
+  constructor(name, pos, region){
     //constants
     this.name = name;
     this.pos = pos; //{x:_, y:_} -unscaled coords for position on the game_board
     this.region = region; //string - name of region
-    this.animal = animal; //who lives here, undefined if no one
 
     //these are defined during game generation
 

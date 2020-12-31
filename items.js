@@ -12,6 +12,8 @@ Items are defined as classes, with lots of variations.
 Each class is required to have the below member variables and methods
 
     name: string, assumed that items with the same name are the same (instead of making new items, will just increment quantity), unless have different tags
+    img_src: string of image file name, from the directory ./static/images/items/
+        - if omitted, no image will be rendered
     quantity: integer
     categories: array of categories (strings) this item belongs to. These may be used as item descriptions given to the players
               - this will not be an exhaustive list, but should include the less general/more objective categories
@@ -115,6 +117,7 @@ class Leaf extends Item {
 
     //required
     this.name = (alive ? this.color : "Dead") + " " + this.species + (species=="Pine" ? " Needle" : " Leaf");
+    this.img_src = this.name + ".jpg";
     this.quantity = quantity;
     this.categories = [
       this.species + " Leaf",

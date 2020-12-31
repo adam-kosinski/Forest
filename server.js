@@ -183,15 +183,16 @@ io.on("connection", function(socket) {
     callback(object.getInteractions(player));
   });
 
+
   //actions for things and items
   socket.on("action", function(where, type, idx, action){
     //where is a place idx or "my"
     //type is "thing" or "item"
-    action = action.toLowerCase().replace(" ","_");
+    action = action.toLowerCase().replace(/ /g,"_");
     let player = game.players[id_to_name[socket.id]];
     let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
 
-    object[action](player);
+    object[action](player, socket);
     io.emit("update_state", game); //in case the action changed something
   });
 

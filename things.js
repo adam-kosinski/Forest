@@ -14,7 +14,7 @@ Things are defined as classes, and must have the following member variables and 
     visible: true/false, whether it is visible without searching
     getInteractions(Player): function returning an object {actions: [], messages: []} - arrays of strings
         - actions are stuff the player can do, messages are any information relating to the thing to show the player
-        - for each possible action, there needs to be a method with the same name, taking a player state as an argument
+        - for each possible action, there needs to be a method with the same name, taking a player state as an argument (and the socket as an optional second, if you need to emit back)
         - (will convert action name to lowercase, and replace spaces with underscores to get method name, see server.js)
 
 Sometimes not specified:
@@ -125,7 +125,32 @@ class Hole {
     return {
       actions: [],
       messages: ["An empty hole."]
-    }
+    };
+  }
+}
+
+
+class BearDen {
+  constructor(){
+    this.name = "Bear Den";
+    this.items = [];
+    this.visible = true;
+
+
+  }
+  getInteractions(){
+    return {
+      actions: ["Talk to Bear"],
+      messages: []
+    };
+  }
+  talk_to_bear(player, socket){
+    console.log("talk to bear");
+    server.getGame().animals.bear.talk(player, socket);
+  }
+  leave(player){
+    //if all players left, and there's a dropped item the bear wants that the player left, bear will become friendly with them
+    //maybe some time needs to elapse?
   }
 }
 
@@ -133,3 +158,4 @@ class Hole {
 exports.Tree = Tree;
 exports.ForestFloor = ForestFloor;
 exports.Hole = Hole;
+exports.BearDen = BearDen;
