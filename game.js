@@ -46,6 +46,7 @@ class Game {
     this.animals.bear = new animals.Bear();
 
 
+    //iterate through places, adding things
     for(let i=0; i<this.map.places.length; i++){
       let place = this.map.places[i];
 

@@ -32,10 +32,12 @@ exclusive: true/false, assumed false if not specified. If true, once a player st
 */
 
 class Tree {
-  constructor(species, logPlace){
+  constructor(species){
+    //species is title case
     this.species = species;
     this.alive = Math.random() > 0.2;
     this.climbed_by = []; //player names, this is tree specific. player.climbed is for player-specific (used to consolidate items)
+    this.climb_finds = []; //item objects, lists items that can be found if you climb this tree - see climb() for implementation
 
     this.name = (this.alive ? "" : "Dead ") + species + " Tree";
     this.items = [];
@@ -44,10 +46,29 @@ class Tree {
     if(this.alive){
       //make some alive leaves up high
       let green_leaves = new items.Leaf(this.species, true, "Green", Math.floor(Math.random()*25)+50);
+      green_leaves.tags = ["in_tree"];
       green_leaves.canTake = function(player){
         return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
       }.bind(this);
       this.items.push(green_leaves);
+
+      //if pine tree, make pinecones
+      if(species == "Pine"){
+        //pinecones in tree
+        if(Math.random() < 0.3){
+          let high_pinecones = new items.Pinecone(Math.floor(Math.random()*3));
+          high_pinecones.visible = false;
+          high_pinecones.p = 0.1;
+          high_pinecones.p_focus = 0.4; //these are hard to see from the ground
+          high_pinecones.tags = ["in_tree"];
+          high_pinecones.canTake = function(player){
+            return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
+          }.bind(this);
+          high_pinecones.img_src = "Pine Cone Tree.jpg";
+          this.items.push(high_pinecones);
+          this.climb_finds.push(high_pinecones);
+        }
+      }
     }
 
     //make some dead leaves on the ground
@@ -66,6 +87,13 @@ class Tree {
   climb(player){
     player.climbed.push(this.name);
     this.climbed_by.push(player.name);
+
+    //climb finds
+    console.log("climb_finds", this.climb_finds);
+    for(let i=0; i<this.climb_finds.length; i++){
+      this.climb_finds[i].found_by.push(player.name);
+    }
+
     console.log(player.name + " climbed " + this.name + "!");
   }
   leave(player){

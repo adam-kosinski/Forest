@@ -1,5 +1,8 @@
 /* z-index table
 
+#disable_page_div: 40
+.popup: 45
+
 game div
 	game_board - undefined
 	- background image, canvas, nodes, added in order to ensure correct viewing
@@ -35,6 +38,67 @@ p {
 	margin: 0;
 }
 
+
+/* custom prompt and alert implementation ----------------------------- */
+#disable_page_div {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.25);
+	z-index: 40;
+	display: none;
+}
+
+.popup {
+	width: 300px;
+	left: 0;
+	right: 0;
+	top: 10vh;
+	margin: auto;
+	background-color: bisque;
+	border: 4px solid burlywood;
+	padding: 12px;
+	z-index: 45;
+	display: none;
+}
+
+.popup * {
+	font-family: serif;
+	font-size: 18px;
+	position: relative;
+}
+
+.popup p {
+	width: 275px;
+}
+
+#prompt_input {
+	margin-top: 12px;
+	padding: 5px;
+	width: calc(100% - 14px); /*there's a 2px border in addition to the padding => 14px total extra width*/
+}
+
+.popup .button_div {
+	text-align: right;
+}
+
+.popup button {
+	width: 70px;
+	height: 40px;
+	right: 0;
+	border-radius: 10px;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	margin: 12px 0 0 12px;
+}
+
+.popup .ok_button {
+	background-color: forestgreen;
+	color: white;
+}
+
+#prompt_input {
+
+}
 
 /* home screen ----------------------------------------------------*/
 #home_screen {

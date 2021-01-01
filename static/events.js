@@ -10,6 +10,9 @@ document.addEventListener("keydown", handleKeydown);
 window.addEventListener("resize", handleWindowResize);
 
 
+//note: custom prompt/alert events are handled in util.js, where the rest of the prompt/alert code is
+
+
 let drag_element; //undefined means not currently dragging (same for next two)
 let drag_offset_start; // {top: y, left: x} -what the element's offsets were at drag start
 let drag_mouse_start; // {x: pageX, y: pageY} - what the mouse's coords were at drag start
@@ -19,13 +22,14 @@ let game_board_scale = 1; //bigger is more zoomed in
 
 
 
-
 function handleClick(e){
   if(elementPartOf(e.target, "start_button")){
     socket.emit("start_game");
   }
   if(e.button == 0){ //left click
-    hide(contextmenu);
+    if(getComputedStyle(contextmenu).display == "block"){
+      hide(contextmenu);
+    }
   }
   //console.log(e.offsetX, e.offsetY);
 }
@@ -33,7 +37,9 @@ function handleClick(e){
 
 function handleMousedown(e){
 
-  e.preventDefault(); //otherwise computer complains about you trying to drag the background image
+  if(e.target.tagName !== "INPUT"){
+    e.preventDefault(); //otherwise computer complains about you trying to drag the background image
+  }
 
   // drag and drop
   //if it's part of the game_board but not draggable, drag the game_board
@@ -188,7 +194,7 @@ function handleContextmenu(e){
 
   contextmenu.innerHTML = "";
 
-  //contextmenu for things
+  //contextmenu for things and items
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
     let split = e.target.id.split("-");
     let where = split[0]; //a place idx or "my"
@@ -210,6 +216,44 @@ function handleContextmenu(e){
         });
         contextmenu.appendChild(menu_item);
       }
+
+      //add messages to contextmenu
+      for(let i=0; i<messages.length; i++){
+        let menu_item = document.createElement("div");
+        menu_item.textContent = messages[i];
+        contextmenu.appendChild(menu_item);
+      }
+    });
+  }
+  else if(e.target == my_token){
+    socket.emit("get_place_interactions", me.location, function(interactions){
+      let actions = interactions.actions;
+      let messages = interactions.messages;
+
+      //add actions to contextmenu
+      for(let i=0; i<actions.length; i++){
+        let menu_item = document.createElement("div");
+        menu_item.className = "action";
+        menu_item.textContent = actions[i];
+        menu_item.addEventListener("click", function(){
+          if(actions[i] == "Focused Search"){
+            customPrompt("What do you want to search for (case insensitive)?\n\nNote: Focused searches are usually quicker and more successful than regular searches.",
+            function(search_focus){
+              if(search_focus == null || search_focus.length == 0){
+                customAlert("No focus entered, abandoning search.");
+              }
+              else {
+                socket.emit("place_action", me.location, actions[i], search_focus);
+              }
+            });
+          }
+          else {
+            socket.emit("place_action", me.location, actions[i]);
+          }
+        });
+        contextmenu.appendChild(menu_item);
+      }
+
       //add messages to contextmenu
       for(let i=0; i<messages.length; i++){
         let menu_item = document.createElement("div");
@@ -222,6 +266,7 @@ function handleContextmenu(e){
     contextmenu.style.display = "none"; //hide it in case it was showing
     return; //and skip showing it (below)
   }
+
 
   //show the contextmenu
 
@@ -238,29 +283,32 @@ function handleContextmenu(e){
     let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
     contextmenu.style.top = e.pageY + top_offset + "px";
 
-    //contextmenu.style.opacity = 1;
     show(contextmenu);
   }, 20);
 }
 
 
 function handleKeypress(e){
-  if(e.key == "~"){
-    disable_contextmenu = !disable_contextmenu;
-    console.log("Disable contextmenu:", disable_contextmenu);
-  }
-  if(e.key == " " && game_active){
-    getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
-    //we'll let spectators view the inventory board, that way they can see what stuff there is to find
+  if(which_popup_open == undefined){ //see util.js
+    if(e.key == "~"){
+      disable_contextmenu = !disable_contextmenu;
+      console.log("Disable contextmenu:", disable_contextmenu);
+    }
+    if(e.key == " " && game_active){
+      getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
+      //we'll let spectators view the inventory board, that way they can see what stuff there is to find
+    }
   }
 }
 
 
 function handleKeydown(e){
   if(e.key == "Escape"){
-    //contextmenu.style.display = "none";
     hide(contextmenu);
-    hide(inventory);
+
+    if(which_popup_open == undefined){ //see util.js
+      hide(inventory);
+    }
   }
 }
 

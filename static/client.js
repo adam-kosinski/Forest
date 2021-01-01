@@ -151,7 +151,7 @@ socket.on("start_game", function(game){
 			dark_fade.style.display = "none";
 			clearInterval(interval);
 		}
-	}, 50);
+	}, 5); //TODO change it back to 50ms
 });
 
 

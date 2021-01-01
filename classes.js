@@ -98,6 +98,12 @@ class Place {
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
+  getInteractions(player){
+    return {
+      actions: ["Search", "Focused Search"], //focused search will also call the search method - see the socket.on in server.js
+      messages: []
+    };
+  }
   addItem(item){
     //function to check if place already has an item, and consolidate the items if yes
     for(let i=0; i<this.items.length; i++){
@@ -111,6 +117,19 @@ class Place {
   search(player, focus=undefined){
     //player: Player object of the searching player
     //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
+    focus = focus.toLowerCase(); //case insensitive for better usability
+    console.log(player.name + " searching, focus = " + focus);
+
+    let search_duration = 15000; //ms
+    let total_attempts = 15;
+    let n = 0;
+
+    let interval = setInterval(function(){
+      console.log("search attempt");
+
+      n++;
+      if(n >= total_attempts){clearInterval(interval);}
+    }, search_duration/total_attempts);
   }
   leave(player){
     //runs when a player leaves this place

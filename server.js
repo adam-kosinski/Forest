@@ -1,3 +1,12 @@
+//TODO: sometimes players will disconnect if the computer goes to sleep (long inactivity)
+//If this happens, they don't always reconnect when the computer comes back up, and thus the id_to_name array
+//fails to get their name, which causes a failure to get the player object, which causes some other error and
+//crashes the server
+
+//fix - maaybe notify the player if they're disconnected (not sure if that's actually possible since they disconnected)
+//better fix - put checks in this file if the player is disconnected before doing anything with a received emit
+
+
 //SERVER SETUP --------------------------------------------------------------------------------
 
 // Dependencies
@@ -166,11 +175,27 @@ io.on("connection", function(socket) {
 
   socket.on("walk", function(destination){
     let player = game.players[id_to_name[socket.id]];
-    game.map.places[player.location].leave(player);
-    player.location = destination;
-    io.emit("update_state", game);
+    if(player.location != destination){
+      game.map.places[player.location].leave(player);
+      player.location = destination;
+      io.emit("update_state", game);
+    }
+  });
 
-    console.log("walk",player.name,socket.id,id_to_name);
+
+  //interactions for places
+  socket.on("get_place_interactions", function(place_idx, callback){
+    let player = game.players[id_to_name[socket.id]];
+    callback(game.map.places[place_idx].getInteractions());
+  });
+
+  //actions for places
+  socket.on("place_action", function(place_idx, action, search_focus=undefined){
+    //can consider making search_focus a more generic list of args in the future if more place actions than searching are added
+    if(action == "Focused Search"){action = "Search";}
+    action = action.toLowerCase().replace(/ /g, "_");
+    let player = game.players[id_to_name[socket.id]];
+    game.map.places[place_idx][action](player, search_focus);
   });
 
 
@@ -188,7 +213,7 @@ io.on("connection", function(socket) {
   socket.on("action", function(where, type, idx, action){
     //where is a place idx or "my"
     //type is "thing" or "item"
-    action = action.toLowerCase().replace(/ /g,"_");
+    action = action.toLowerCase().replace(/ /g, "_");
     let player = game.players[id_to_name[socket.id]];
     let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
 
