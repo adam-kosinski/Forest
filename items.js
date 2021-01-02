@@ -13,23 +13,36 @@ Each class is required to have the below member variables and methods
 
     name: string, assumed that items with the same name are the same (instead of making new items, will just increment quantity), unless have different tags
     img_src: string of image file name, from the directory ./static/images/items/
-        - if omitted, no image will be rendered
+              - if omitted, no image will be rendered
     quantity: integer
     categories: array of categories (strings) this item belongs to. These may be used as item descriptions given to the players
               - this will not be an exhaustive list, but should include the less general/more objective categories
     weight: number, how heavy it is; how much it slows the player down
-    visible: true/false, whether it is visible without searching
-    copy(): returns a copy, basically just calling the constructor with the same arguments. Used by the main Item class for several things
+
+
+Required, specified by Item class:
+    owned_by: undefined or a player name
+    n_visible_for: object (player_name: int) - how many were found by each player (a player may not have found the whole quantity)
+              - Only consulted if visible is false
+              - Default values are 0
+              - if a value equals the quantity, the player found them all
+              - when an item is taken, we subtract one from the quantity AND from counts in here if not 0 (some "take that! - you have to search again")
+              - when an item is dropped, it's visible, so we increment all counts in here
+          - setNVisible(int): function that sets all values in n_visible_for to the arg
+                    - EACH CONSTRUCTOR MUST CALL THIS TO MAKE THE ITEM VISIBLE!!!
+    a bunch of other functions, look below
+
 
 Sometimes not specified:
 
     tags: array of strings, used to mark items with the same name as different. Optional.
-    found_by: array of player names, who found this item. Only specified if not visible
+              - this property is cleared when an item goes in the inventory
     p: 0-1.0, probability of finding it in a general search. Only specified if not visible
     p_focus: 0-1.0, probability of finding it when focusing on it. Only specified if not visible
     canTake(Player): optional method, run to check if a player can take an item. Returns "yes" if they can, otherwise returns a string explaining why they can't
               - if not defined, assumed "yes"
               - arg is the player's player state object
+              - if include one of these, should include a tag as well, so dropped items don't get lumped into this
     canFind(Player): optional method, run to check if a player can find this item. Returns "yes" if they can, something else if they can't
               - only specified if not visible
               - if not defined, assumed "yes"
@@ -37,10 +50,56 @@ Sometimes not specified:
 */
 
 
+// Deep copy (required for the copy method) ------------------------------------------------------------
+
+function deepCopy(object){
+	let copy;
+	//figure out if input is an array or a generic object
+	if(Array.isArray(object)){copy = []}
+	else {copy = {}}
+
+	for(prop in object){
+		if(typeof object[prop] == "object"){
+			copy[prop] = deepCopy(object[prop]);
+		} else {
+			copy[prop] = object[prop]
+		}
+	}
+	return copy;
+}
+
+
+// Class definitions
 
 class Item {
   constructor(){
     this.owned_by = undefined; //if a player name, implies it's in their inventory
+
+    this.n_visible_for = {};
+    let player_names = server.getCurrentPlayerNames();
+    for(let i=0; i<player_names.length; i++){
+      this.n_visible_for[player_names[i]] = 0;
+    }
+  }
+  setNVisible(n){
+    for(let name in this.n_visible_for){
+      this.n_visible_for[name] = n;
+    }
+  }
+  deepCopyPropertiesTo(target){
+    for(let prop in this){
+      if(typeof this[prop] != "object"){
+        target[prop] = this[prop];
+      }
+      else {
+        target[prop] = deepCopy(this[prop]); //util.js
+      }
+    }
+  }
+  copy(){
+    let out = new Item();
+    this.deepCopyPropertiesTo(out); //copies methods too
+    return out;
   }
   getInteractions(player){
     /*function returning an object {actions: [], messages: []} - arrays of strings
@@ -85,25 +144,34 @@ class Item {
     let item = this.copy(); //methods added later not copied - that's what we want
     item.quantity = 1; //don't copy the quantity!
     item.owned_by = player.name;
+    item.canTake = undefined; //after it's been taken, this item will never have a canTake function again (it's been "unlocked")
+    item.tags = [];
     player.give(item);
+
     this.quantity--;
+    //take one away from visibility
+    for(let name in this.n_visible_for){
+      this.n_visible_for[name] = Math.max(0, this.n_visible_for[name] - 1);
+    }
   }
   drop_one(player){
     let item = this.copy();
     item.quantity = 1; //only drop one!
-    item.visible = true; //dropped items are pretty obvious
+    item.setNVisible(item.quantity); //dropped items are pretty obvious
+    item.owned_by = undefined;
+
     let place = server.getGame().map.places[player.location];
     place.addItem(item);
-    this.quantity--;
+    this.quantity--; //from inventory, so no need to worry about changing n_visible_for
     console.log("dropped one!");
   }
   drop_all(player){
     let item = this.copy();
     //no need to change the quantity here, we're dropping it all
-    item.visible = true; //dropped items are pretty obvious
+    item.setNVisible(item.quantity); //dropped items are pretty obvious
     let place = server.getGame().map.places[player.location];
     place.addItem(item);
-    this.quantity = 0;
+    this.quantity = 0; //from inventory, so no need to worry about changing n_visible_for
     console.log("dropped all!");
   }
 }
@@ -127,11 +195,7 @@ class Leaf extends Item {
       "Leaf"
     ];
     this.weight = 1;
-    this.visible = true; //may change
-  }
-  copy(){
-    //doesn't copy anything not created in the constructor (e.g. a canTake() method added by a Thing generating the item)
-    return new Leaf(this.species, this.alive, this.color, this.quantity);
+    this.setNVisible(this.quantity);
   }
 }
 
@@ -145,16 +209,10 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-    this.visible = Math.random() < 0.2;
-    if(!this.visible){
-      this.p = Math.random()*0.3 + 0.6;
-      this.p_focus = Math.random()*0.2 + 0.8;
-    }
-    this.found_by = [];
+    this.p = Math.random()*0.3 + 0.6;
+    this.p_focus = Math.random()*0.2 + 0.8;
     this.img_src = "Pine Cone Ground.jpg"; //for the tree ones, the tree will set this
-  }
-  copy(){
-    return new Pinecone(this.quantity);
+    this.setNVisible(Math.floor((quantity+1)*Math.pow(Math.random(), 2))); //more likely that fewer are visible
   }
 }
 

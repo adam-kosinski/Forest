@@ -60,6 +60,11 @@ class Game {
           place.things.push(tree);
           tree.items.forEach(item => place.addItem(item));
         }
+
+        //add dead pine needles on the ground (done here instead of in Tree to make it uniform in the prickly pines)
+        let dead_leaves = new items.Leaf("Pine", false, "Brown", Math.floor(Math.random()*25)+50);
+        place.addItem(dead_leaves);
+
       }
     }
 

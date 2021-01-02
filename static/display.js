@@ -31,7 +31,16 @@ function makeThingOrItem(type, object, id){
   }
   div.appendChild(circle);
   let p = document.createElement("p");
-  p.textContent = object.name + (type=="item"? " ("+object.quantity+")" : "");
+  p.textContent = object.name;
+  if(type == "item"){
+    if(object.owned_by){
+      p.textContent += " (" + object.quantity + ")";
+    }
+    else {
+      p.textContent += " (" + object.n_visible_for[my_name] + ")";
+    }
+  }
+
   div.appendChild(p);
   return div;
 }
@@ -74,10 +83,9 @@ function updatePlaceInfo(){
   item_display.innerHTML = "";
   for(let i=0; i<place.items.length; i++){
     let item = place.items[i];
-    if(!item.visible && item.found_by && !item.found_by.includes(my_name)) {
+    if(item.n_visible_for[my_name] < 1) {
       continue;
     }
-    if(item.quantity < 1){continue;}
     let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
   }
@@ -92,7 +100,7 @@ function updateInventory(){
   if(!am_spectator){
     for(let i=0; i<me.items.length; i++){
       let item = me.items[i];
-      if(item.quantity < 1){continue;}
+      if(item.quantity < 1){continue;} //only check quantity, visibility is a given in your inventory
       let div = makeThingOrItem("item", item, "my-item-" + i);
       inventory_items.appendChild(div);
     }

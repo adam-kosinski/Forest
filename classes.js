@@ -27,6 +27,7 @@ class Player {
   }
   give(item){
     //used to give this player items
+    //note: no need to worry about item.n_visible_for, the client inventory display ignores that and displays the full quantity always
     //check if player already has this item
     for(let i=0; i<this.items.length; i++){
       if(this.items[i].sameAs(item)){
@@ -108,7 +109,11 @@ class Place {
     //function to check if place already has an item, and consolidate the items if yes
     for(let i=0; i<this.items.length; i++){
       if(this.items[i].sameAs(item)){
-        this.items[i].quantity += item.quantity;
+        let place_item = this.items[i];
+        place_item.quantity += item.quantity;
+        for(let name in this.items[i].n_visible_for){
+          place_item.n_visible_for[name] += item.n_visible_for[name];
+        }
         return;
       }
     }

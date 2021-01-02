@@ -57,23 +57,24 @@ class Tree {
         //pinecones in tree
         if(Math.random() < 0.3){
           let high_pinecones = new items.Pinecone(Math.floor(Math.random()*3));
-          high_pinecones.visible = false;
           high_pinecones.p = 0.1;
-          high_pinecones.p_focus = 0.4; //these are hard to see from the ground
+          high_pinecones.p_focus = 0.4; //high pinecones are hard to see from the ground when searching
           high_pinecones.tags = ["in_tree"];
           high_pinecones.canTake = function(player){
             return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
           }.bind(this);
           high_pinecones.img_src = "Pine Cone Tree.jpg";
+          high_pinecones.setNVisible(0); //can't see from ground
           this.items.push(high_pinecones);
           this.climb_finds.push(high_pinecones);
         }
+        //pinecones on the ground
+        if(Math.random() < 0.7){
+          let ground_pinecones = new items.Pinecone(Math.ceil(Math.random()*3));
+          this.items.push(ground_pinecones);
+        }
       }
     }
-
-    //make some dead leaves on the ground
-    let dead_leaves = new items.Leaf(this.species, false, "Brown", Math.floor(Math.random()*25)+50);
-    this.items.push(dead_leaves);
 
   }
   getInteractions(player){
@@ -91,7 +92,8 @@ class Tree {
     //climb finds
     console.log("climb_finds", this.climb_finds);
     for(let i=0; i<this.climb_finds.length; i++){
-      this.climb_finds[i].found_by.push(player.name);
+      let item = this.climb_finds[i];
+      item.n_visible_for[player.name] = item.quantity;
     }
 
     console.log(player.name + " climbed " + this.name + "!");
