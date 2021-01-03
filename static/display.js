@@ -23,13 +23,16 @@ function makeThingOrItem(type, object, id){
 
   let div = document.createElement("div");
   div.className = type + "-container";
+
   let circle = document.createElement("div");
   circle.id = id;
   circle.className = type;
-  if(object.img_src){
-    circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.img_src + "')";
-  }
+  let img_postfix = "";
+  if(type == "item"){img_postfix += object.tags ? "-"+object.tags.join("-") : "";}
+  if(type == "thing" && object.img_postfixes){img_postfix += object.img_postfixes[my_name] ? "-"+object.img_postfixes[my_name] : "";}
+  circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.name + img_postfix + ".jpg')";
   div.appendChild(circle);
+
   let p = document.createElement("p");
   p.textContent = object.name;
   if(type == "item"){
@@ -200,9 +203,8 @@ function animateIndividualItems(items, prev_items, getItemDiv){
         //animate a duplicate image of the item expanding on top
         let circle = document.createElement("div");
         circle.className = "animator_circle";
-        if(items[i].img_src){
-          circle.style.backgroundImage = "url('./static/images/items/" + items[i].img_src + "')";
-        }
+        circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
+
         item_div.appendChild(circle);
         animateScale(circle, true, function(){
           circle.parentElement.removeChild(circle);
@@ -221,9 +223,8 @@ function animateIndividualItems(items, prev_items, getItemDiv){
         //animate a duplicate image of the item contracting on top
         let circle = document.createElement("div");
         circle.className = "animator_circle";
-        if(items[i].img_src){
-          circle.style.backgroundImage = "url('./static/images/items/" + items[i].img_src + "')";
-        }
+        circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
+        
         item_div.appendChild(circle);
         animateScale(circle, false, function(){
           circle.parentElement.removeChild(circle);

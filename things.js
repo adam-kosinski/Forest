@@ -6,6 +6,8 @@ let server = require("./server"); //used to get the game object
 "Things" are anything that can be placed at a location that is not an item. They cannot be picked up.
 More things will be generated than are actually needed
 
+Image used for an thing must be titled: thingname.jpg OR thingname-postfix.jpg
+
 
 Things are defined as classes, and must have the following member variables and methods:
 
@@ -19,6 +21,7 @@ Things are defined as classes, and must have the following member variables and 
 
 Sometimes not specified:
 
+    img_postfixes: object (playername: string) - postfixes to put on the image url after the thing's name
     found_by: array of player names, who found this thing. Only specified if not visible
     p: 0-1.0, probability of finding it in a general search. Only specified if not visible
     p_focus: 0-1.0, probability of finding it when focusing on it. Only specified if not visible
@@ -38,6 +41,7 @@ class Tree {
     this.alive = Math.random() > 0.2;
     this.climbed_by = []; //player names, this is tree specific. player.climbed is for player-specific (used to consolidate items)
     this.climb_finds = []; //item objects, lists items that can be found if you climb this tree - see climb() for implementation
+    this.img_postfixes = {};
 
     this.name = (this.alive ? "" : "Dead ") + species + " Tree";
     this.items = [];
@@ -63,7 +67,6 @@ class Tree {
           high_pinecones.canTake = function(player){
             return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
           }.bind(this);
-          high_pinecones.img_src = "Pine Cone Tree.jpg";
           high_pinecones.setNVisible(0); //can't see from ground
           this.items.push(high_pinecones);
           this.climb_finds.push(high_pinecones);
@@ -88,6 +91,7 @@ class Tree {
   climb(player){
     player.climbed.push(this.name);
     this.climbed_by.push(player.name);
+    this.img_postfixes[player.name] = "climbed";
 
     //climb finds
     for(let i=0; i<this.climb_finds.length; i++){
@@ -99,6 +103,7 @@ class Tree {
   }
   leave(player){
     this.climbed_by = this.climbed_by.filter(name => name != player.name);
+    delete this.img_postfixes[player.name];
   }
 }
 

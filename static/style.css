@@ -349,6 +349,7 @@ div.item, div.thing, div.animator_circle {
 	border: 1px solid burlywood;
 	background-color: beige;
 	background-size: cover;
+	background-position: center;
 }
 
 div.item + p, div.thing + p {
@@ -541,4 +542,5 @@ div.item + p, div.thing + p {
 #place_info .animator_circle, #inventory #inventory_items .animator_circle {
 	position: absolute;
 	top: 0;
+	box-shadow: 0 0 5px 5px white;
 }
