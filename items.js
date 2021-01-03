@@ -37,8 +37,13 @@ Sometimes not specified:
 
     tags: array of strings, used to mark items with the same name as different. Optional.
               - this property is cleared when an item goes in the inventory
-    p: 0-1.0, probability of finding it in a general search. Only specified if not visible
-    p_focus: 0-1.0, probability of finding it when focusing on it. Only specified if not visible
+    p_find: avg probability of finding it in a single general search. Only specified if not visible
+              - 0 = will never find
+              - 0.5 = on avg will find one every 2 searches
+              - 1 = on avg will find one every search
+              - 2 = on avg will find two every search, etc.
+              - can't be greater than the number of search attempts per search (see Place class)
+    p_find_focus: avg probability of finding it when focusing on it. Only specified if not visible
     canTake(Player): optional method, run to check if a player can take an item. Returns "yes" if they can, otherwise returns a string explaining why they can't
               - if not defined, assumed "yes"
               - arg is the player's player state object
@@ -48,6 +53,9 @@ Sometimes not specified:
               - if not defined, assumed "yes"
 
 */
+
+
+//TODO: FIX IMAGE SRC TO MAKE IT BASED ON TAGS - currently the first img src for given tags will stay
 
 
 // Deep copy (required for the copy method) ------------------------------------------------------------
@@ -145,7 +153,7 @@ class Item {
     item.quantity = 1; //don't copy the quantity!
     item.owned_by = player.name;
     item.canTake = undefined; //after it's been taken, this item will never have a canTake function again (it's been "unlocked")
-    item.tags = [];
+    delete item.tags; //tags only used for different functions surrounding the same item - once we take it, it's just the item
     player.give(item);
 
     this.quantity--;
@@ -153,6 +161,8 @@ class Item {
     for(let name in this.n_visible_for){
       this.n_visible_for[name] = Math.max(0, this.n_visible_for[name] - 1);
     }
+
+    //IMPORTANT: never remove items entirely (just change quantity), this way the client can use its index to reliably track it over time
   }
   drop_one(player){
     let item = this.copy();
@@ -169,6 +179,8 @@ class Item {
     let item = this.copy();
     //no need to change the quantity here, we're dropping it all
     item.setNVisible(item.quantity); //dropped items are pretty obvious
+    item.owned_by = undefined;
+    
     let place = server.getGame().map.places[player.location];
     place.addItem(item);
     this.quantity = 0; //from inventory, so no need to worry about changing n_visible_for
@@ -209,10 +221,10 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-    this.p = Math.random()*0.3 + 0.6;
-    this.p_focus = Math.random()*0.2 + 0.8;
+    this.p_find = Math.random()*0.3 + 0.6;
+    this.p_find_focus = Math.random()*0.2 + 0.8;
     this.img_src = "Pine Cone Ground.jpg"; //for the tree ones, the tree will set this
-    this.setNVisible(Math.floor((quantity+1)*Math.pow(Math.random(), 2))); //more likely that fewer are visible
+    this.setNVisible(Math.floor((quantity+1)*Math.pow(Math.random(), 2))); //quadratic, more likely that fewer are visible
   }
 }
 

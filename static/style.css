@@ -342,7 +342,7 @@ div.item-container, div.thing-container {
 	vertical-align: top;
 }
 
-div.item, div.thing {
+div.item, div.thing, div.animator_circle {
 	width: 4vw;
 	height: 4vw;
 	border-radius: 4vw;
@@ -359,6 +359,23 @@ div.item + p, div.thing + p {
 	right: 0;
 	margin: auto;
 	font-size: 0.8vw;
+}
+
+
+@keyframes expand {
+	from {transform: scale(0);}
+	to {transform: scale(1);}
+}
+
+.expand {
+	animation-name: expand;
+	animation-duration: 0.5s;
+}
+
+.contract {
+	animation-name: expand;
+	animation-duration: 0.5s;
+	animation-direction: reverse;
 }
 
 
@@ -518,3 +535,10 @@ div.item + p, div.thing + p {
 }
 
 /*item styling for the inventory uses the same rules as the placeInfo board, see above*/
+
+
+
+#place_info .animator_circle, #inventory #inventory_items .animator_circle {
+	position: absolute;
+	top: 0;
+}

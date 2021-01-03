@@ -52,7 +52,9 @@ function updatePlaceInfo(){
     return;
   }
 
-  let place = map.places[me.location];
+  let place = game_obj.map.places[me.location];
+  let prev_place = prev_game_obj.map.places[me.location]; //for animations
+  let prev_location = prev_game_obj.players[my_name].location;
 
   place_name_display.textContent = place.name;
   region_name_display.textContent = place.region;
@@ -70,6 +72,7 @@ function updatePlaceInfo(){
 
   //things
   thing_display.innerHTML = "";
+  let things = []; //for animation later
   for(let i=0; i<place.things.length; i++){
     let thing = place.things[i];
     if(!thing.visible && thing.found_by && !thing.found_by.includes(my_name)) {
@@ -77,17 +80,56 @@ function updatePlaceInfo(){
     }
     let div = makeThingOrItem("thing", thing, me.location + "-thing-" + i);
     thing_display.appendChild(div);
+    things.push(div);
   }
 
   //items
   item_display.innerHTML = "";
+  let items = []; //for animation later
   for(let i=0; i<place.items.length; i++){
     let item = place.items[i];
-    if(item.n_visible_for[my_name] < 1) {
-      continue;
+    let prev_item = prev_place.items[i];
+    if(item.n_visible_for[my_name] <= 0 && (!prev_item || prev_item.n_visible_for[my_name] <= 0)) {
+      continue; //still make item if it was just removed
     }
     let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
+    items.push(div);
+  }
+
+
+  //animate things and items
+  //if new location, animate everything
+  if(me.location != prev_location){
+    console.log("new place");
+    let stuff = things.concat(items);
+    stuff.forEach(element => {element.style.opacity = 0});
+
+    let i = 0;
+    let interval = setInterval(function(){
+      if(i >= stuff.length){
+        clearInterval(interval);
+        return;
+      }
+      stuff[i].style.opacity = 1;
+      animateScale(stuff[i], true);
+      i++;
+    }, 150);
+  }
+  else {
+    //only animate changes for individual things/items
+    //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
+
+    //things
+    //TODO
+
+    //items
+    animateIndividualItems(place.items, prev_place.items, function(i){
+      let item_circle = document.getElementById(me.location + "-item-" + i);
+      if(item_circle){return item_circle.parentElement;}
+      else {return undefined;}
+    });
+
   }
 }
 
@@ -100,10 +142,28 @@ function updateInventory(){
   if(!am_spectator){
     for(let i=0; i<me.items.length; i++){
       let item = me.items[i];
-      if(item.quantity < 1){continue;} //only check quantity, visibility is a given in your inventory
+      let prev_item = prev_game_obj.players[my_name].items[i];
+
+      if(item.quantity <= 0 && (!prev_item || prev_item.quantity <= 0)){continue;} //only check quantity, visibility is a given in your inventory
+      //also still show items that are removed via animation (the second check)
+
       let div = makeThingOrItem("item", item, "my-item-" + i);
       inventory_items.appendChild(div);
     }
+
+    //animate differences
+
+    let items = me.items;
+    let prev_items = prev_game_obj.players[my_name].items;
+    //update n_visible_for, since the animation function checks that, not quantity
+    items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
+    prev_items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
+
+    animateIndividualItems(items, prev_items, function(i){
+      let item_circle = document.getElementById("my-item-" + i);
+      if(item_circle){return item_circle.parentElement;}
+      else {return undefined;}
+    });
   }
   else {
     //tell the spectator they don't have an inventory
@@ -118,8 +178,71 @@ function updateInventory(){
 
 
 
+
+function animateIndividualItems(items, prev_items, getItemDiv){
+  //items is an array of Item objects (from the server)
+  //prev_items is what that array looked like last update
+  //getItemDiv is a function, taking the index of the item in the array as an argument and returning the div container of the item
+
+  for(let i=0; i<items.length; i++){
+    let item_div = getItemDiv(i);
+    if(!item_div){continue;} //item is not visible, don't animate
+
+    //check if more of this item here than before
+    if((items[i] && !prev_items[i]) ||
+        items[i].n_visible_for[my_name] > prev_items[i].n_visible_for[my_name])
+    {
+      //if previously none, animate the item expanding
+      if(!prev_items[i] || prev_items[i].n_visible_for[my_name] == 0){
+        animateScale(item_div, true);
+      }
+      else {
+        //animate a duplicate image of the item expanding on top
+        let circle = document.createElement("div");
+        circle.className = "animator_circle";
+        if(items[i].img_src){
+          circle.style.backgroundImage = "url('./static/images/items/" + items[i].img_src + "')";
+        }
+        item_div.appendChild(circle);
+        animateScale(circle, true, function(){
+          circle.parentElement.removeChild(circle);
+        });
+      }
+    }
+    //check if fewer of this item here than before
+    else if((!items[i] && prev_items[i]) ||
+              items[i].n_visible_for[my_name] < prev_items[i].n_visible_for[my_name])
+    {
+      //if no more here, animate the item contracting then change display to none
+      if(!items[i] || items[i].n_visible_for[my_name] == 0){
+        animateScale(item_div, false, function(){item_div.style.display = "none";});
+      }
+      else {
+        //animate a duplicate image of the item contracting on top
+        let circle = document.createElement("div");
+        circle.className = "animator_circle";
+        if(items[i].img_src){
+          circle.style.backgroundImage = "url('./static/images/items/" + items[i].img_src + "')";
+        }
+        item_div.appendChild(circle);
+        animateScale(circle, false, function(){
+          circle.parentElement.removeChild(circle);
+        });
+      }
+    }
+
+  }
+
+}
+
+
+
+
+
+
 function initGameDisplay(game){
-  map = game.map; //map is a global variable
+  game_obj = game; //game_obj is a global variable
+  prev_game_obj = game; //originally no previous one
   me = game.players[my_name];
 
   game_div.style.display = "block";
@@ -148,21 +271,21 @@ function initGameDisplay(game){
   ctx.strokeStyle = "rgba(255, 228, 196, 0.6)"; //bisque
   ctx.lineWidth = 2;
   //iterate through adjacency matrix, without redundancies
-  for(let r=0; r<map.adj_matrix.length; r++){
+  for(let r=0; r<game_obj.map.adj_matrix.length; r++){
 
     //create this node
     let node = document.createElement("div");
     node.id = "node_" + r;
     node.className = "node";
-    node.style.top = map.places[r].pos.y + "px";
-    node.style.left = map.places[r].pos.x + "px";
+    node.style.top = game_obj.map.places[r].pos.y + "px";
+    node.style.left = game_obj.map.places[r].pos.x + "px";
     game_board.appendChild(node);
 
-    for(let c=r+1; c<map.adj_matrix[0].length; c++){
-      if(map.adj_matrix[r][c] == 1){
+    for(let c=r+1; c<game_obj.map.adj_matrix[0].length; c++){
+      if(game_obj.map.adj_matrix[r][c] == 1){
         ctx.beginPath();
-        ctx.moveTo(map.places[r].pos.x, map.places[r].pos.y);
-        ctx.lineTo(map.places[c].pos.x, map.places[c].pos.y);
+        ctx.moveTo(game_obj.map.places[r].pos.x, game_obj.map.places[r].pos.y);
+        ctx.lineTo(game_obj.map.places[c].pos.x, game_obj.map.places[c].pos.y);
         ctx.stroke();
         ctx.closePath();
       }
@@ -198,7 +321,6 @@ function initGameDisplay(game){
 
 
 
-
 //show and hide opacity animations
 
 function animateOpacity(element, show, finishFunc=undefined){
@@ -222,4 +344,18 @@ function show(element){
 
 function hide(element){
   animateOpacity(element, false, function(){element.style.display = "none";});
+}
+
+
+//pop animations for items and things
+
+function animateScale(element, expand=true, finishFunc=function(){}){
+  let handleAnimationEnd = function(){
+    element.removeEventListener("animationend", handleAnimationEnd);
+    element.classList.remove("expand");
+    element.classList.remove("contract");
+    finishFunc();
+  }
+  element.addEventListener("animationend", handleAnimationEnd);
+  element.classList.add(expand ? "expand" : "contract");
 }

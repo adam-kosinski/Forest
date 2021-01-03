@@ -1,3 +1,5 @@
+let server = require("./server");
+
 
 class PlayerStatus {
   constructor(name){
@@ -119,22 +121,34 @@ class Place {
     }
     this.items.push(item);
   }
-  search(player, focus=undefined){
+  search(player, socket, focus=undefined){
     //player: Player object of the searching player
     //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
-    focus = focus.toLowerCase(); //case insensitive for better usability
+    if(focus){focus = focus.toLowerCase();} //case insensitive for better usability
     console.log(player.name + " searching, focus = " + focus);
 
-    let search_duration = 15000; //ms
+    let search_duration = focus ? 8000 : 15000; //ms
     let total_attempts = 15;
     let n = 0;
 
-    let interval = setInterval(function(){
+    let interval = setInterval((function(){
       console.log("search attempt");
-
+      //apply each item's probability
+      for(let i=0; i<this.items.length; i++){
+        let item = this.items[i];
+        if(item.n_visible_for[player.name] < item.quantity){
+          let prob = focus == item.name.toLowerCase() ? item.p_find_focus : item.p_find;
+          prob /= total_attempts;
+          if(Math.random() < prob){
+            //we found one
+            item.n_visible_for[player.name]++;
+            socket.emit("update_state", server.getGame());
+          }
+        }
+      }
       n++;
       if(n >= total_attempts){clearInterval(interval);}
-    }, search_duration/total_attempts);
+    }).bind(this), search_duration/total_attempts); //need to bind otherwise 'this' becomes some timeout object
   }
   leave(player){
     //runs when a player leaves this place

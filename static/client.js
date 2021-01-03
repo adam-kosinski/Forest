@@ -131,7 +131,6 @@ socket.on("player_connection", function(player_statuses){
 socket.on("start_game", function(game){
 	console.log("Game starting");
 	game_active = true;
-	map = game.map;
 
 	//fade to dark slowly and then back to light to start the game
 	dark_fade.style.display = "block";
@@ -161,8 +160,12 @@ socket.on("update_client_element", function(data){
 
 
 socket.on("update_state", function(game){
+	console.log("update");
 	me = game.players[my_name];
-	map = game.map;
+
+	prev_game_obj = game_obj;
+	game_obj = game;
+
 	updatePlaceInfo(); //display.js
 	updateInventory(); //display.js
 });

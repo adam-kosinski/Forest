@@ -63,8 +63,8 @@ function handleMousedown(e){
     //compute adjacent places so we know if player is allowed to go there
     if(!am_spectator){
       adj_places = []; //global var
-      for(let c=0; c<map.adj_matrix[me.location].length; c++){
-        if(map.adj_matrix[me.location][c] == 1){
+      for(let c=0; c<game_obj.map.adj_matrix[me.location].length; c++){
+        if(game_obj.map.adj_matrix[me.location][c] == 1){
           adj_places.push(c);
         }
       }
@@ -101,7 +101,7 @@ function handleMousemove(e){
       let x = Number(style.left.split("px")[0]);
       let y = Number(style.top.split("px")[0]);
       //my location node
-      let my_place = map.places[me.location].pos;
+      let my_place = game_obj.map.places[me.location].pos;
       if(Math.hypot(x-my_place.x, y-my_place.y) <= place_radius){
         document.getElementById("node_"+me.location).style.boxShadow = "0 0 10px 5px white";
         drag_place = me.location;
@@ -116,7 +116,7 @@ function handleMousemove(e){
           document.getElementById("node_"+adj_places[i]).style.boxShadow = "none";
         }
         for(let i=0; i<adj_places.length; i++){
-          let node_pos = map.places[adj_places[i]].pos;
+          let node_pos = game_obj.map.places[adj_places[i]].pos;
           if(Math.hypot(x-node_pos.x, y-node_pos.y) <= place_radius){
             document.getElementById("node_"+adj_places[i]).style.boxShadow = "0 0 10px 5px yellow";
             drag_place = adj_places[i];
@@ -201,6 +201,18 @@ function handleContextmenu(e){
     if(where != "my"){where = Number(where);}
     let type = split[1]; //"thing" or "item"
     let idx = Number(split[2]);
+
+    //if removing it (animation), don't allow contextmenu
+    let here = game_obj.map.places[me.location];
+    if(type == "item" && ((where == "my" && me.items[idx].quantity == 0) || (where != "my" && here.items[idx].n_visible_for[my_name] == 0))){
+      contextmenu.style.display = "none";
+      return;
+    }
+    if(type == "thing" && (!here.things[idx].visible || (here.things[idx].found_by && !here.things[idx].found_by.includes(my_name))) ){
+      contextmenu.style.display = "none";
+      return;
+    }
+
 
     socket.emit("get_interactions", where, type, idx, function(interactions){
       let actions = interactions.actions;

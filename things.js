@@ -56,9 +56,9 @@ class Tree {
       if(species == "Pine"){
         //pinecones in tree
         if(Math.random() < 0.3){
-          let high_pinecones = new items.Pinecone(Math.floor(Math.random()*3));
-          high_pinecones.p = 0.1;
-          high_pinecones.p_focus = 0.4; //high pinecones are hard to see from the ground when searching
+          let high_pinecones = new items.Pinecone(Math.ceil(Math.random()*2));
+          high_pinecones.p = 0.2;
+          high_pinecones.p_focus = 0.5; //high pinecones are hard to see from the ground when searching
           high_pinecones.tags = ["in_tree"];
           high_pinecones.canTake = function(player){
             return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";
@@ -90,7 +90,6 @@ class Tree {
     this.climbed_by.push(player.name);
 
     //climb finds
-    console.log("climb_finds", this.climb_finds);
     for(let i=0; i<this.climb_finds.length; i++){
       let item = this.climb_finds[i];
       item.n_visible_for[player.name] = item.quantity;

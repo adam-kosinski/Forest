@@ -198,7 +198,9 @@ io.on("connection", function(socket) {
     if(action == "Focused Search"){action = "Search";}
     action = action.toLowerCase().replace(/ /g, "_");
     let player = game.players[id_to_name[socket.id]];
-    game.map.places[place_idx][action](player, search_focus);
+    game.map.places[place_idx][action](player, socket, search_focus);
+    io.emit("update_state", game); //in case the action changed something
+    // ^ TODO have the acutal action emit update in the future, make sure to pass io (or have a getter function in exports)
   });
 
 
@@ -222,6 +224,7 @@ io.on("connection", function(socket) {
 
     object[action](player, socket);
     io.emit("update_state", game); //in case the action changed something
+    // ^ TODO have the acutal action emit update in the future, make sure to pass io (or have a getter function in exports)
   });
 
 
