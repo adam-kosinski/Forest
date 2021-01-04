@@ -55,6 +55,21 @@ function updatePlaceInfo(){
     return;
   }
 
+  //check if traveling
+  if(me.travel_progress !== false){
+    //check if just started, if so, animate hiding everything about this place
+    if(prev_game_obj.players[me.name].travel_progress === false){
+      animateOpacity(place_name_display, false, function(){}, 500);
+      animateOpacity(region_name_display, false, function(){}, 500);
+
+      let things = Array.from(thing_display.children);
+      let items = Array.from(item_display.children);
+      let stuff = things.concat(items);
+      stuff.forEach(div => {animateScale(div, false, function(){div.style.display = "none";})});
+    }
+    return; //in general don't show anything while traveling
+  }
+
   let place = game_obj.map.places[me.location];
   let prev_place = prev_game_obj.map.places[me.location]; //for animations
   let prev_location = prev_game_obj.players[my_name].location;
@@ -75,7 +90,6 @@ function updatePlaceInfo(){
 
   //things
   thing_display.innerHTML = "";
-  let things = []; //for animation later
   for(let i=0; i<place.things.length; i++){
     let thing = place.things[i];
     if(!thing.visible && thing.found_by && !thing.found_by.includes(my_name)) {
@@ -83,12 +97,10 @@ function updatePlaceInfo(){
     }
     let div = makeThingOrItem("thing", thing, me.location + "-thing-" + i);
     thing_display.appendChild(div);
-    things.push(div);
   }
 
   //items
   item_display.innerHTML = "";
-  let items = []; //for animation later
   for(let i=0; i<place.items.length; i++){
     let item = place.items[i];
     let prev_item = prev_place.items[i];
@@ -97,7 +109,6 @@ function updatePlaceInfo(){
     }
     let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
-    items.push(div);
   }
 
 
@@ -105,6 +116,12 @@ function updatePlaceInfo(){
   //if new location, animate everything
   if(me.location != prev_location){
     console.log("new place");
+
+    animateOpacity(place_name_display, true, function(){}, 1000);
+    animateOpacity(region_name_display, true, function(){}, 1000);
+
+    let things = Array.from(thing_display.children);
+    let items = Array.from(item_display.children);
     let stuff = things.concat(items);
     stuff.forEach(element => {element.style.opacity = 0});
 
@@ -155,18 +172,20 @@ function updateInventory(){
     }
 
     //animate differences
+    if(getComputedStyle(inventory).display != "none"){
 
-    let items = me.items;
-    let prev_items = prev_game_obj.players[my_name].items;
-    //update n_visible_for, since the animation function checks that, not quantity
-    items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
-    prev_items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
+      let items = me.items;
+      let prev_items = prev_game_obj.players[my_name].items;
+      //update n_visible_for, since the animation function checks that, not quantity
+      items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
+      prev_items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
 
-    animateIndividualItems(items, prev_items, function(i){
-      let item_circle = document.getElementById("my-item-" + i);
-      if(item_circle){return item_circle.parentElement;}
-      else {return undefined;}
-    });
+      animateIndividualItems(items, prev_items, function(i){
+        let item_circle = document.getElementById("my-item-" + i);
+        if(item_circle){return item_circle.parentElement;}
+        else {return undefined;}
+      });
+    }
   }
   else {
     //tell the spectator they don't have an inventory
@@ -224,7 +243,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
         let circle = document.createElement("div");
         circle.className = "animator_circle";
         circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
-        
+
         item_div.appendChild(circle);
         animateScale(circle, false, function(){
           circle.parentElement.removeChild(circle);
@@ -324,18 +343,21 @@ function initGameDisplay(game){
 
 //show and hide opacity animations
 
-function animateOpacity(element, show, finishFunc=undefined){
+function animateOpacity(element, show, finishFunc=undefined, duration=100){
   //show = true/false, if false means hide
+  let n_steps = 5;
+
   let opacity = show ? 0 : 1;
   element.style.opacity = opacity;
+
   let interval = setInterval(function(){
-    opacity += (show ? 1 : -1)*0.2;
+    opacity += (show ? 1 : -1)*(1/n_steps);
     element.style.opacity = opacity;
     if(opacity >= 1 || opacity <= 0){
       clearInterval(interval);
       if(finishFunc){finishFunc();}
     }
-  }, 20);
+  }, duration/n_steps);
 }
 
 function show(element){

@@ -59,6 +59,7 @@ let current_player_names = []; //items need to know this during the game constru
                                 //this is redefined each time a "start_game" emit is received
 
 
+
 // WEBSOCKET HANDLERS --------------------------------------------------------------------------------------------------------------------
 io.on("connection", function(socket) {
 
@@ -179,9 +180,28 @@ io.on("connection", function(socket) {
   socket.on("walk", function(destination){
     let player = game.players[id_to_name[socket.id]];
     if(player.location != destination){
+
       game.map.places[player.location].leave(player);
-      player.location = destination;
-      io.emit("update_state", game);
+
+      let walk_duration = 5000; //ms, TODO: determine algorithmically based on weight
+      let fps = 20; //for showing player progress via emitting updates
+
+      let t_elapsed = 0;
+      let interval = setInterval(function(){
+        t_elapsed += 1000/fps;
+        let fraction = t_elapsed/walk_duration;
+        player.travel_progress = fraction;
+
+        if(fraction >= 1){
+          clearInterval(interval);
+          player.location = destination;
+          player.travel_progress = false;
+          io.emit("update_state", game); //tell everyone that the player's location changed
+        }
+        else {
+          socket.emit("update_state", game); //only the player moving needs to know the progress while traveling
+        }
+      }, 1000/fps);
     }
   });
 

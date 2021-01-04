@@ -415,6 +415,7 @@ div.item + p, div.thing + p {
 	height: 100vh;
 	background-color: rgba(0,30,18,0.75);
 	z-index: 15;
+	display: none;
 }
 
 #inventory_display {

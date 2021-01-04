@@ -134,6 +134,9 @@ class ForestFloor {
     this.name = "Forest Floor";
     this.items = [];
     this.visible = true;
+
+    this.img_postfixes = {};
+    server.getCurrentPlayerNames().forEach(name => {this.img_postfixes[name] = region});
   }
   getInteractions(){
     return {
