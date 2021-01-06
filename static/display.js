@@ -336,7 +336,110 @@ function initGameDisplay(game){
   //place info
   updatePlaceInfo(); //see this file
   updateInventory(); //see this file
+  updateSearchDiv(); //see this file
 }
+
+
+
+
+function updateSearchDiv(){
+  //function to update the search targets while the search div is open, caused by changes besides the user clicking on a search target
+  //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
+  if(getComputedStyle(search_div).display == "none"){return;}
+
+  //check for differences in visibility between now and previous state
+  let place = game_obj.map.places[me.location];
+  let prev_place = prev_game_obj.map.places[me.location];
+
+  let different = false;
+
+  //items
+  for(let i=0; i<place.items.length; i++){
+    if(!prev_place.items[i]){
+      different = true;
+      break;
+    }
+    if(place.items[i].n_visible_for[my_name] != prev_place.items[i].n_visible_for[my_name]){
+      different = true;
+      break;
+    }
+  }
+
+  if(different){
+    console.log("Visibility difference detected");
+    updateSearchTargets(search_focus); //search_focus is a global
+  }
+}
+
+
+
+
+function updateSearchTargets(focus){
+  //update search targets in the process
+
+  let search_div = document.getElementById("search_div");
+
+  //clear previous targets
+  let prev_targets = search_div.getElementsByClassName("search_target");
+  while(prev_targets.length > 0){
+    let div = prev_targets[0];
+    div.parentElement.removeChild(div);
+  }
+
+  socket.emit("update_search_coords", function(place){
+    //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
+    console.log("place", place);
+    let total_search_targets = 0;
+    let search_target_counter = document.getElementById("search_target_counter");
+
+    //add new search targets for items
+  	for(let i=0; i<place.items.length; i++){
+      let item = place.items[i];
+
+      console.log("name", item.name)
+
+      if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
+
+        let size = item.size; //default
+
+        if(focus){
+          if(focus.toLowerCase() == item.name.toLowerCase()){
+            size = item.size_focus;
+          }
+          else {continue;}
+        }
+
+        let n_search_targets = item.quantity - item.n_visible_for[my_name];
+        total_search_targets += n_search_targets;
+
+        for(let j=0; j<n_search_targets; j++){
+          console.log("search target created");
+
+      		let search_target = document.createElement("div");
+      		search_target.classList.add("search_target");
+          search_target.classList.add("search-item-" + i); //used for removing this search target if an external source finds/removes it (e.g. climbing a tree, another player taking items) - see updateSearchDiv() below
+      		search_target.style.height = size;
+      		search_target.style.width = size;
+      		search_target.style.top = item.search_coords[j].y;
+      		search_target.style.left = item.search_coords[j].x;
+      		search_target.style.animationDelay = 3*Math.random() + "s";
+
+      		search_target.addEventListener("click",function(){
+            search_target.parentElement.removeChild(search_target);
+            total_search_targets--;
+            search_target_counter.textContent = "Hidden Things Left: " + total_search_targets;
+            socket.emit("found", me.location, "item", i);
+      		});
+
+      		search_div.appendChild(search_target);
+        }
+      }
+    }
+    search_target_counter.textContent = focus ? "" : "Hidden Things Left: " + total_search_targets;
+      //don't show counter in focused searches, so a player can't directly know if the item they want is in this place
+  });
+}
+
 
 
 

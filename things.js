@@ -61,8 +61,8 @@ class Tree {
         //pinecones in tree
         if(Math.random() < 0.3){
           let high_pinecones = new items.Pinecone(Math.ceil(Math.random()*2));
-          high_pinecones.p = 0.2;
-          high_pinecones.p_focus = 0.5; //high pinecones are hard to see from the ground when searching
+          high_pinecones.size = "1.5vh";
+          high_pinecones.size_focus = "2vh"; //high pinecones are hard to see from the ground compared to normal (fallen) pinecones
           high_pinecones.tags = ["in_tree"];
           high_pinecones.canTake = function(player){
             return player.climbed.includes(this.name) ? "yes" : "You need to climb a "+this.name.toLowerCase()+" to take this.";

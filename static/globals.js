@@ -19,6 +19,8 @@ let contextmenu = document.getElementById("contextmenu");
 let inventory = document.getElementById("inventory");
 let inventory_items = document.getElementById("inventory_items");
 
+let search_div = document.getElementById("search_div");
+
 
 //constants
 
@@ -36,7 +38,7 @@ let prev_game_obj; //last game state, used for detecting and animating changes
 let me; //stores a copy of my player state object that the server has
 let my_token; //DOM reference
 let adj_places = []; //list of place ids adjacent to my location, redefined each time we start dragging my token
-
+let search_focus = undefined; //this is a global var b/c updateSearchDiv() needs to know it. Gets reset to undefined when press Esc to close the search_div
 
 //debug
 let disable_contextmenu = true;

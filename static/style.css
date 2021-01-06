@@ -4,11 +4,12 @@
 .popup: 45
 
 game div
-	game_board - undefined
+	game_board: 1
 	- background image, canvas, nodes, added in order to ensure correct viewing
 	- .player_token: 10 (11 for my player token)
 	#place_info: 20
 	#inventory: 15
+	#search_div: 5
 
 #contextmenu: 25
 
@@ -94,10 +95,6 @@ p {
 .popup .ok_button {
 	background-color: forestgreen;
 	color: white;
-}
-
-#prompt_input {
-
 }
 
 /* home screen ----------------------------------------------------*/
@@ -234,6 +231,10 @@ p {
 }
 
 /* game board ---------------------------------------*/
+
+#game_board {
+	z-index: 1;
+}
 
 #map_image {
 	height: 1125px;
@@ -544,4 +545,62 @@ div.item + p, div.thing + p {
 	position: absolute;
 	top: 0;
 	box-shadow: 0 0 5px 5px white;
+}
+
+
+
+/* stuff relating to actions -------------------------------------------------*/
+
+#search_div {
+	width: 80vw; /*#place_info is 20vw wide*/
+	height: 100vh;
+	background-color: black;
+	z-index: 5;
+	background-size: cover;
+	background-image: url('/static/images/prickly_pines.jpg');
+	display: none;
+}
+
+@keyframes breathe {
+	0% {opacity: 0;}
+	50% {opacity: 0;}
+	100% {opacity: 1;}
+}
+
+#search_div .search_target {
+	opacity: 0; /*so they start off invisible before the animation kicks in*/
+	border-radius: 5px;
+	background-image: radial-gradient(closest-side, yellow, transparent 50%);
+	cursor: pointer;
+	animation-name: breathe;
+	animation-duration: 3s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	border: 3px solid orange;
+
+	animation-delay: 0s; /*This should be set individually, so the targets breathe out of sync*/
+	left: 50%;
+	top: 50%;
+	width: 1.5vh;
+	height: 1.5vh;
+}
+
+.search_info {
+	color: white;
+	background-color: #000a;
+	box-shadow: 0 0 5px 5px #000a;
+	font-size: 18px;
+	font-family: serif;
+	border-radius: 10px;
+	padding: 5px;
+	white-space: pre;
+	top: 10px;
+}
+
+#search_target_counter {
+	left: 10px;
+}
+
+#leave_search_instructions {
+	right: 10px;
 }

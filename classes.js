@@ -103,10 +103,17 @@ class Place {
     this.quests = []; //Potential quests to get here - only if animals live here
   }
   getInteractions(player){
+    //currently not used
     return {
       actions: ["Search", "Focused Search"], //focused search will also call the search method - see the socket.on in server.js
       messages: []
     };
+  }
+  updateSearchCoords(){
+    //update each item's search_coords property to match the quantity of the item
+    this.items.forEach(item => {item.updateSearchCoords()});
+
+    //TODO: search coords for things?
   }
   addItem(item){
     //function to check if place already has an item, and consolidate the items if yes
@@ -122,6 +129,7 @@ class Place {
     }
     this.items.push(item);
   }
+  /*
   search(player, socket, focus=undefined){
     //player: Player object of the searching player
     //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
@@ -151,6 +159,7 @@ class Place {
       if(n >= total_attempts){clearInterval(interval);}
     }).bind(this), search_duration/total_attempts); //need to bind otherwise 'this' becomes some timeout object
   }
+  */
   leave(player){
     //runs when a player leaves this place
     console.log(player.name + " left " + this.name);

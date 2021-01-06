@@ -206,13 +206,13 @@ io.on("connection", function(socket) {
   });
 
 
-  //interactions for places
+  /*/interactions for places
   socket.on("get_place_interactions", function(place_idx, callback){
     let player = game.players[id_to_name[socket.id]];
     callback(game.map.places[place_idx].getInteractions());
-  });
+  });*/
 
-  //actions for places
+  /*/actions for places
   socket.on("place_action", function(place_idx, action, search_focus=undefined){
     //can consider making search_focus a more generic list of args in the future if more place actions than searching are added
     if(action == "Focused Search"){action = "Search";}
@@ -221,6 +221,29 @@ io.on("connection", function(socket) {
     game.map.places[place_idx][action](player, socket, search_focus);
     io.emit("update_state", game); //in case the action changed something
     // ^ TODO have the acutal action emit update in the future, make sure to pass io (or have a getter function in exports)
+  });*/
+
+
+  socket.on("update_search_coords", function(callback){ //callback takes the place's object as an arg
+    //update search coords to match quantity of each item
+    let player = game.players[id_to_name[socket.id]];
+    game.map.places[player.location].updateSearchCoords();
+
+    callback(game.map.places[player.location]);
+    //don't emit update_state, to avoid double updating:
+    //(client takes an item -> update_state from server -> client detects item visibility diff -> emits this -> update_state from server)
+  });
+
+
+  socket.on("found", function(place_idx, type, idx){
+    //type is either "item" or "thing"
+
+    let player = game.players[id_to_name[socket.id]];
+
+    if(type == "item"){
+      game.map.places[place_idx].items[idx].n_visible_for[player.name]++;
+      io.emit("update_state", game);
+    }
   });
 
 

@@ -23,6 +23,8 @@ Each class is required to have the below member variables and methods
 
 Required, specified by Item class:
     owned_by: undefined or a player name
+		search_coords: array of {x: "0-100%", "y: 0-100%"} - where on the search div it's located (if the player hasn't yet found it)
+							- left empty at the start, filled/updated with the method updateSearchCoords(), which matches the number of coords to the item's quantity
     n_visible_for: object (player_name: int) - how many were found by each player (a player may not have found the whole quantity)
               - Only consulted if visible is false
               - Default values are 0
@@ -38,13 +40,8 @@ Sometimes not specified:
 
     tags: array of strings, used to mark items with the same name as different. Optional.
               - this property is cleared when an item goes in the inventory
-    p_find: avg probability of finding it in a single general search. Only specified if not visible
-              - 0 = will never find
-              - 0.5 = on avg will find one every 2 searches
-              - 1 = on avg will find one every search
-              - 2 = on avg will find two every search, etc.
-              - can't be greater than the number of search attempts per search (see Place class)
-    p_find_focus: avg probability of finding it when focusing on it. Only specified if not visible
+    size: between 1.5 and 2.5 (vh units) - how big the search target div for this item is. Only specified if not always visible
+		size_focus: vh units, how big the search target div is when we focus on this item (should be larger than the size property). Only specified if not always visible
     canTake(Player): optional method, run to check if a player can take an item. Returns "yes" if they can, otherwise returns a string explaining why they can't
               - if not defined, assumed "yes"
               - arg is the player's player state object
@@ -83,6 +80,9 @@ function deepCopy(object){
 class Item {
   constructor(){
     this.owned_by = undefined; //if a player name, implies it's in their inventory
+		this.quantity = 0; //just in case a child forgets to set this, don't crash the server
+
+		this.search_coords = [];
 
     this.n_visible_for = {};
     let player_names = server.getCurrentPlayerNames();
@@ -95,6 +95,23 @@ class Item {
       this.n_visible_for[name] = n;
     }
   }
+	updateSearchCoords(){
+		if(this.quantity < this.search_coords.length){
+			//chop off the end
+			this.search_coords.splice(this.quantity);
+		}
+		else if(this.quantity > this.search_coords.length){
+			//add new coords
+			let n_to_add = this.quantity - this.search_coords.length;
+			for(let i=0; i<n_to_add; i++){
+				let coord = {
+					x: 5 + Math.floor(Math.random()*90) + "%",
+					y: 5 + Math.floor(Math.random()*90) + "%"
+				};
+				this.search_coords.push(coord);
+			}
+		}
+	}
   deepCopyPropertiesTo(target){
     for(let prop in this){
       if(typeof this[prop] != "object"){
@@ -221,9 +238,11 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-    this.p_find = Math.random()*0.3 + 0.6;
-    this.p_find_focus = Math.random()*0.2 + 0.8;
-    this.setNVisible(Math.floor((quantity+1)*Math.pow(Math.random(), 2))); //quadratic, more likely that fewer are visible
+    this.size = "2vh";
+    this.size_focus = "3vh";
+
+		let n_visible = Math.random() < 0.5 ? 0 : Math.ceil(quantity*Math.pow(Math.random(), 2)); //quadratic, more likely that fewer are visible
+    this.setNVisible(n_visible);
   }
 }
 

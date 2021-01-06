@@ -238,9 +238,9 @@ function handleContextmenu(e){
     });
   }
   else if(e.target == my_token){
-    socket.emit("get_place_interactions", me.location, function(interactions){
-      let actions = interactions.actions;
-      let messages = interactions.messages;
+
+      let actions = ["Search", "Focused Search"];
+      let messages = [];
 
       //add actions to contextmenu
       for(let i=0; i<actions.length; i++){
@@ -248,19 +248,23 @@ function handleContextmenu(e){
         menu_item.className = "action";
         menu_item.textContent = actions[i];
         menu_item.addEventListener("click", function(){
+
+          if(actions[i] == "Search"){
+            updateSearchTargets(); //display.js
+            show(search_div);
+          }
           if(actions[i] == "Focused Search"){
-            customPrompt("What do you want to search for (case insensitive)?\n\nNote: Focused searches are usually quicker and more successful than regular searches.",
-            function(search_focus){
-              if(search_focus == null || search_focus.length == 0){
+            customPrompt("What do you want to search for (case insensitive)?\n\nNote: In general, things are more noticeable in focused searches; however, only what you search for will be shown. Also, some items can only be found in a focused search.",
+            function(focus){
+              if(focus == null || focus.length == 0){
                 customAlert("No focus entered, abandoning search.");
               }
               else {
-                socket.emit("place_action", me.location, actions[i], search_focus);
+                search_focus = focus; //search_focus is a global, gets reset when press Esc to close the search_div
+                updateSearchTargets(focus);
+                show(search_div);
               }
             });
-          }
-          else {
-            socket.emit("place_action", me.location, actions[i]);
           }
         });
         contextmenu.appendChild(menu_item);
@@ -272,7 +276,6 @@ function handleContextmenu(e){
         menu_item.textContent = messages[i];
         contextmenu.appendChild(menu_item);
       }
-    });
   }
   else {
     contextmenu.style.display = "none"; //hide it in case it was showing
@@ -319,6 +322,10 @@ function handleKeydown(e){
     hide(contextmenu);
 
     if(which_popup_open == undefined){ //see util.js
+      if(getComputedStyle(inventory).display == "none"){
+        hide(search_div);
+        search_focus = undefined;
+      }
       hide(inventory);
     }
   }

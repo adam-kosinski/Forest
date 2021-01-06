@@ -65,6 +65,10 @@ class Game {
         let dead_leaves = new items.Leaf("Pine", false, "Brown", Math.floor(Math.random()*25)+50);
         place.addItem(dead_leaves);
 
+        //chance to have a pinecone regardless of pine trees
+        if(Math.random() > 0.6){
+          place.addItem(new items.Pinecone(1));
+        }
       }
     }
 
