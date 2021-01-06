@@ -238,13 +238,18 @@ io.on("connection", function(socket) {
   });
 
 
-  socket.on("found", function(place_idx, type, idx){
+  socket.on("found", function(place_idx, type, idx, target_idx){
     //type is either "item" or "thing"
+    //idx is the item/thing's index in the place array
+    //target_idx is for items where the quantity is > 1, identifies which coords the item was found at so we can remove those coords
 
     let player = game.players[id_to_name[socket.id]];
 
     if(type == "item"){
-      game.map.places[place_idx].items[idx].n_visible_for[player.name]++;
+      let item = game.map.places[place_idx].items[idx];
+      item.n_visible_for[player.name]++;
+      item.search_coords.splice(target_idx, 1);
+
       io.emit("update_state", game);
     }
   });

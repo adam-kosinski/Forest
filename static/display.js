@@ -432,7 +432,7 @@ function updateSearchTargets(focus){
             search_target.parentElement.removeChild(search_target);
             total_search_targets--;
             search_target_counter.textContent = "Hidden Things Left: " + total_search_targets;
-            socket.emit("found", me.location, "item", i);
+            socket.emit("found", me.location, "item", i, j);
       		});
 
       		search_div.appendChild(search_target);
