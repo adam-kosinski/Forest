@@ -172,6 +172,23 @@ socket.on("update_state", function(game){
 });
 
 
+socket.on("activity_progress", function(activity, fraction){
+	if(activity){
+		if(getComputedStyle(progress_div).display != "block"){
+			show(progress_div);
+		}
+		document.getElementById("activity_name").textContent = activity;
+		document.getElementById("activity_progress").value = fraction;
+	}
+	else {
+		if(getComputedStyle(progress_div).display != "none"){
+			hide(progress_div);
+		}
+	}
+});
+
+
+//placeholder for bear conversation
 socket.on("hello", function(){
 	console.log("I heard hello!");
 });

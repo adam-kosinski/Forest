@@ -20,6 +20,7 @@ let inventory = document.getElementById("inventory");
 let inventory_items = document.getElementById("inventory_items");
 
 let search_div = document.getElementById("search_div");
+let progress_div = document.getElementById("progress_div");
 
 
 //constants

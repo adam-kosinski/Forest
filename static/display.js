@@ -347,7 +347,7 @@ function updateSearchDiv(){
   //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
   if(getComputedStyle(search_div).display == "none"){return;}
 
-  //check for differences in visibility between now and previous state
+  //check for differences in visibility or quantity between now and previous state
   let place = game_obj.map.places[me.location];
   let prev_place = prev_game_obj.map.places[me.location];
 
@@ -363,10 +363,14 @@ function updateSearchDiv(){
       different = true;
       break;
     }
+    if(place.items[i].quantity != prev_place.items[i].quantity){
+      different = true;
+      break;
+    }
   }
 
   if(different){
-    console.log("Visibility difference detected");
+    console.log("Visibility/quantity difference detected");
     updateSearchTargets(search_focus); //search_focus is a global
   }
 }
@@ -438,50 +442,4 @@ function updateSearchTargets(focus){
     search_target_counter.textContent = focus ? "" : "Hidden Things Left: " + total_search_targets;
       //don't show counter in focused searches, so a player can't directly know if the item they want is in this place
   });
-}
-
-
-
-
-
-//show and hide opacity animations
-
-function animateOpacity(element, show, finishFunc=undefined, duration=100){
-  //show = true/false, if false means hide
-  let n_steps = 5;
-
-  let opacity = show ? 0 : 1;
-  element.style.opacity = opacity;
-
-  let interval = setInterval(function(){
-    opacity += (show ? 1 : -1)*(1/n_steps);
-    element.style.opacity = opacity;
-    if(opacity >= 1 || opacity <= 0){
-      clearInterval(interval);
-      if(finishFunc){finishFunc();}
-    }
-  }, duration/n_steps);
-}
-
-function show(element){
-  element.style.display = "block";
-  animateOpacity(element, true);
-}
-
-function hide(element){
-  animateOpacity(element, false, function(){element.style.display = "none";});
-}
-
-
-//pop animations for items and things
-
-function animateScale(element, expand=true, finishFunc=function(){}){
-  let handleAnimationEnd = function(){
-    element.removeEventListener("animationend", handleAnimationEnd);
-    element.classList.remove("expand");
-    element.classList.remove("contract");
-    finishFunc();
-  }
-  element.addEventListener("animationend", handleAnimationEnd);
-  element.classList.add(expand ? "expand" : "contract");
 }

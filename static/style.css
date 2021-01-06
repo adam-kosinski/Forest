@@ -10,6 +10,7 @@ game div
 	#place_info: 20
 	#inventory: 15
 	#search_div: 5
+	#progress_div: 30
 
 #contextmenu: 25
 
@@ -603,4 +604,33 @@ div.item + p, div.thing + p {
 
 #leave_search_instructions {
 	right: 10px;
+}
+
+
+/* progress div -------------------------------------------*/
+
+#progress_div {
+	width: 100vw;
+	height: 100vh;
+	z-index: 30;
+	background-color: #fff8;
+	display: none;
+}
+
+#progress_div * {
+	left: 0;
+	right: 0;
+	margin: auto;
+	text-align: center;
+}
+
+#activity_name {
+	font-size: 6vh;
+	top: 40vh;
+}
+
+#activity_progress {
+	width: 80vh;
+	height: 4vh;
+	top: 50vh;
 }

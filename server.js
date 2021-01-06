@@ -184,7 +184,7 @@ io.on("connection", function(socket) {
       game.map.places[player.location].leave(player);
 
       let walk_duration = 5000; //ms, TODO: determine algorithmically based on weight
-      let fps = 20; //for showing player progress via emitting updates
+      let fps = 30; //for showing player progress via emitting updates
 
       let t_elapsed = 0;
       let interval = setInterval(function(){
@@ -192,10 +192,13 @@ io.on("connection", function(socket) {
         let fraction = t_elapsed/walk_duration;
         player.travel_progress = fraction;
 
+        socket.emit("activity_progress", "Traveling", fraction); //only send to the person traveling
+
         if(fraction >= 1){
           clearInterval(interval);
           player.location = destination;
           player.travel_progress = false;
+          socket.emit("activity_progress"); //no args mean clear the progress bar
           io.emit("update_state", game); //tell everyone that the player's location changed
         }
         else {
