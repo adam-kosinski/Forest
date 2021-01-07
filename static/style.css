@@ -569,14 +569,14 @@ div.item + p, div.thing + p {
 }
 
 #search_div .search_target {
-	opacity: 0; /*so they start off invisible before the animation kicks in*/
+	opacity: 1; /*so they start off invisible before the animation kicks in*/
 	border-radius: 5px;
 	background-image: radial-gradient(closest-side, yellow, transparent 50%);
 	cursor: pointer;
-	animation-name: breathe;
+	/*animation-name: breathe;
 	animation-duration: 3s;
 	animation-iteration-count: infinite;
-	animation-direction: alternate;
+	animation-direction: alternate;*/
 	border: 3px solid orange;
 
 	animation-delay: 0s; /*This should be set individually, so the targets breathe out of sync*/

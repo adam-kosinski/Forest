@@ -400,12 +400,12 @@ function updateSearchTargets(focus){
   	for(let i=0; i<place.items.length; i++){
       let item = place.items[i];
 
-      console.log("name", item.name)
-
+      //check that this item type has items that aren't yet visible to us
       if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
 
-        let size = item.size; //default
+        let size = item.size; //default, changed if we're focusing on it, see below
 
+        //focus checking
         if(focus){
           if(focus.toLowerCase() == item.name.toLowerCase()){
             size = item.size_focus;
@@ -413,11 +413,17 @@ function updateSearchTargets(focus){
           else {continue;}
         }
 
-        let n_search_targets = item.quantity - item.n_visible_for[my_name];
-        total_search_targets += n_search_targets;
+        //iterate through hidden items and make a target for each one we didn't find yet
+        console.log("search coords for",item.name,item.search_coords);
 
-        for(let j=0; j<n_search_targets; j++){
-          console.log("search target created");
+        let n_hidden = item.quantity - item.n_visible_for[my_name];
+        for(let j=0, n_targets_made=0; n_targets_made<n_hidden; j++){ //need two iterators, one for idx in search_coords, other to make sure we made the right number of search targets
+
+          //out of the n_hidden, some we may have found already, check if we have
+          if(item.search_coords[j].found_by.includes(my_name)){
+            console.log("already found, skipping idx",j);
+            continue;
+          }
 
       		let search_target = document.createElement("div");
       		search_target.classList.add("search_target");
@@ -432,10 +438,15 @@ function updateSearchTargets(focus){
             search_target.parentElement.removeChild(search_target);
             total_search_targets--;
             search_target_counter.textContent = "Hidden Things Left: " + total_search_targets;
+            console.log("found item",item.name,item.tags,j);
             socket.emit("found", me.location, "item", i, j);
       		});
 
       		search_div.appendChild(search_target);
+          total_search_targets++;
+          console.log("search target created");
+
+          n_targets_made++;
         }
       }
     }

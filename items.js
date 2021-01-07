@@ -23,9 +23,9 @@ Each class is required to have the below member variables and methods
 
 Required, specified by Item class:
     owned_by: undefined or a player name
-		search_coords: array of {x: "0-100%", "y: 0-100%"} - where on the search div it's located (if the player hasn't yet found it)
+		search_coords: array of {x: "0-100%", "y: 0-100%", found_by:[player_names]} - where on the search div it's located (if the player hasn't yet found it)
 							- left empty at the start, filled/updated with the method updateSearchCoords(), which matches the number of coords to the item's quantity
-    n_visible_for: object (player_name: int) - how many were found by each player (a player may not have found the whole quantity)
+		n_visible_for: object (player_name: int) - how many were found by each player (a player may not have found the whole quantity)
               - Only consulted if visible is false
               - Default values are 0
               - if a value equals the quantity, the player found them all
@@ -83,6 +83,7 @@ class Item {
 		this.quantity = 0; //just in case a child forgets to set this, don't crash the server
 
 		this.search_coords = [];
+		this.found_search_targets = {};
 
     this.n_visible_for = {};
     let player_names = server.getCurrentPlayerNames();
@@ -106,7 +107,8 @@ class Item {
 			for(let i=0; i<n_to_add; i++){
 				let coord = {
 					x: 5 + Math.floor(Math.random()*90) + "%",
-					y: 5 + Math.floor(Math.random()*90) + "%"
+					y: 5 + Math.floor(Math.random()*90) + "%",
+					found_by: []
 				};
 				this.search_coords.push(coord);
 			}

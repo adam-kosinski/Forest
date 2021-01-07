@@ -183,7 +183,7 @@ io.on("connection", function(socket) {
 
       game.map.places[player.location].leave(player);
 
-      let walk_duration = 5000; //ms, TODO: determine algorithmically based on weight
+      let walk_duration = 1000; //ms, TODO: determine algorithmically based on weight
       let fps = 30; //for showing player progress via emitting updates
 
       let t_elapsed = 0;
@@ -248,7 +248,7 @@ io.on("connection", function(socket) {
     if(type == "item"){
       let item = game.map.places[place_idx].items[idx];
       item.n_visible_for[player.name]++;
-      item.search_coords.splice(target_idx, 1);
+      item.search_coords[target_idx].found_by.push(player.name);
 
       io.emit("update_state", game);
     }
