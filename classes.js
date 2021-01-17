@@ -16,6 +16,7 @@ class Player {
     this.energy = 10;
     this.max_energy = 10;
     this.location = location; //index of the starting place
+    this.traveling = false;
     this.travel_progress = false; //when traveling, set to number >0 - 1.0 denoting progress through traveling
     //this.occupied_with = undefined; //can be a thing object, used to reset things we are no longer interacting with
     this.climbed = []; //names of things this player has climbed, gets reset when moving

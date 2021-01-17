@@ -172,15 +172,30 @@ socket.on("update_state", function(game){
 });
 
 
-socket.on("activity_progress", function(activity, fraction){
+socket.on("activity_progress", function(activity, duration){
 	if(activity){
-		if(getComputedStyle(progress_div).display != "block"){
-			show(progress_div);
-		}
+		let progress_bar = document.getElementById("activity_progress");
 		document.getElementById("activity_name").textContent = activity;
-		document.getElementById("activity_progress").value = fraction;
+		progress_bar.value = 0;
+
+		show(progress_div);
+
+		//animate the progress bar
+		let t_start;
+		let step_function = function(t_now){ //arg is time elapsed since document loaded, in ms
+			if(t_start === undefined){
+				t_start = t_now;
+			}
+			let fraction = (t_now - t_start)/duration;
+			progress_bar.value = fraction;
+			if(fraction < 1){
+				window.requestAnimationFrame(step_function);
+			}
+		}
+		window.requestAnimationFrame(step_function);
 	}
 	else {
+		//clear the progress indicator screen
 		if(getComputedStyle(progress_div).display != "none"){
 			hide(progress_div);
 		}
