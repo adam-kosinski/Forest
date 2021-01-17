@@ -120,7 +120,7 @@ socket.on("player_connection", function(player_statuses){
 			player_display.appendChild(div);
 			setTimeout(function(){ //seems like a delay is needed for curved text, maybe circletype is using computed values
 				new CircleType(name_display).radius(0.15*window.innerHeight);
-			},10);
+			}, 100);
 		}
 	}
 
