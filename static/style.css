@@ -10,6 +10,7 @@ game div
 	#place_info: 20
 	#inventory: 15
 	#search_div: 5
+	- #flashlight_canvas: 10
 	#progress_div: 30
 
 #contextmenu: 25
@@ -528,7 +529,7 @@ div.item + p, div.thing + p {
 
 #inventory_items {
 	max-width: 100%;
-	height: 100%;
+	height: calc(100% - 12.5vh);
 	padding: 9.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
 	text-align: center;
 	overflow-y: auto;
@@ -569,17 +570,18 @@ div.item + p, div.thing + p {
 }
 
 #search_div .search_target {
-	opacity: 1; /*so they start off invisible before the animation kicks in*/
+	opacity: 0; /*so they start off invisible before the animation kicks in*/
 	border-radius: 5px;
 	background-image: radial-gradient(closest-side, yellow, transparent 50%);
 	cursor: pointer;
-	/*animation-name: breathe;
+	animation-name: breathe;
 	animation-duration: 3s;
 	animation-iteration-count: infinite;
-	animation-direction: alternate;*/
-	border: 3px solid orange;
+	animation-direction: alternate;
+	/*border: 3px solid orange;*/
 
-	animation-delay: 0s; /*This should be set individually, so the targets breathe out of sync*/
+	/*default values that should be overwritten by js*/
+	animation-delay: 0s; /*set individually so the targets breathe out of sync*/
 	left: 50%;
 	top: 50%;
 	width: 1.5vh;
@@ -600,10 +602,18 @@ div.item + p, div.thing + p {
 
 #search_target_counter {
 	left: 10px;
+	display: none; /*TODO: decide whether to always hide*/
 }
 
 #leave_search_instructions {
 	right: 10px;
+}
+
+#flashlight_canvas {
+	display: none;
+	z-index: 10;
+	filter: blur(10px);
+	transform: translate(-50%, -50%); /*the illuminated spot is in the center of the canvas, make that at the canvas's position*/
 }
 
 

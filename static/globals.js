@@ -20,6 +20,7 @@ let inventory = document.getElementById("inventory");
 let inventory_items = document.getElementById("inventory_items");
 
 let search_div = document.getElementById("search_div");
+let flashlight_canvas = document.getElementById("flashlight_canvas");
 let progress_div = document.getElementById("progress_div");
 
 
@@ -28,7 +29,7 @@ let progress_div = document.getElementById("progress_div");
 let my_name;
 let board_aspect_ratio = 959/750; // width/height, determined by the background image's dimensions
 let place_radius = 50; //px around a place's center where a token is considered at that place
-
+let flashlight_radius = 20; //in vh
 
 //game-state variables, need to reset these if ending a game --------------------------
 

@@ -333,6 +333,26 @@ function initGameDisplay(game){
   }
 
 
+  //search_div flashlight canvas
+  let fc = flashlight_canvas; //alias
+  fc.width = 500;
+  fc.height = 500;
+  fc.style.width = "500px";
+  fc.style.height = "500px";
+
+  let flash_ctx = fc.getContext("2d");
+
+  flash_ctx.fillStyle = "black";
+  flash_ctx.fillRect(0, 0, fc.width, fc.height);
+
+  flash_ctx.beginPath();
+  let px_radius = flashlight_radius * (window.innerHeight/100);
+  flash_ctx.arc(0.5*fc.width, 0.5*fc.height, px_radius, 0, 2*Math.PI);
+  flash_ctx.clip(); //now all changes will only apply to the circle we defined
+  flash_ctx.clearRect(0, 0, fc.width, fc.height);
+
+
+
   //place info
   updatePlaceInfo(); //see this file
   updateInventory(); //see this file

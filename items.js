@@ -240,8 +240,8 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-    this.size = "2vh";
-    this.size_focus = "3vh";
+    this.size = "3.5vh";
+    this.size_focus = "5vh";
 
 		let n_visible = Math.random() < 0.5 ? 0 : Math.ceil(quantity*Math.pow(Math.random(), 2)); //quadratic, more likely that fewer are visible
     this.setNVisible(n_visible);
