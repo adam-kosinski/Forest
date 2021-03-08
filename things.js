@@ -21,7 +21,10 @@ Things are defined as classes, and must have the following member variables and 
 
 Sometimes not specified:
 
-    img_postfixes: object (playername: string) - postfixes to put on the image url after the thing's name
+    img_postfixes: object (playername: string) - postfixes to put on the image src name after the thing's name
+        - Similar to an Item's tags, but these are per-player
+        - Purely visual usage - can show different pictures of the same Thing depending on the player
+        - e.g. if climbed a tree or not
     found_by: array of player names, who found this thing. Only specified if not visible
     p: 0-1.0, probability of finding it in a general search. Only specified if not visible
     p_focus: 0-1.0, probability of finding it when focusing on it. Only specified if not visible

@@ -104,8 +104,10 @@ function updatePlaceInfo(){
   for(let i=0; i<place.items.length; i++){
     let item = place.items[i];
     let prev_item = prev_place.items[i];
+
+    //ignore items that there are none of
     if(item.n_visible_for[my_name] <= 0 && (!prev_item || prev_item.n_visible_for[my_name] <= 0)) {
-      continue; //still make item if it was just removed
+      continue; //but still show item if it was just removed
     }
     let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
@@ -164,8 +166,9 @@ function updateInventory(){
       let item = me.items[i];
       let prev_item = prev_game_obj.players[my_name].items[i];
 
+      //ignore items that there are none of
       if(item.quantity <= 0 && (!prev_item || prev_item.quantity <= 0)){continue;} //only check quantity, visibility is a given in your inventory
-      //also still show items that are removed via animation (the second check)
+      //but still show items that will be removed via animation below (the second check)
 
       let div = makeThingOrItem("item", item, "my-item-" + i);
       inventory_items.appendChild(div);
@@ -200,6 +203,7 @@ function updateInventory(){
 
 
 
+//function to animate an item's quantity changing
 
 function animateIndividualItems(items, prev_items, getItemDiv){
   //items is an array of Item objects (from the server)
@@ -412,6 +416,7 @@ function updateSearchTargets(focus){
 
   socket.emit("update_search_coords", function(place){
     //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
+
     console.log("place", place);
     let total_search_targets = 0;
     let search_target_counter = document.getElementById("search_target_counter");

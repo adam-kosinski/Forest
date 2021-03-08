@@ -103,6 +103,7 @@ class Place {
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
+  /*
   getInteractions(player){
     //currently not used
     return {
@@ -110,6 +111,7 @@ class Place {
       messages: []
     };
   }
+  */
   updateSearchCoords(){
     //update each item's search_coords property to match the quantity of the item
     this.items.forEach(item => {item.updateSearchCoords()});

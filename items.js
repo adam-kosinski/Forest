@@ -31,8 +31,8 @@ Required, specified by Item class:
               - if a value equals the quantity, the player found them all
               - when an item is taken, we subtract one from the quantity AND from counts in here if not 0 (some "take that! - you have to search again")
               - when an item is dropped, it's visible, so we increment all counts in here
-          - setNVisible(int): function that sets all values in n_visible_for to the arg
-                    - EACH CONSTRUCTOR MUST CALL THIS TO MAKE THE ITEM VISIBLE!!!
+  	setNVisible(int): function that sets all values in n_visible_for to the arg
+          		- EACH CONSTRUCTOR MUST CALL THIS TO MAKE THE ITEM VISIBLE!!!
     a bunch of other functions, look below
 
 
@@ -40,6 +40,7 @@ Sometimes not specified:
 
     tags: array of strings, used to mark items with the same name as different. Optional.
               - this property is cleared when an item goes in the inventory
+							- used for example for pinecones in trees vs in the ground - same item but different functionality
     size: between 1.5 and 2.5 (vh units) - how big the search target div for this item is. Only specified if not always visible
 		size_focus: vh units, how big the search target div is when we focus on this item (should be larger than the size property). Only specified if not always visible
     canTake(Player): optional method, run to check if a player can take an item. Returns "yes" if they can, otherwise returns a string explaining why they can't
@@ -49,6 +50,12 @@ Sometimes not specified:
     canFind(Player): optional method, run to check if a player can find this item. Returns "yes" if they can, something else if they can't
               - only specified if not visible
               - if not defined, assumed "yes"
+
+
+Usage note:
+In general, Items are stored in arrays (e.g. by Places or Things or Players).
+Once an Item is added to a storage array, that index is reserved for that Item forever, even if the quantity goes to 0.
+Adding future Items of an existing type (with the same tags - see Item.sameAs()) should just change the existing Item's quantity, not push the extra Item onto the array.
 
 */
 
@@ -97,12 +104,15 @@ class Item {
     }
   }
 	updateSearchCoords(){
+		//gets called by Place.updateSearchCoords, which gets called by the "update_search_coords" emit from the client
+		//so items don't start with
+
 		if(this.quantity < this.search_coords.length){
-			//chop off the end
+			//this will happen if items are taken - chop off the end
 			this.search_coords.splice(this.quantity);
 		}
 		else if(this.quantity > this.search_coords.length){
-			//add new coords
+			//happens upon initialization - add new coords
 			let n_to_add = this.quantity - this.search_coords.length;
 			for(let i=0; i<n_to_add; i++){
 				let coord = {
