@@ -56,11 +56,12 @@ function updatePlaceInfo(){
   }
 
   //check if traveling
-  if(me.travel_progress !== false){
+  if(me.traveling){
     //check if just started, if so, animate hiding everything about this place
-    if(prev_game_obj.players[me.name].travel_progress === false){
-      animateOpacity(place_name_display, false, function(){}, 500);
-      animateOpacity(region_name_display, false, function(){}, 500);
+    if(!prev_game_obj.players[me.name].traveling){
+
+      $(place_name_display).fadeOut(500);
+      $(region_name_display).fadeOut(500);
 
       let things = Array.from(thing_display.children);
       let items = Array.from(item_display.children);
@@ -119,8 +120,8 @@ function updatePlaceInfo(){
   if(me.location != prev_location){
     console.log("new place");
 
-    animateOpacity(place_name_display, true, function(){}, 1000);
-    animateOpacity(region_name_display, true, function(){}, 1000);
+    $(place_name_display).fadeIn(1000);
+    $(region_name_display).fadeIn(1000);
 
     let things = Array.from(thing_display.children);
     let items = Array.from(item_display.children);

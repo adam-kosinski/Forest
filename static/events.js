@@ -224,6 +224,7 @@ function handleContextmenu(e){
       return;
     }
 
+    console.log("contextmenu allowed");
 
     socket.emit("get_interactions", where, type, idx, function(interactions){
       let actions = interactions.actions;
@@ -248,29 +249,25 @@ function handleContextmenu(e){
       }
     });
   }
-  else {
-    contextmenu.style.display = "none"; //hide it in case it was showing
+  else { //if right click on something without a menu
+    hide(contextmenu); //hide it in case it was showing
     return; //and skip showing it (below)
   }
 
 
-  //show the contextmenu
+  //show the contextmenu, making sure it doesn't go offscreen
 
-  contextmenu.style.opacity = 0; //hacky trick to get computed width (can't get computed width while display is none)
-  contextmenu.style.display = "block";
+  //for some reason jquery can tell the width/height immediately (unlike getComputedStyle), but weirdly it only works if inside a setTimeout with 0 delay
 
-  //now that we know its computed width and height, position it so it doesn't go off screen
   let size_timeout = setTimeout(function(){
-    let width = Number(getComputedStyle(contextmenu).width.split("px")[0]);
-    let left_offset = Math.min(0, window.innerWidth - (width + e.pageX));
+    let left_offset = Math.min(0, window.innerWidth - ($(contextmenu).width() + e.pageX));
     contextmenu.style.left = e.pageX + left_offset + "px";
 
-    let height = Number(getComputedStyle(contextmenu).height.split("px")[0]);
-    let top_offset = Math.min(0, window.innerHeight - (height + e.pageY));
+    let top_offset = Math.min(0, window.innerHeight - ($(contextmenu).height() + e.pageY));
     contextmenu.style.top = e.pageY + top_offset + "px";
 
     show(contextmenu);
-  }, 20);
+  }, 0);
 }
 
 

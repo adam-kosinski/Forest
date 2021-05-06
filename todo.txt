@@ -1,0 +1,2 @@
+remove game_active variable
+update server client connection to better version

@@ -31,7 +31,7 @@ let my_name;
 let place_radius = 50; //px around a place's center where a token is considered at that place
 let flashlight_radius = 20; //in vh
 let map_max_scale = 3;
-let map_min_scale = 0.5;
+let map_min_scale = 0.25;
 
 //game-state variables, need to reset these if ending a game --------------------------
 
