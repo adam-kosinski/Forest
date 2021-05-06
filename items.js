@@ -42,7 +42,6 @@ Sometimes not specified:
               - this property is cleared when an item goes in the inventory
 							- used for example for pinecones in trees vs in the ground - same item but different functionality
     size: between 1.5 and 2.5 (vh units) - how big the search target div for this item is. Only specified if not always visible
-		size_focus: vh units, how big the search target div is when we focus on this item (should be larger than the size property). Only specified if not always visible
     canTake(Player): optional method, run to check if a player can take an item. Returns "yes" if they can, otherwise returns a string explaining why they can't
               - if not defined, assumed "yes"
               - arg is the player's player state object
@@ -251,7 +250,6 @@ class Pinecone extends Item {
     ];
     this.weight = 3;
     this.size = "3.5vh";
-    this.size_focus = "5vh";
 
 		let n_visible = Math.random() < 0.5 ? 0 : Math.ceil(quantity*Math.pow(Math.random(), 2)); //quadratic, more likely that fewer are visible
     this.setNVisible(n_visible);

@@ -27,7 +27,6 @@ Sometimes not specified:
         - e.g. if climbed a tree or not
     found_by: array of player names, who found this thing. Only specified if not visible
     p: 0-1.0, probability of finding it in a general search. Only specified if not visible
-    p_focus: 0-1.0, probability of finding it when focusing on it. Only specified if not visible
     leave(Player): Optional, function to run when the player leaves this place
 
 Experiment with later:

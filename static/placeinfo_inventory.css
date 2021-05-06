@@ -1,0 +1,255 @@
+/* place info panel -------------------------------------*/
+
+#place_info {
+	height: 100vh;
+	width: 20vw;
+	left: 100vw;
+	transform: translate(-100%, 0);
+	background-color: bisque;
+	border-left: 2px solid burlywood;
+	border-right: 2px solid burlywood;
+	text-align: center;
+	font-size: 2.5vh;
+	color: white;
+	z-index: 10;
+	background-size: cover;
+}
+
+#place_info * {
+	position: relative;
+}
+
+#place_info #place_info_darkener {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.7);
+}
+
+#place_title {
+	height: 9vh;
+	width: 85%;
+	z-index: 5;
+	background-color: #fffa;
+	box-shadow: 0 0 2.1vh 2.1vh #fffa;
+	color: black;
+	border-radius: 3vh;
+	left: 0;
+	right: 0;
+	margin: auto;
+	margin-top: 2vh;
+}
+
+#place_name_display {
+	margin-top: 0.5vh;
+	font-size: 2em;
+}
+
+#place_info #top_line {
+	border-top: 1px solid burlywood;
+	position: absolute;
+	width: 18vw;
+	top: 14vh;
+	left: 1vw;
+}
+
+#place_scroll_container {
+	height: 85.5vh;
+	margin-top: 3.5vh;
+	padding: 0 1vw 0 1vw;
+	overflow-y: auto;
+}
+
+#thing_display {
+	border-bottom: 1px solid burlywood;
+	min-height: 15vh;
+	padding: 1.5vh 0 1.5vh 0;
+}
+
+#item_display_title {
+	margin: 1vh;
+}
+
+/*note: the below item/thing styling is also used for the inventory*/
+div.item-container, div.thing-container {
+	margin: 0 0.65vw 3vh 0.65vw;
+	display: inline-block;
+	vertical-align: top;
+}
+
+div.item, div.thing, div.animator_circle {
+	width: 4vw;
+	height: 4vw;
+	border-radius: 4vw;
+	border: 1px solid burlywood;
+	background-color: beige;
+	background-size: cover;
+	background-position: center;
+}
+
+div.item + p, div.thing + p {
+	width: 4vw;
+	font-family: serif;
+	top: 0.5vw;
+	left: 0;
+	right: 0;
+	margin: auto;
+	font-size: 0.8vw;
+}
+
+
+@keyframes expand {
+	from {transform: scale(0);}
+	to {transform: scale(1);}
+}
+
+.expand {
+	animation-name: expand;
+	animation-duration: 0.5s;
+}
+
+.contract {
+	animation-name: expand;
+	animation-duration: 0.5s;
+	animation-direction: reverse;
+}
+
+
+
+/* inventory ---------------------------------------------*/
+
+#inventory {
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,30,18,0.75);
+	z-index: 5;
+	display: none;
+}
+
+#inventory_display {
+	width: 70vw;
+	height: 90vh;
+	left: 5vw;
+	top: 5vh;
+	background-color: saddlebrown;
+	border: 5px solid saddlebrown;
+}
+
+#inventory_display table {
+	border-collapse: collapse;
+	width: 100%;
+	height: 100%;
+	background-color: saddlebrown;
+}
+
+#inventory_display table * {
+	position: static;
+}
+
+#inventory_display h1 {
+	font-size: 5.1vh;
+	font-weight: normal;
+	color: white;
+	text-align: center;
+	position: relative;
+	top: -1vh;
+}
+
+#inventory_title {
+	left: calc(0.5*(70vw - 33.6vh));
+	transform: translate(-50%, 0);
+}
+
+#inventory_display tr:first-child td:first-child {
+	height: 18vh;
+	width: 32vh; /*We're scaling only by height changes, except for the inventory item title*/
+	background-image: url("./images/goal_title.svg");
+}
+#inventory_display tr td:nth-child(2) {
+	width: 1.6vh;
+	background-image: url("./images/divider.svg");
+	outline: 1px solid black;
+}
+#inventory_display tr:first-child td:nth-child(3) {
+	width: 16.2vh;
+	background-image: url("./images/inventory_title_left.svg");
+}
+#inventory_display tr:first-child td:nth-child(4) {
+	background-image: url("./images/inventory_title_center.svg");
+	background-size: auto 18vh;
+}
+#inventory_display tr:first-child td:nth-child(5) {
+	width: 9.8vh;
+	background-image: url("./images/inventory_title_right.svg");
+}
+#inventory_display tr:nth-child(2) td:first-child {
+	background-image: url("./images/goal_item_background.svg");
+	background-attachment: local;
+	background-size: contain;
+}
+#inventory_display tr:nth-child(2) td:nth-child(3) {
+	background-image: url("./images/parchment.svg");
+}
+
+#inventory_display td {
+	background-size: cover;
+}
+
+.wreath {
+	height: 11.2vh;
+	top: -2vh;
+}
+
+#wreath_left {
+	left: -6vh;
+}
+
+#wreath_right {
+	transform: scaleX(-1);
+	right: -6vh;
+}
+
+.vines {
+	height: 37.6vh;
+	top: 9.8vh;
+}
+
+#vines_tile {
+	top: 9.8vh;
+	left: 32vh;
+	background-image: url("./images/vines_tile.svg");
+	position: absolute;
+	height: 17.6vh;
+	width: calc(100% - 34vh);
+	background-size: cover;
+}
+
+#vines_left {
+	left: -3.7vh;
+}
+
+#vines_right {
+	right: -5vh;
+}
+
+#inventory_items {
+	max-width: 100%;
+	height: calc(100% - 12.5vh);
+	padding: 9.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
+	text-align: center;
+	overflow-y: auto;
+}
+
+#inventory #inventory_items * {
+	position: relative;
+}
+
+/*item styling for the inventory uses the same rules as the placeInfo board, see above*/
+
+
+
+#place_info .animator_circle, #inventory #inventory_items .animator_circle {
+	position: absolute;
+	top: 0;
+	box-shadow: 0 0 5px 5px white;
+}

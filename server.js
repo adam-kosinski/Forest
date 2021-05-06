@@ -199,24 +199,6 @@ io.on("connection", function(socket) {
   });
 
 
-  /*/interactions for places
-  socket.on("get_place_interactions", function(place_idx, callback){
-    let player = game.players[id_to_name[socket.id]];
-    callback(game.map.places[place_idx].getInteractions());
-  });*/
-
-  /*/actions for places
-  socket.on("place_action", function(place_idx, action, search_focus=undefined){
-    //can consider making search_focus a more generic list of args in the future if more place actions than searching are added
-    if(action == "Focused Search"){action = "Search";}
-    action = action.toLowerCase().replace(/ /g, "_");
-    let player = game.players[id_to_name[socket.id]];
-    game.map.places[place_idx][action](player, socket, search_focus);
-    io.emit("update_state", game); //in case the action changed something
-    // ^ TODO have the acutal action emit update in the future, make sure to pass io (or have a getter function in exports)
-  });*/
-
-
   socket.on("update_search_coords", function(callback){ //callback takes the place's object as an arg
     //update search coords to match quantity of each item
     let player = game.players[id_to_name[socket.id]];

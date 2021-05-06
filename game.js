@@ -32,7 +32,7 @@ class Game {
       this.players[player.name] = player;
 
       let pos = this.map.places[player.location].pos;
-      let token = new Element("div", player.name+"_token", "game_board", "player_token tracked", {left:pos.x+"px", top:pos.y+"px"});
+      let token = new Element("div", player.name+"_token", "map_overlay", "player_token tracked", {left:pos.x+"px", top:pos.y+"px"});
       this.elements[token.id] = token;
     }
 

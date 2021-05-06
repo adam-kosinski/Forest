@@ -2,10 +2,13 @@
 <html>
 	<head>
 		<title>Forest</title>
-		<link type="text/css" rel="stylesheet" href="/static/style.css"/>
+		<link type="text/css" rel="stylesheet" href="/static/misc.css"/>
+		<link type="text/css" rel="stylesheet" href="/static/game.css"/>
+		<link type="text/css" rel="stylesheet" href="/static/placeinfo_inventory.css"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bilbo"/>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/static/circletype.min.js"></script>
+		<script src="/static/jquery.js"></script>
 	</head>
 	<body>
 
@@ -41,7 +44,21 @@
 
 		<div id="game_div">
 
-			<div id="game_board" class="draggable"></div> 				<!--reset-->
+			<div id="map_div">
+				<div id="map_darkener"></div>
+				<div id="map_zoom_div" class="draggable">
+					<img id="map_image" src="./static/unfinished_map.jpg"/>
+					<div id="map_overlay"></div>						<!-- reset -->
+				</div>
+			</div>
+
+
+			<div id="search_div">
+				<div class="search_target"></div>
+				<canvas id="flashlight_canvas"></canvas>
+			</div>
+
+
 
 			<div id="place_info">
 				<div id="place_info_darkener"></div>
@@ -85,12 +102,6 @@
 				</div>
 			</div>
 
-			<div id="search_div">
-				<div class="search_target"></div>
-				<div id="search_target_counter" class="search_info">Hidden Things Left: 0</div>
-				<div id="leave_search_instructions" class="search_info">(press Esc to leave)</div>
-				<canvas id="flashlight_canvas"></canvas>
-			</div>
 
 			<div id="progress_div">
 				<p id="activity_name">La dee da...</p>

@@ -1,6 +1,5 @@
 //Custom prompt and alert popups -------------------------------------------
 
-let which_popup_open;
 let prompt_callback = function(){};
 let alert_callback = function(){};
 
@@ -22,23 +21,27 @@ document.addEventListener("click", function(e){
 
 
 document.addEventListener("keydown", function(e){
+
+  let alert_popup = document.getElementById("alert");
+  let prompt_popup = document.getElementById("prompt");
+
   if(e.key == "Enter"){
-    if(which_popup_open == "prompt"){
+    if(getComputedStyle(prompt_popup).display != "none"){
       let input = document.getElementById("prompt_input");
       closePopup();
       prompt_callback(input.value);
     }
-    else if(which_popup_open == "alert"){
+    else if(getComputedStyle(alert_popup).display != "none"){
       closePopup();
       alert_callback();
     }
   }
   if(e.key == "Escape"){
-    if(which_popup_open == "prompt"){
+    if(getComputedStyle(prompt_popup).display != "none"){
       closePopup();
       prompt_callback(null);
     }
-    if(which_popup_open == "alert"){
+    if(getComputedStyle(alert_popup).display != "none"){
       closePopup();
       alert_callback();
     }
@@ -47,13 +50,11 @@ document.addEventListener("keydown", function(e){
 
 
 function closePopup(){
-  document.getElementById("prompt").style.display = "none";
-  document.getElementById("alert").style.display = "none";
-  document.getElementById("disable_page_div").style.display = "none";
-
-  //do a short timeout for the flag because otherwise an event triggering this will also be able to trigger other things right after this closes
+  //do a short timeout because otherwise an event triggering this will also be able to trigger other things right after this closes (e.g. closing multiple things with Esc)
   setTimeout(function(){
-    which_popup_open = undefined;
+    document.getElementById("prompt").style.display = "none";
+    document.getElementById("alert").style.display = "none";
+    document.getElementById("disable_page_div").style.display = "none";
   }, 10);
 }
 
@@ -69,7 +70,6 @@ function customPrompt(message, callback=function(){}){
     let input = document.getElementById("prompt_input");
     input.value = "";
     input.focus();
-    which_popup_open = "prompt";
   }, 20); //longer delay than closePopup()'s setTimeout
 }
 
@@ -81,10 +81,17 @@ function customAlert(message, callback=function(){}){
     document.getElementById("alert_text").innerText = message;
     document.getElementById("alert").style.display = "block";
     document.getElementById("disable_page_div").style.display = "block";
-    which_popup_open = "alert";
   }, 20); //longer delay than closePopup()'s setTimeout
 }
 
+
+
+function isPopupOpen(){
+  let alert_popup = document.getElementById("alert");
+  let prompt_popup = document.getElementById("prompt");
+  if(getComputedStyle(alert_popup).display != "none" || getComputedStyle(prompt_popup).display != "none") return true;
+  return false;
+}
 
 
 

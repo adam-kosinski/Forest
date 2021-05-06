@@ -18,7 +18,7 @@ let drag_offset_start; // {top: y, left: x} -what the element's offsets were at 
 let drag_mouse_start; // {x: pageX, y: pageY} - what the mouse's coords were at drag start
 let drag_place; //id of node we're "over" (near), undefined if none
 
-let game_board_scale = 1; //bigger is more zoomed in
+let map_zoom_div_scale = 1; //bigger is more zoomed in
 
 
 
@@ -42,10 +42,10 @@ function handleMousedown(e){
   }
 
   // drag and drop
-  //if it's part of the game_board but not draggable, drag the game_board
+  //if it's part of the map_zoom_div but not draggable, drag the map_zoom_div
   let drag_target = e.target;
-  if(elementPartOf(e.target, "game_board") && !e.target.classList.contains("draggable")){ //util.js
-    drag_target = game_board;
+  if(elementPartOf(e.target, "map_zoom_div") && !e.target.classList.contains("draggable")){ //util.js
+    drag_target = map_zoom_div;
   }
 
   if(drag_target.classList.contains("draggable")){
@@ -79,10 +79,10 @@ function handleMousemove(e){
     let m_offset_y = e.pageY - drag_mouse_start.y;
     let m_offset_x = e.pageX - drag_mouse_start.x;
 
-    if(drag_element != game_board && elementPartOf(drag_element, "game_board")){
+    if(drag_element != map_zoom_div && elementPartOf(drag_element, "map_zoom_div")){
       //account for zoom
-      m_offset_y /= game_board_scale;
-      m_offset_x /= game_board_scale;
+      m_offset_y /= map_zoom_div_scale;
+      m_offset_x /= map_zoom_div_scale;
     }
 
     if(e.clientY > 0 && e.clientY < window.innerHeight){
@@ -140,7 +140,8 @@ function handleMousemove(e){
 
 function handleMouseup(e){
 
-  //drag and drop
+  //drag and drop ---------------------
+
   if(my_token && drag_element == my_token){
     //check if invalid drag
     if(drag_place == undefined){
@@ -172,26 +173,27 @@ function handleMousewheel(e){
 
   //gameboard zooming
   //check if the target is the gameboard, or a child of the gameboard, or a child of a child of the gameboard, etc
-  if(elementPartOf(e.target, "game_board")){ //util.js
+  if(elementPartOf(e.target, "map_zoom_div")){ //util.js
     //get initial position
-    let style = getComputedStyle(game_board);
+    let style = getComputedStyle(map_zoom_div);
     let left = Number(style.left.split("px")[0]);
     let top = Number(style.top.split("px")[0]);
 
     //get mouse offset, in unscaled px
-    let rect = game_board.getBoundingClientRect();
-    let m_offset_x = (e.clientX-rect.x)/game_board_scale;
-    let m_offset_y = (e.clientY-rect.y)/game_board_scale;
+    let rect = map_zoom_div.getBoundingClientRect();
+    let m_offset_x = (e.clientX-rect.x)/map_zoom_div_scale;
+    let m_offset_y = (e.clientY-rect.y)/map_zoom_div_scale;
 
-    let initial_scale = game_board_scale;
+    let initial_scale = map_zoom_div_scale; //global at top of file
 
     //negative deltaY means zoom in
     let scale_factor = Math.pow(1.07, -e.deltaY/100);
-    game_board_scale *= scale_factor;
+    map_zoom_div_scale *= scale_factor;
+    map_zoom_div_scale = Math.max(map_min_scale, Math.min(map_max_scale, map_zoom_div_scale));
 
-    game_board.style.transform = "scale(" + game_board_scale + ")";
-    game_board.style.left = left + (m_offset_x*initial_scale) - (m_offset_x*game_board_scale) + "px";
-    game_board.style.top = top + (m_offset_y*initial_scale) - (m_offset_y*game_board_scale) + "px";
+    map_zoom_div.style.transform = "scale(" + map_zoom_div_scale + ")";
+    map_zoom_div.style.left = left + (m_offset_x*initial_scale) - (m_offset_x*map_zoom_div_scale) + "px";
+    map_zoom_div.style.top = top + (m_offset_y*initial_scale) - (m_offset_y*map_zoom_div_scale) + "px";
   }
 }
 
@@ -246,46 +248,6 @@ function handleContextmenu(e){
       }
     });
   }
-  else if(e.target == my_token){
-
-      let actions = ["Search", "Focused Search"];
-      let messages = [];
-
-      //add actions to contextmenu
-      for(let i=0; i<actions.length; i++){
-        let menu_item = document.createElement("div");
-        menu_item.className = "action";
-        menu_item.textContent = actions[i];
-        menu_item.addEventListener("click", function(){
-
-          if(actions[i] == "Search"){
-            updateSearchTargets(); //display.js
-            show(search_div);
-          }
-          if(actions[i] == "Focused Search"){
-            customPrompt("What do you want to search for (case insensitive)?\n\nNote: In general, things are more noticeable in focused searches; however, only what you search for will be shown. Also, some items can only be found in a focused search.",
-            function(focus){
-              if(focus == null || focus.length == 0){
-                customAlert("No focus entered, abandoning search.");
-              }
-              else {
-                search_focus = focus; //search_focus is a global, gets reset when press Esc to close the search_div
-                updateSearchTargets(focus);
-                show(search_div);
-              }
-            });
-          }
-        });
-        contextmenu.appendChild(menu_item);
-      }
-
-      //add messages to contextmenu
-      for(let i=0; i<messages.length; i++){
-        let menu_item = document.createElement("div");
-        menu_item.textContent = messages[i];
-        contextmenu.appendChild(menu_item);
-      }
-  }
   else {
     contextmenu.style.display = "none"; //hide it in case it was showing
     return; //and skip showing it (below)
@@ -313,30 +275,31 @@ function handleContextmenu(e){
 
 
 function handleKeypress(e){
-  if(which_popup_open == undefined){ //see util.js
-    if(e.key == "~"){
-      disable_contextmenu = !disable_contextmenu;
-      console.log("Disable contextmenu:", disable_contextmenu);
-    }
-    if(e.key == " " && game_active){
-      getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
-      //we'll let spectators view the inventory board, that way they can see what stuff there is to find
-    }
+  if(isPopupOpen()) return;
+
+  if(e.key == "~"){
+    disable_contextmenu = !disable_contextmenu;
+    console.log("Disable contextmenu:", disable_contextmenu);
+  }
+  if(e.key == " " && game_active){
+    hide(map_div);
+    getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
+    //we'll let spectators view the inventory board, that way they can see what stuff there is to find
+  }
+  if(e.key == "m"){
+    hide(inventory);
+    getComputedStyle(map_div).display == "block" ? hide(map_div) : show(map_div);
   }
 }
 
 
 function handleKeydown(e){
+  if(isPopupOpen()) return;
+
   if(e.key == "Escape"){
     hide(contextmenu);
-
-    if(which_popup_open == undefined){ //see util.js
-      if(getComputedStyle(inventory).display == "none"){
-        hide(search_div);
-        search_focus = undefined;
-      }
-      hide(inventory);
-    }
+    hide(inventory);
+    hide(map_div);
   }
 }
 

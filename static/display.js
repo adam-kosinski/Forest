@@ -272,21 +272,19 @@ function initGameDisplay(game){
   game_div.style.display = "block";
   place_info.style.display = "block"; //in case we were a spectator last round and this is hidden
 
-  //board background image
-  let img = document.createElement("img");
-  img.id = "map_image";
-  img.src = "./static/unfinished_map.jpg";
-  game_board.appendChild(img);
+  let map_overlay = document.getElementById("map_overlay");
+  let map_image = document.getElementById("map_image");
 
   //board canvas for graph lines
   let canvas = document.createElement("canvas");
   canvas.id = "map_canvas";
-  let map_height = getComputedStyle(img).height.split("px")[0];
-  canvas.width = map_height*board_aspect_ratio;
-  canvas.style.width = map_height*board_aspect_ratio + "px";
+  let map_height = getComputedStyle(map_image).height.split("px")[0];
+  let map_width = getComputedStyle(map_image).width.split("px")[0];
+  canvas.width = map_width;
+  canvas.style.width = map_width + "px";
   canvas.height = map_height;
   canvas.style.height = map_height + "px";
-  game_board.appendChild(canvas);
+  map_overlay.appendChild(canvas);
 
 
 
@@ -303,7 +301,7 @@ function initGameDisplay(game){
     node.className = "node";
     node.style.top = game_obj.map.places[r].pos.y + "px";
     node.style.left = game_obj.map.places[r].pos.x + "px";
-    game_board.appendChild(node);
+    map_overlay.appendChild(node);
 
     for(let c=r+1; c<game_obj.map.adj_matrix[0].length; c++){
       if(game_obj.map.adj_matrix[r][c] == 1){
@@ -395,14 +393,14 @@ function updateSearchDiv(){
 
   if(different){
     console.log("Visibility/quantity difference detected");
-    updateSearchTargets(search_focus); //search_focus is a global
+    updateSearchTargets();
   }
 }
 
 
 
 
-function updateSearchTargets(focus){
+function updateSearchTargets(){
   //update search targets in the process
 
   let search_div = document.getElementById("search_div");
@@ -418,8 +416,6 @@ function updateSearchTargets(focus){
     //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
 
     console.log("place", place);
-    let total_search_targets = 0;
-    let search_target_counter = document.getElementById("search_target_counter");
 
     //add new search targets for items
   	for(let i=0; i<place.items.length; i++){
@@ -427,16 +423,6 @@ function updateSearchTargets(focus){
 
       //check that this item type has items that aren't yet visible to us
       if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
-
-        let size = item.size; //default, changed if we're focusing on it, see below
-
-        //focus checking
-        if(focus){
-          if(focus.toLowerCase() == item.name.toLowerCase()){
-            size = item.size_focus;
-          }
-          else {continue;}
-        }
 
         //iterate through hidden items and make a target for each one we didn't find yet
         console.log("search coords for",item.name,item.search_coords);
@@ -453,29 +439,24 @@ function updateSearchTargets(focus){
       		let search_target = document.createElement("div");
       		search_target.classList.add("search_target");
           search_target.classList.add("search-item-" + i); //used for removing this search target if an external source finds/removes it (e.g. climbing a tree, another player taking items) - see updateSearchDiv() below
-      		search_target.style.height = size;
-      		search_target.style.width = size;
+      		search_target.style.height = item.size;
+      		search_target.style.width = item.size;
       		search_target.style.top = item.search_coords[j].y;
       		search_target.style.left = item.search_coords[j].x;
       		search_target.style.animationDelay = 3*Math.random() + "s";
 
       		search_target.addEventListener("click",function(){
             search_target.parentElement.removeChild(search_target);
-            total_search_targets--;
-            search_target_counter.textContent = "Hidden Things Left: " + total_search_targets;
             console.log("found item",item.name,item.tags,j);
             socket.emit("found", me.location, "item", i, j);
       		});
 
       		search_div.appendChild(search_target);
-          total_search_targets++;
           console.log("search target created");
 
           n_targets_made++;
         }
       }
     }
-    search_target_counter.textContent = focus ? "" : "Hidden Things Left: " + total_search_targets;
-      //don't show counter in focused searches, so a player can't directly know if the item they want is in this place
   });
 }

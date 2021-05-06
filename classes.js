@@ -54,7 +54,7 @@ class Skill {
 
 
 class Element {
-  constructor(tagName, id, parentId="game_board", className="", style={}){ //1st four args are strings, style is an object
+  constructor(tagName, id, parentId="map_overlay", className="", style={}){ //1st four args are strings, style is an object
     this.tagName = tagName;
     this.id = id;
     this.parentId = parentId; //has to be a hardcoded element in index.html
@@ -92,7 +92,7 @@ class Place {
   constructor(name, pos, region){
     //constants
     this.name = name;
-    this.pos = pos; //{x:_, y:_} -unscaled coords for position on the game_board
+    this.pos = pos; //{x:_, y:_} -unscaled coords for position on the map_zoom_div
     this.region = region; //string - name of region
 
     //these are defined during game generation
@@ -103,15 +103,6 @@ class Place {
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
-  /*
-  getInteractions(player){
-    //currently not used
-    return {
-      actions: ["Search", "Focused Search"], //focused search will also call the search method - see the socket.on in server.js
-      messages: []
-    };
-  }
-  */
   updateSearchCoords(){
     //update each item's search_coords property to match the quantity of the item
     this.items.forEach(item => {item.updateSearchCoords()});
@@ -132,37 +123,6 @@ class Place {
     }
     this.items.push(item);
   }
-  /*
-  search(player, socket, focus=undefined){
-    //player: Player object of the searching player
-    //focus: string, name of item to search for specifically. Having a focus reduces search time and increases chances of finding that item
-    if(focus){focus = focus.toLowerCase();} //case insensitive for better usability
-    console.log(player.name + " searching, focus = " + focus);
-
-    let search_duration = focus ? 8000 : 15000; //ms
-    let total_attempts = 15;
-    let n = 0;
-
-    let interval = setInterval((function(){
-      console.log("search attempt");
-      //apply each item's probability
-      for(let i=0; i<this.items.length; i++){
-        let item = this.items[i];
-        if(item.n_visible_for[player.name] < item.quantity){
-          let prob = focus == item.name.toLowerCase() ? item.p_find_focus : item.p_find;
-          prob /= total_attempts;
-          if(Math.random() < prob){
-            //we found one
-            item.n_visible_for[player.name]++;
-            socket.emit("update_state", server.getGame());
-          }
-        }
-      }
-      n++;
-      if(n >= total_attempts){clearInterval(interval);}
-    }).bind(this), search_duration/total_attempts); //need to bind otherwise 'this' becomes some timeout object
-  }
-  */
   leave(player){
     //runs when a player leaves this place
     console.log(player.name + " left " + this.name);
