@@ -29,6 +29,7 @@ class Player {
     this.trust = {};
   }
   give(item){
+    /*
     //used to give this player items
     //note: no need to worry about item.n_visible_for, the client inventory display ignores that and displays the full quantity always
     //check if player already has this item
@@ -40,6 +41,7 @@ class Player {
     }
     //they don't have it, add it
     this.items.push(item);
+    */
   }
 }
 
@@ -102,13 +104,9 @@ class Place {
     this.knowledge = []; //Potential knowledge to learn here, from talking - only if animals live here
     this.quests = []; //Potential quests to get here - only if animals live here
   }
-  updateSearchCoords(){
-    //update each item's search_coords property to match the quantity of the item
-    this.items.forEach(item => {item.updateSearchCoords()});
 
-    //TODO: search coords for things?
-  }
   addItem(item){
+    /*
     //function to check if place already has an item, and consolidate the items if yes
     for(let i=0; i<this.items.length; i++){
       if(this.items[i].sameAs(item)){
@@ -121,6 +119,7 @@ class Place {
       }
     }
     this.items.push(item);
+    */
   }
   leave(player){
     //runs when a player leaves this place

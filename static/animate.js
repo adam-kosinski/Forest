@@ -1,4 +1,6 @@
 
+//show and hide functions, animate the opacity - using separate functions instead of just $().fadeIn() so we have one place to configure the duration
+
 function show(element){
   $(element).fadeIn(100);
 }

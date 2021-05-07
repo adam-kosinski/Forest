@@ -27,7 +27,7 @@ function makeThingOrItem(type, object, id){
   let circle = document.createElement("div");
   circle.id = id;
   circle.className = type;
-  let img_postfix = "";
+/*  let img_postfix = "";
   if(type == "item"){img_postfix += object.tags ? "-"+object.tags.join("-") : "";}
   if(type == "thing" && object.img_postfixes){img_postfix += object.img_postfixes[my_name] ? "-"+object.img_postfixes[my_name] : "";}
   circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.name + img_postfix + ".jpg')";
@@ -44,7 +44,7 @@ function makeThingOrItem(type, object, id){
     }
   }
 
-  div.appendChild(p);
+  div.appendChild(p);*/
   return div;
 }
 
@@ -60,8 +60,8 @@ function updatePlaceInfo(){
     //check if just started, if so, animate hiding everything about this place
     if(!prev_game_obj.players[me.name].traveling){
 
-      $(place_name_display).fadeOut(500);
-      $(region_name_display).fadeOut(500);
+      $(place_name_display).fadeOut(250);
+      $(region_name_display).fadeOut(250);
 
       let things = Array.from(thing_display.children);
       let items = Array.from(item_display.children);
@@ -89,6 +89,7 @@ function updatePlaceInfo(){
   place_info.style.backgroundImage = "url('" + url + "')";
   place_info.style.backgroundPosition = position;
 
+/*
   //things
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
@@ -113,7 +114,7 @@ function updatePlaceInfo(){
     let div = makeThingOrItem("item", item, me.location + "-item-" + i);
     item_display.appendChild(div);
   }
-
+*/
 
   //animate things and items
   //if new location, animate everything
@@ -142,7 +143,7 @@ function updatePlaceInfo(){
   else {
     //only animate changes for individual things/items
     //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
-
+/*
     //things
     //TODO
 
@@ -152,7 +153,7 @@ function updatePlaceInfo(){
       if(item_circle){return item_circle.parentElement;}
       else {return undefined;}
     });
-
+*/
   }
 }
 
@@ -162,8 +163,17 @@ function updateInventory(){
   //we'll let spectators view the inventory board, that way they can see what stuff there is to find
 
   inventory_items.innerHTML = "";
-  if(!am_spectator){
-    for(let i=0; i<me.items.length; i++){
+
+  if(am_spectator){
+    //tell the spectator they don't have an inventory
+    let h1 = document.createElement("h1");
+    h1.textContent = "N/A";
+    h1.style.fontSize = "15vh";
+    h1.style.color = "black";
+    inventory_items.appendChild(h1);
+  }
+  else { //not spectator
+    /*for(let i=0; i<me.items.length; i++){
       let item = me.items[i];
       let prev_item = prev_game_obj.players[my_name].items[i];
 
@@ -189,15 +199,7 @@ function updateInventory(){
         if(item_circle){return item_circle.parentElement;}
         else {return undefined;}
       });
-    }
-  }
-  else {
-    //tell the spectator they don't have an inventory
-    let h1 = document.createElement("h1");
-    h1.textContent = "N/A";
-    h1.style.fontSize = "15vh";
-    h1.style.color = "black";
-    inventory_items.appendChild(h1);
+    }*/
   }
 }
 
@@ -210,7 +212,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
   //items is an array of Item objects (from the server)
   //prev_items is what that array looked like last update
   //getItemDiv is a function, taking the index of the item in the array as an argument and returning the div container of the item
-
+/*
   for(let i=0; i<items.length; i++){
     let item_div = getItemDiv(i);
     if(!item_div){continue;} //item is not visible, don't animate
@@ -257,7 +259,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
     }
 
   }
-
+*/
 }
 
 
@@ -368,8 +370,8 @@ function initGameDisplay(game){
 function updateSearchDiv(){
   //function to update the search targets while the search div is open, caused by changes besides the user clicking on a search target
   //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
-  if(getComputedStyle(search_div).display == "none"){return;}
 
+/*
   //check for differences in visibility or quantity between now and previous state
   let place = game_obj.map.places[me.location];
   let prev_place = prev_game_obj.map.places[me.location];
@@ -396,6 +398,7 @@ function updateSearchDiv(){
     console.log("Visibility/quantity difference detected");
     updateSearchTargets();
   }
+  */
 }
 
 
@@ -404,6 +407,7 @@ function updateSearchDiv(){
 function updateSearchTargets(){
   //update search targets in the process
 
+/*
   let search_div = document.getElementById("search_div");
 
   //clear previous targets
@@ -460,4 +464,6 @@ function updateSearchTargets(){
       }
     }
   });
+
+*/
 }

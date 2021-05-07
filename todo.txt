@@ -1,2 +1,6 @@
 remove game_active variable
 update server client connection to better version
+
+Make spectators be able to walk around, see things/items, and do the search game,
+just can't interact with anything (disable the contextmenu / only have one thing
+in the contexxtmenu saying you're a spectator)

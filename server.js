@@ -199,34 +199,6 @@ io.on("connection", function(socket) {
   });
 
 
-  socket.on("update_search_coords", function(callback){ //callback takes the place's object as an arg
-    //update search coords to match quantity of each item
-    let player = game.players[id_to_name[socket.id]];
-    game.map.places[player.location].updateSearchCoords();
-
-    callback(game.map.places[player.location]);
-    //don't emit update_state, to avoid double updating:
-    //(client takes an item -> update_state from server -> client detects item visibility diff -> emits this -> update_state from server)
-  });
-
-
-  socket.on("found", function(place_idx, type, idx, target_idx){
-    //type is either "item" or "thing"
-    //idx is the item/thing's index in the place array
-    //target_idx is for items where the quantity is > 1, identifies which coords the item was found at so we can remove those coords
-
-    let player = game.players[id_to_name[socket.id]];
-
-    if(type == "item"){
-      let item = game.map.places[place_idx].items[idx];
-      item.n_visible_for[player.name]++;
-      item.search_coords[target_idx].found_by.push(player.name);
-
-      io.emit("update_state", game);
-    }
-  });
-
-
   //interactions for things and items, shown in the contextmenu
   socket.on("get_interactions", function(where, type, idx, callback){
     //where is a place idx or "my"

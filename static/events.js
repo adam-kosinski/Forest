@@ -32,6 +32,7 @@ function handleClick(e){
     }
   }
   //console.log(e.offsetX, e.offsetY);
+  //note: when the contextmenu is generated, click event handlers for each menu item are attached individually, so we don't handle that here
 }
 
 
@@ -204,7 +205,7 @@ function handleContextmenu(e){
   else {return;}
 
   contextmenu.innerHTML = "";
-
+/*
   //contextmenu for things and items
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
     let split = e.target.id.split("-");
@@ -268,6 +269,8 @@ function handleContextmenu(e){
 
     show(contextmenu);
   }, 0);
+
+*/
 }
 
 
