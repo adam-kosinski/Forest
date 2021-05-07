@@ -54,9 +54,6 @@ let player_statuses = {}; //holds PlayerStatus objects (only to store connected/
 let id_to_name = {}; //maps socket ids to names. If a name isn't in here, player is disconnected
 
 let game = undefined; //undefined means no game currently going on
-let current_player_names = []; //items need to know this during the game constructor, so we're going to let them get it from this file
-                                //having the game pass this as an argument to every item constructor is painful so this is better
-                                //this is redefined each time a "start_game" emit is received
 
 
 
@@ -122,7 +119,6 @@ io.on("connection", function(socket) {
       }
     }
 
-    current_player_names = connected_player_names;
     game = new Game(connected_player_names);
     console.log("Game starting");
     console.log(game);
@@ -181,7 +177,6 @@ io.on("connection", function(socket) {
     let player = game.players[id_to_name[socket.id]];
     if(player.location != destination){
 
-      game.map.places[player.location].leave(player);
       player.traveling = true;
 
       let walk_duration = 1000; //ms, TODO: determine algorithmically based on weight
@@ -197,6 +192,7 @@ io.on("connection", function(socket) {
       }, walk_duration);
     }
   });
+
 
 
   //interactions for things and items, shown in the contextmenu
@@ -228,4 +224,3 @@ io.on("connection", function(socket) {
 
 
 exports.getGame = function(){return game;}
-exports.getCurrentPlayerNames = function(){return current_player_names;}

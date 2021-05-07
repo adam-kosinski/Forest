@@ -45,10 +45,14 @@ class Item {
 		this.categories = []; //array of categories (strings) this item belongs to. These may be used as item descriptions given to the players to find
               						// - this will not be an exhaustive list, but should include the less general/more objective categories
 		this.weight = 0; //how heavy it is; how much it slows the player down
+		this.visible = true; //if false, is hidden (not in side panel). Being visible doesn't imply a person can see it, if Item.canFind() doesn't return "yes"
 
 		//these properties sometimes overridden in child constructors
-		this.coords = {x:"50%", y:"50%"}; //where an item is located in the search_div, if hidden. "0-100%" for x and y
-		this.size = 2; //vh units, how big the search target div for this item is, when the item is hidden
+		this.size = "3.5vh"; //width and height styling for this Item's search target div, when hidden
+		this.coords = {  //where this Item is located in the search_div, if hidden. "0-100%" for x and y
+			x: (2+Math.floor(Math.random()*96)) + "%",
+			y: (2+Math.floor(Math.random()*96)) + "%",
+		};
 		this.tags = []; //array of strings in alphabetic order, used to mark items with the same name as different - e.g. pinecones in a tree vs. pinecones on the ground
 										//generally tags are cleared when an item is placed in a player's inventory - see Item.take (after taking a pinecone from anywhere, they're all the same really)
 										//tags are modified with Item.addTag(), Item.removeTag(), and Item.tags = []; to ensure they stay sorted
@@ -59,7 +63,7 @@ class Item {
 		next_item_id++;
     this.owned_by = undefined; //undefined or a player name (implies it's in their inventory)
   }
-	//methods sometimes overridden by child classes or other code manipulating the item
+	//methods sometimes overridden ---------------------------
 	canTake(player){
 		//Returns "yes" if the player can take this item, otherwise returns a string explaining why they can't
 		return "yes"; //default
@@ -88,7 +92,7 @@ class Item {
   }
 
 	//methods we don't override -------------------------
-	addTag(tag){ //maintains alphabetical sorting
+	addTag(tag){ //maintains alphabetical sorting and no duplicates
 		if(!this.tags.includes(tag)) this.tags.push(tag);
 		this.tags.sort();
 	}
@@ -146,7 +150,7 @@ class Item {
     item.owned_by = undefined;
 
     let place = server.getGame().map.places[player.location];
-    place.addItem(item);
+    place.items.push(item)
     this.quantity--; //from inventory, so no need to worry about changing n_visible_for
     console.log("dropped one!");
 	*/
@@ -158,7 +162,7 @@ class Item {
     item.owned_by = undefined;
 
     let place = server.getGame().map.places[player.location];
-    place.addItem(item);
+    place.items.push(item);
     this.quantity = 0; //from inventory, so no need to worry about changing n_visible_for
     console.log("dropped all!");
   }
@@ -182,6 +186,7 @@ class Leaf extends Item {
       "Leaf"
     ];
     this.weight = 1;
+		this.visible = alive ? Math.random() > 0.2 : true;
   }
 }
 
@@ -194,9 +199,7 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-    this.size = "3.5vh";
-
-		//let n_visible = Math.random() < 0.5 ? 0 : Math.ceil(quantity*Math.pow(Math.random(), 2)); //quadratic, more likely that fewer are visible
+		this.visible = Math.random() > 0.7;
   }
 }
 

@@ -27,24 +27,23 @@ function makeThingOrItem(type, object, id){
   let circle = document.createElement("div");
   circle.id = id;
   circle.className = type;
-/*  let img_postfix = "";
-  if(type == "item"){img_postfix += object.tags ? "-"+object.tags.join("-") : "";}
-  if(type == "thing" && object.img_postfixes){img_postfix += object.img_postfixes[my_name] ? "-"+object.img_postfixes[my_name] : "";}
+  let img_postfix = "";
+  if(type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
   circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.name + img_postfix + ".jpg')";
   div.appendChild(circle);
 
   let p = document.createElement("p");
   p.textContent = object.name;
-  if(type == "item"){
+  /*if(type == "item"){
     if(object.owned_by){
       p.textContent += " (" + object.quantity + ")";
     }
     else {
       p.textContent += " (" + object.n_visible_for[my_name] + ")";
-    }
-  }
+    }*
+  }*/
 
-  div.appendChild(p);*/
+  div.appendChild(p);
   return div;
 }
 
@@ -66,7 +65,7 @@ function updatePlaceInfo(){
       let things = Array.from(thing_display.children);
       let items = Array.from(item_display.children);
       let stuff = things.concat(items);
-      stuff.forEach(div => {animateScale(div, false, function(){div.style.display = "none";})});
+      stuff.forEach(div => {animateScale(div, "contract", function(){div.style.display = "none";})});
     }
     return; //in general don't show anything while traveling
   }
@@ -94,7 +93,7 @@ function updatePlaceInfo(){
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
     let thing = place.things[i];
-    if(!thing.visible && thing.found_by && !thing.found_by.includes(my_name)) {
+    if(!thing.visible) {
       continue;
     }
     let div = makeThingOrItem("thing", thing, me.location + "-thing-" + i);
@@ -136,7 +135,7 @@ function updatePlaceInfo(){
         return;
       }
       stuff[i].style.opacity = 1;
-      animateScale(stuff[i], true);
+      animateScale(stuff[i], "expand");
       i++;
     }, 150);
   }
@@ -223,7 +222,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
     {
       //if previously none, animate the item expanding
       if(!prev_items[i] || prev_items[i].n_visible_for[my_name] == 0){
-        animateScale(item_div, true);
+        animateScale(item_div, "expand");
       }
       else {
         //animate a duplicate image of the item expanding on top
@@ -232,7 +231,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
         circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
 
         item_div.appendChild(circle);
-        animateScale(circle, true, function(){
+        animateScale(circle, "expand", function(){
           circle.parentElement.removeChild(circle);
         });
       }
@@ -243,7 +242,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
     {
       //if no more here, animate the item contracting then change display to none
       if(!items[i] || items[i].n_visible_for[my_name] == 0){
-        animateScale(item_div, false, function(){item_div.style.display = "none";});
+        animateScale(item_div, "contract", function(){item_div.style.display = "none";});
       }
       else {
         //animate a duplicate image of the item contracting on top
@@ -252,7 +251,7 @@ function animateIndividualItems(items, prev_items, getItemDiv){
         circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
 
         item_div.appendChild(circle);
-        animateScale(circle, false, function(){
+        animateScale(circle, "contract", function(){
           circle.parentElement.removeChild(circle);
         });
       }

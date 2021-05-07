@@ -220,7 +220,7 @@ function handleContextmenu(e){
       contextmenu.style.display = "none";
       return;
     }
-    if(type == "thing" && (!here.things[idx].visible || (here.things[idx].found_by && !here.things[idx].found_by.includes(my_name))) ){
+    if(type == "thing" && !here.things[idx].visible){
       contextmenu.style.display = "none";
       return;
     }

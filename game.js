@@ -4,12 +4,9 @@
 let classes = require("./classes");
 let PlayerStatus = classes.PlayerStatus;
 let Player = classes.Player;
-let Skill = classes.Skill;
 let Element = classes.Element;
 let Map = classes.Map;
 let Place = classes.Place;
-let Knowledge = classes.Knowledge;
-let Quest = classes.Quest;
 
 let items = require("./items");
 let things = require("./things");
@@ -46,7 +43,7 @@ class Game {
     this.animals.bear = new animals.Bear();
 
 
-    //iterate through places, adding things
+    //iterate through places, adding things and items
     for(let i=0; i<this.map.places.length; i++){
       let place = this.map.places[i];
 
@@ -58,16 +55,16 @@ class Game {
         for(let n=0; n<n_pine_trees; n++){
           let tree = new things.Tree("Pine");
           place.things.push(tree);
-          tree.items.forEach(item => place.addItem(item));
+          tree.items.forEach(item => place.items.push(item));
         }
 
         //add dead pine needles on the ground (done here instead of in Tree to make it uniform in the prickly pines)
-        let dead_leaves = new items.Leaf("Pine", false, "Brown", Math.floor(Math.random()*25)+50);
-        place.addItem(dead_leaves);
+        let n_dead_needles = Math.floor(Math.random()*15)+35
+        for(let i=0; i<n_dead_needles; i++) place.items.push(new items.Leaf("Pine", false, "Brown"));
 
         //chance to have a pinecone regardless of pine trees
         if(Math.random() > 0.6){
-          place.addItem(new items.Pinecone(1));
+          place.items.push(new items.Pinecone());
         }
       }
     }

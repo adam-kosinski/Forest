@@ -12,13 +12,12 @@ function hide(element){
 
 //pop animations for items and things
 
-function animateScale(element, expand=true, finishFunc=function(){}){
+function animateScale(element, expand="expand", finishFunc=function(){}){ //expand is "expand" or "contract" to scale 0->1 or 1->0
   let handleAnimationEnd = function(){
     element.removeEventListener("animationend", handleAnimationEnd);
-    element.classList.remove("expand");
-    element.classList.remove("contract");
+    element.classList.remove(expand);
     finishFunc();
   }
   element.addEventListener("animationend", handleAnimationEnd);
-  element.classList.add(expand ? "expand" : "contract");
+  element.classList.add(expand);
 }
