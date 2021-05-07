@@ -40,7 +40,7 @@ function makeThingOrItem(object, display_quantity=0){
 }
 
 
-function updatePlaceInfo(){
+function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
   if(am_spectator){
     place_info.style.display = "none";
     return;
@@ -85,7 +85,7 @@ function updatePlaceInfo(){
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
     let thing = place.things[i];
-    if(!thing.visible) {
+    if(!thing.visible || cannotFind.thingIds.includes(thing.id)) {
       continue;
     }
     let div = makeThingOrItem(thing);
@@ -94,9 +94,8 @@ function updatePlaceInfo(){
 
   //items
   item_display.innerHTML = "";
-  let processed_items = processItems(place.items); //see util.js
+  let processed_items = processItems(place.items, cannotFind.itemIds); //see util.js
   //only show visible items in placeInfo
-  console.log(processed_items.visible);
   for(key in processed_items.visible){
     let item_list = processed_items.visible[key];
     let div = makeThingOrItem(item_list[0], item_list.length);
@@ -131,7 +130,7 @@ function updatePlaceInfo(){
   else {
     //only animate changes for individual things/items
     //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
-/*
+  /*
     //things
     //TODO
 
@@ -141,9 +140,48 @@ function updatePlaceInfo(){
       if(item_circle){return item_circle.parentElement;}
       else {return undefined;}
     });
-*/
+  */
   }
+
 }
+
+
+
+
+function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}){
+  //function to update the search targets while the search div is open, caused by changes besides the user clicking on a search target
+  //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
+
+/*
+  //check for differences in visibility or quantity between now and previous state
+  let place = game_obj.map.places[me.location];
+  let prev_place = prev_game_obj.map.places[me.location];
+
+  let different = false;
+
+  //items
+  for(let i=0; i<place.items.length; i++){
+    if(!prev_place.items[i]){
+      different = true;
+      break;
+    }
+    if(place.items[i].n_visible_for[my_name] != prev_place.items[i].n_visible_for[my_name]){
+      different = true;
+      break;
+    }
+    if(place.items[i].quantity != prev_place.items[i].quantity){
+      different = true;
+      break;
+    }
+  }
+
+  if(different){
+    console.log("Visibility/quantity difference detected");
+    updateSearchTargets();
+  }
+  */
+}
+
 
 
 
@@ -345,49 +383,15 @@ function initGameDisplay(game){
   flash_ctx.clearRect(0, 0, fc.width, fc.height);
 
 
-
-  //place info
-  updatePlaceInfo(); //see this file
-  updateInventory(); //see this file
-  updateSearchDiv(); //see this file
+  socket.emit("getCannotFind", function(cannotFind){
+    updatePlaceInfo(cannotFind); //display.js
+    updateSearchDiv(cannotFind); //display.js
+    updateInventory(); //display.js
+  });
 }
 
 
 
-
-function updateSearchDiv(){
-  //function to update the search targets while the search div is open, caused by changes besides the user clicking on a search target
-  //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
-
-/*
-  //check for differences in visibility or quantity between now and previous state
-  let place = game_obj.map.places[me.location];
-  let prev_place = prev_game_obj.map.places[me.location];
-
-  let different = false;
-
-  //items
-  for(let i=0; i<place.items.length; i++){
-    if(!prev_place.items[i]){
-      different = true;
-      break;
-    }
-    if(place.items[i].n_visible_for[my_name] != prev_place.items[i].n_visible_for[my_name]){
-      different = true;
-      break;
-    }
-    if(place.items[i].quantity != prev_place.items[i].quantity){
-      different = true;
-      break;
-    }
-  }
-
-  if(different){
-    console.log("Visibility/quantity difference detected");
-    updateSearchTargets();
-  }
-  */
-}
 
 
 

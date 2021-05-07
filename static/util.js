@@ -113,9 +113,10 @@ function elementPartOf(element, id){
 
 // Item processing --------------------------------------------
 
-function processItems(itemArray){
+function processItems(itemArray, cannotFindIds){
   //returns an object with two properties, visible and hidden, which each refer to objects
   //each sub-object is of form {item_name-tag1-tag2: [array of item objects]}
+  //items we can't find are omitted entirely from the return object
 
   let out = {visible:{}, hidden:{}};
 
@@ -127,10 +128,13 @@ function processItems(itemArray){
     else object[key] = [item];
   }
 
-  itemArray.forEach(item => {
+  for(let i=0; i<itemArray.length; i++){
+    let item = itemArray[i];
+    if(cannotFindIds.includes(item.id)) continue;
+    
     if(item.visible) addToObject(item, out.visible);
     else addToObject(item, out.hidden);
-  });
+  }
 
   return out;
 }

@@ -219,8 +219,26 @@ io.on("connection", function(socket) {
   });
 
 
+  socket.on("getCannotFind", function(callback){
+    let player = game.players[id_to_name[socket.id]];
+    let out = {itemIds:[], thingIds:[]}; //stores ids of items/things this player cannot find
+
+    let items = game.map.places[player.location].items;
+    items.forEach(item => {
+      if(!item.canFind(player)) out.itemIds.push(item.id);
+    });
+
+    let things = game.map.places[player.location].things;
+    things.forEach(thing => {
+      if(!thing.canFind(player)) out.thingIds.push(thing.id);
+    });
+
+    callback(out);
+  });
+
 
 });
+
 
 
 exports.getGame = function(){return game;}

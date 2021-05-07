@@ -166,9 +166,11 @@ socket.on("update_state", function(game){
 	prev_game_obj = game_obj;
 	game_obj = game;
 
-	updatePlaceInfo(); //display.js
-	updateInventory(); //display.js
-	updateSearchDiv(); //display.js
+	socket.emit("getCannotFind", function(cannotFind){
+		updatePlaceInfo(cannotFind); //display.js
+		updateSearchDiv(cannotFind); //display.js
+		updateInventory(); //display.js
+	});
 });
 
 
