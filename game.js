@@ -51,7 +51,7 @@ class Game {
         //forest floor
         place.things.push(new things.ForestFloor("Prickly Pines"));
         //add trees
-        let n_pine_trees = Math.ceil(Math.random()*3);
+        let n_pine_trees = 4 - Math.floor(Math.random()*3);
         for(let n=0; n<n_pine_trees; n++){
           let tree = new things.Tree("Pine");
           place.things.push(tree);

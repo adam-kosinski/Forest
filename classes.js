@@ -13,17 +13,12 @@ class Player {
   constructor(name, species, location){
     this.name = name;
     this.species = species; //this influences how much certain animals trust you, as well as your skills
-    this.energy = 10;
-    this.max_energy = 10;
     this.location = location; //index of the starting place
     this.traveling = false;
-    //this.occupied_with = undefined; //can be a thing object, used to reset things we are no longer interacting with
-    this.climbed = []; //names of things this player has climbed, gets reset when moving
     this.items = [];
 
     //below things are defined during game generation
-    this.skills = []; //skill objects
-    this.active_skills = []; //names of active skills
+    //this.skills = []; //skill objects
 
     //the more an animal trusts you, the more they will tell you / the more quests they will give. Keys are NPC animal names, values are trust level
     this.trust = {};

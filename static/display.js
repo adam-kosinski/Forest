@@ -18,30 +18,22 @@ function updateClientElement(data){
 }
 
 
-function makeThingOrItem(type, object, id){
-  //type is "thing" or "item"
+function makeThingOrItem(object, display_quantity=0){
 
   let div = document.createElement("div");
-  div.className = type + "-container";
+  div.className = object.type + "-container";
 
   let circle = document.createElement("div");
-  circle.id = id;
-  circle.className = type;
+  circle.id = object.type + "-" + id;
+  circle.className = object.type;
   let img_postfix = "";
-  if(type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
-  circle.style.backgroundImage = "url('./static/images/" + type + "s/" + object.name + img_postfix + ".jpg')";
+  if(object.type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
+  circle.style.backgroundImage = "url('./static/images/" + object.type + "s/" + object.name + img_postfix + ".jpg')";
   div.appendChild(circle);
 
   let p = document.createElement("p");
   p.textContent = object.name;
-  /*if(type == "item"){
-    if(object.owned_by){
-      p.textContent += " (" + object.quantity + ")";
-    }
-    else {
-      p.textContent += " (" + object.n_visible_for[my_name] + ")";
-    }*
-  }*/
+  if(display_quantity > 0) p.textContent += " (" + display_quantity + ")";
 
   div.appendChild(p);
   return div;
@@ -88,7 +80,7 @@ function updatePlaceInfo(){
   place_info.style.backgroundImage = "url('" + url + "')";
   place_info.style.backgroundPosition = position;
 
-/*
+
   //things
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
@@ -96,24 +88,21 @@ function updatePlaceInfo(){
     if(!thing.visible) {
       continue;
     }
-    let div = makeThingOrItem("thing", thing, me.location + "-thing-" + i);
+    let div = makeThingOrItem(thing);
     thing_display.appendChild(div);
   }
 
   //items
   item_display.innerHTML = "";
-  for(let i=0; i<place.items.length; i++){
-    let item = place.items[i];
-    let prev_item = prev_place.items[i];
-
-    //ignore items that there are none of
-    if(item.n_visible_for[my_name] <= 0 && (!prev_item || prev_item.n_visible_for[my_name] <= 0)) {
-      continue; //but still show item if it was just removed
-    }
-    let div = makeThingOrItem("item", item, me.location + "-item-" + i);
+  let processed_items = processItems(place.items); //see util.js
+  //only show visible items in placeInfo
+  console.log(processed_items.visible);
+  for(key in processed_items.visible){
+    let item_list = processed_items.visible[key];
+    let div = makeThingOrItem(item_list[0], item_list.length);
     item_display.appendChild(div);
   }
-*/
+
 
   //animate things and items
   //if new location, animate everything

@@ -108,3 +108,29 @@ function elementPartOf(element, id){
     }
     return false;
 }
+
+
+
+// Item processing --------------------------------------------
+
+function processItems(itemArray){
+  //returns an object with two properties, visible and hidden, which each refer to objects
+  //each sub-object is of form {item_name-tag1-tag2: [array of item objects]}
+
+  let out = {visible:{}, hidden:{}};
+
+  //don't have duplicate code for visible vs hidden
+  let addToObject = function(item, object){
+    let key = item.name;
+    if(item.tags.length > 0) key += "-" + item.tags.join("-");
+    if(object.hasOwnProperty(key)) object[key].push(item);
+    else object[key] = [item];
+  }
+
+  itemArray.forEach(item => {
+    if(item.visible) addToObject(item, out.visible);
+    else addToObject(item, out.hidden);
+  });
+
+  return out;
+}

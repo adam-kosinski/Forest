@@ -186,7 +186,7 @@ class Leaf extends Item {
       "Leaf"
     ];
     this.weight = 1;
-		this.visible = alive ? Math.random() > 0.2 : true;
+		this.visible = alive ? Math.random() > 0.4 : true;
   }
 }
 
@@ -199,7 +199,7 @@ class Pinecone extends Item {
       "Seed"
     ];
     this.weight = 3;
-		this.visible = Math.random() > 0.7;
+		this.visible = Math.random() < 0.3;
   }
 }
 
