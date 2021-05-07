@@ -130,13 +130,14 @@ function handleMousemove(e){
   }
 
   //flashlight
-  if(getComputedStyle(search_div).display == "block"){
+  //NOTE: flashlight no longer located in search_div
+  /*if(getComputedStyle(search_div).display == "block"){
     let search_box = search_div.getBoundingClientRect();
     let offset_x = e.clientX - search_box.x;
     let offset_y = e.clientY - search_box.y;
     flashlight_canvas.style.left = offset_x + "px";
     flashlight_canvas.style.top = offset_y + "px";
-  }
+  }*/
 }
 
 function handleMouseup(e){

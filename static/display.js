@@ -85,9 +85,8 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
   thing_display.innerHTML = "";
   for(let i=0; i<place.things.length; i++){
     let thing = place.things[i];
-    if(!thing.visible || cannotFind.thingIds.includes(thing.id)) {
-      continue;
-    }
+    if(!thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
+
     let div = makeThingOrItem(thing);
     thing_display.appendChild(div);
   }
@@ -146,11 +145,65 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
 }
 
 
+function makeSearchObject(object){
+  //object can be an item or thing object
+  //returns a search object
+
+  //search objects are divs that have a search target div and a content div showing the item/thing
+  //normally the content div is hidden, but when the search target is clicked it expands into view in front of the search target
+  //when the mouse moves off the content div, it contracts back down
+
+  let search_object = document.createElement("div");
+  search_object.style.top = object.coords.y;
+  search_object.style.left = object.coords.x;
+
+  let search_target = document.createElement("div");
+  search_target.classList.add("search_target_static");
+  console.log(object);
+  console.log(object.search_target_size);
+  search_target.style.height = object.search_target_size;
+  search_target.style.width = object.search_target_size;
+
+  search_target.style.animationDelay = 3*Math.random() + "s";
+  search_target.addEventListener("click",function(){
+    console.log("found item", object.name, object.tags);
+  });
+  search_object.appendChild(search_target);
+
+  return search_object;
+}
 
 
-function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}){
-  //function to update the search targets while the search div is open, caused by changes besides the user clicking on a search target
-  //for example, the user might find items by interacting with a Thing, or another player who found an item you didn't might take that item
+function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
+
+  //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
+  if(first_time || me.location != prev_game_obj.players[my_name].location){
+
+    //background image and clear contents
+    let place = game_obj.map.places[me.location];
+    search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name + ".jpg')";
+    search_div.innerHTML = "";
+
+    //things
+    for(let i=0; i<place.things.length; i++){
+      let thing = place.things[i];
+      if(thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
+
+      let search_object = makeSearchObject(item);
+      search_div.appendChild(search_object);
+    }
+
+    //items
+    for(let i=0; i<place.items.length; i++){
+      let item = place.items[i];
+      if(item.visible || cannotFind.itemIds.includes(item.id)) continue;
+
+      let search_object = makeSearchObject(item);
+      search_div.appendChild(search_object);
+    }
+  }
+
+
 
 /*
   //check for differences in visibility or quantity between now and previous state
@@ -181,6 +234,75 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}){
   }
   */
 }
+
+
+
+
+function updateSearchTargets(){
+  //update search targets in the process
+
+/*
+  let search_div = document.getElementById("search_div");
+
+  //clear previous targets
+  let prev_targets = search_div.getElementsByClassName("search_target");
+  while(prev_targets.length > 0){
+    let div = prev_targets[0];
+    div.parentElement.removeChild(div);
+  }
+
+  socket.emit("update_search_coords", function(place){
+    //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
+
+    console.log("place", place);
+
+    //add new search targets for items
+  	for(let i=0; i<place.items.length; i++){
+      let item = place.items[i];
+
+      //check that this item type has items that aren't yet visible to us
+      if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
+
+        //iterate through hidden items and make a target for each one we didn't find yet
+        console.log("search coords for",item.name,item.search_coords);
+
+        let n_hidden = item.quantity - item.n_visible_for[my_name];
+        for(let j=0, n_targets_made=0; n_targets_made<n_hidden; j++){ //need two iterators, one for idx in search_coords, other to make sure we made the right number of search targets
+
+          //out of the n_hidden, some we may have found already, check if we have
+          if(item.search_coords[j].found_by.includes(my_name)){
+            console.log("already found, skipping idx",j);
+            continue;
+          }
+
+      		let search_target = document.createElement("div");
+      		search_target.classList.add("search_target");
+          search_target.classList.add("search-item-" + i); //used for removing this search target if an external source finds/removes it (e.g. climbing a tree, another player taking items) - see updateSearchDiv() below
+      		search_target.style.height = item.search_target_size;
+      		search_target.style.width = item.search_target_size;
+      		search_target.style.top = item.search_coords[j].y;
+      		search_target.style.left = item.search_coords[j].x;
+      		search_target.style.animationDelay = 3*Math.random() + "s";
+
+      		search_target.addEventListener("click",function(){
+            search_target.parentElement.removeChild(search_target);
+            console.log("found item",item.name,item.tags,j);
+            socket.emit("found", me.location, "item", i, j);
+      		});
+
+      		search_div.appendChild(search_target);
+          console.log("search target created");
+
+          n_targets_made++;
+        }
+      }
+    }
+  });
+
+*/
+}
+
+
 
 
 
@@ -364,7 +486,7 @@ function initGameDisplay(game){
   }
 
 
-  //search_div flashlight canvas
+  //flashlight canvas
   let fc = flashlight_canvas; //alias
   fc.width = 500;
   fc.height = 500;
@@ -385,77 +507,7 @@ function initGameDisplay(game){
 
   socket.emit("getCannotFind", function(cannotFind){
     updatePlaceInfo(cannotFind); //display.js
-    updateSearchDiv(cannotFind); //display.js
+    updateSearchDiv(cannotFind, true); //display.js
     updateInventory(); //display.js
   });
-}
-
-
-
-
-
-
-
-function updateSearchTargets(){
-  //update search targets in the process
-
-/*
-  let search_div = document.getElementById("search_div");
-
-  //clear previous targets
-  let prev_targets = search_div.getElementsByClassName("search_target");
-  while(prev_targets.length > 0){
-    let div = prev_targets[0];
-    div.parentElement.removeChild(div);
-  }
-
-  socket.emit("update_search_coords", function(place){
-    //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
-
-    console.log("place", place);
-
-    //add new search targets for items
-  	for(let i=0; i<place.items.length; i++){
-      let item = place.items[i];
-
-      //check that this item type has items that aren't yet visible to us
-      if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
-
-        //iterate through hidden items and make a target for each one we didn't find yet
-        console.log("search coords for",item.name,item.search_coords);
-
-        let n_hidden = item.quantity - item.n_visible_for[my_name];
-        for(let j=0, n_targets_made=0; n_targets_made<n_hidden; j++){ //need two iterators, one for idx in search_coords, other to make sure we made the right number of search targets
-
-          //out of the n_hidden, some we may have found already, check if we have
-          if(item.search_coords[j].found_by.includes(my_name)){
-            console.log("already found, skipping idx",j);
-            continue;
-          }
-
-      		let search_target = document.createElement("div");
-      		search_target.classList.add("search_target");
-          search_target.classList.add("search-item-" + i); //used for removing this search target if an external source finds/removes it (e.g. climbing a tree, another player taking items) - see updateSearchDiv() below
-      		search_target.style.height = item.size;
-      		search_target.style.width = item.size;
-      		search_target.style.top = item.search_coords[j].y;
-      		search_target.style.left = item.search_coords[j].x;
-      		search_target.style.animationDelay = 3*Math.random() + "s";
-
-      		search_target.addEventListener("click",function(){
-            search_target.parentElement.removeChild(search_target);
-            console.log("found item",item.name,item.tags,j);
-            socket.emit("found", me.location, "item", i, j);
-      		});
-
-      		search_div.appendChild(search_target);
-          console.log("search target created");
-
-          n_targets_made++;
-        }
-      }
-    }
-  });
-
-*/
 }

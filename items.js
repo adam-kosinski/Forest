@@ -48,7 +48,7 @@ class Item {
 		this.visible = true; //if false, is hidden (not in side panel). Being visible doesn't imply a person can see it, if Item.canFind() doesn't return "yes"
 
 		//these properties sometimes overridden in child constructors
-		this.size = "3.5vh"; //width and height styling for this Item's search target div, when hidden
+		this.search_target_size = "3.5vh"; //width and height styling for this Item's search target div, when hidden
 		this.coords = {  //where this Item is located in the search_div, if hidden. "0-100%" for x and y
 			x: (2+Math.floor(Math.random()*96)) + "%",
 			y: (2+Math.floor(Math.random()*96)) + "%",

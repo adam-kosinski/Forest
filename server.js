@@ -220,7 +220,11 @@ io.on("connection", function(socket) {
 
 
   socket.on("getCannotFind", function(callback){
+    console.log(id_to_name);
+    console.log(socket.id);
     let player = game.players[id_to_name[socket.id]];
+    console.log("name", id_to_name[socket.id], "player", player)
+
     let out = {itemIds:[], thingIds:[]}; //stores ids of items/things this player cannot find
 
     let items = game.map.places[player.location].items;
