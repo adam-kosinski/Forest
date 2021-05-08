@@ -129,10 +129,8 @@
 
 #search_div div.item-container, #search_div div.thing-container { /*aka search_content div*/
 	display: none;
-	top: calc(-2vw - 1px); /*half circle width and border width*/
-	left: calc(-2vw - 1px);
+	/*top and left offsets calculated in display.js in the search_target event listener*/
 	position: absolute;
-
 	background-color: rgba(0,0,0,0.75);
 	box-shadow: 0 0 1vw 1vw rgba(0,0,0,0.75);
 	border-radius: 1vw;
@@ -152,7 +150,8 @@
 	width: 100vw;
 	height: 100vh;
 	z-index: 30;
-	background-color: #fff8;
+	background-color: #0008;
+	color: white;
 	display: none;
 }
 

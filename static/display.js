@@ -162,16 +162,34 @@ function makeSearchObject(object){
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target");
+  search_target.classList.add("search_target_static");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
   search_target.style.animationDelay = 3*Math.random() + "s";
+
   search_target.addEventListener("click",function(){
-    search_content.style.display = "block";
+    search_content.style.display = "block"; //need to have first for the offset calcs below to work
+    search_content.style.top = "0px"; //reset so we can recalculate the offsets
+    search_content.style.left = "0px";
+
+    //calculate top and left offsets of search_content to not go offscreen, ideally centering on the search_object's coords
+    //doing this on every click in case the window was resized since the search_object was generated or last clicked on
+    let vw = window.innerWidth/100;
+    let rect = search_content.getBoundingClientRect();
+    let search_rect = search_div.getBoundingClientRect();
+
+    let top = -Math.min(2*vw + 1, (rect.y - search_rect.y) - vw); //2vw (half height) + 1px (border) to center the image circle, -1vw in 2nd option to account for blur
+    let bottom_diff = (search_rect.y + search_rect.height) - (rect.y + rect.height) - vw; //-vw to account for blur of search_content
+    if(bottom_diff < 0) top = bottom_diff; //don't go off bottom, bigger priority than don't go off top b/c text
+    search_content.style.top = top + "px";
+
+    let left = -Math.min(2*vw + 1, (rect.x - search_rect.x) - vw);
+    let right_diff = (search_rect.x + search_rect.width) - (rect.x + rect.width) - vw;
+    if(right_diff < 0) left = right_diff;
+    search_content.style.left = left + "px";
+
+    //show
     search_content.classList.add("showing"); //used to decide whether to contract in events.js
-
-    //calc top and left so it doesn't show offscreen
-
     $(search_target).fadeOut(500); //in case search_content is offset b/c the screen edge and doesn't cover the search_target - wll fade back on contract
     animateScale(search_content, "expand"); //contraction handled by general mousemove handler
   });
