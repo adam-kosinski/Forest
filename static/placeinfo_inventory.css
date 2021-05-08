@@ -60,6 +60,12 @@
 	overflow-y: auto;
 }
 
+#place_info div.item-container, #place_info div.thing-container {
+	margin: 0 0.65vw 3vh 0.65vw;
+	display: inline-block;
+	vertical-align: top;
+}
+
 #thing_display {
 	border-bottom: 1px solid burlywood;
 	min-height: 15vh;
@@ -70,14 +76,13 @@
 	margin: 1vh;
 }
 
-/*note: the below item/thing styling is also used for the inventory*/
+/*note: the below item/thing styling is also used for the inventory and search_div*/
 div.item-container, div.thing-container {
-	margin: 0 0.65vw 3vh 0.65vw;
-	display: inline-block;
-	vertical-align: top;
+	/*currently the styling for this is done separately under #place_info and #search_div*/
 }
 
 div.item, div.thing, div.animator_circle {
+	position: static;
 	width: 4vw;
 	height: 4vw;
 	border-radius: 4vw;
@@ -87,14 +92,14 @@ div.item, div.thing, div.animator_circle {
 	background-position: center;
 }
 
-div.item + p, div.thing + p {
+div.item-container > p, div.thing-container > p { /*select p elements that are direct children of a .item-container or .thing-container*/
+	position: static;
 	width: 4vw;
 	font-family: serif;
-	top: 0.5vw;
-	left: 0;
-	right: 0;
-	margin: auto;
+	margin-top: 0.5vw;
 	font-size: 0.8vw;
+	text-align: center;
+	color: white;
 }
 
 

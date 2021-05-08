@@ -103,6 +103,7 @@
 	border-radius: 5px;
 	background-image: radial-gradient(closest-side, yellow, transparent 50%);
 	cursor: pointer;
+	transform: translate(-50%, -50%); /*so it's centered with the position coordinates of the search object div*/
 	animation-name: breathe;
 	animation-duration: 3s;
 	animation-iteration-count: infinite;
@@ -120,11 +121,22 @@
 	border-radius: 5px;
 	background-image: radial-gradient(closest-side, yellow, transparent 50%);
 	cursor: pointer;
+	transform: translate(-50%, -50%);
 	border: 3px solid orange;
 	width: 1.5vh;
 	height: 1.5vh;
 }
 
+#search_div div.item-container, #search_div div.thing-container { /*aka search_content div*/
+	display: none;
+	top: calc(-2vw - 1px); /*half circle width and border width*/
+	left: calc(-2vw - 1px);
+	position: absolute;
+
+	background-color: rgba(0,0,0,0.75);
+	box-shadow: 0 0 1vw 1vw rgba(0,0,0,0.75);
+	border-radius: 1vw;
+}
 
 #flashlight_canvas {
 	display: none;

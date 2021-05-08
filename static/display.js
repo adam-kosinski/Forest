@@ -24,7 +24,7 @@ function makeThingOrItem(object, display_quantity=0){
   div.className = object.type + "-container";
 
   let circle = document.createElement("div");
-  circle.id = object.type + "-" + id;
+  circle.id = object.type + "-" + object.id;
   circle.className = object.type;
   let img_postfix = "";
   if(object.type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
@@ -49,7 +49,7 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
   //check if traveling
   if(me.traveling){
     //check if just started, if so, animate hiding everything about this place
-    if(!prev_game_obj.players[me.name].traveling){
+    if(!prev_game_obj.players[my_name].traveling){
 
       $(place_name_display).fadeOut(250);
       $(region_name_display).fadeOut(250);
@@ -154,21 +154,30 @@ function makeSearchObject(object){
   //when the mouse moves off the content div, it contracts back down
 
   let search_object = document.createElement("div");
+  search_object.className = "search_object";
   search_object.style.top = object.coords.y;
   search_object.style.left = object.coords.x;
 
+  let search_content = makeThingOrItem(object);
+  search_content.classList.add("search_content");
+
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target_static");
-  console.log(object);
-  console.log(object.search_target_size);
+  search_target.classList.add("search_target");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
-
   search_target.style.animationDelay = 3*Math.random() + "s";
   search_target.addEventListener("click",function(){
-    console.log("found item", object.name, object.tags);
+    search_content.style.display = "block";
+    search_content.classList.add("showing"); //used to decide whether to contract in events.js
+
+    //calc top and left so it doesn't show offscreen
+
+    $(search_target).fadeOut(500); //in case search_content is offset b/c the screen edge and doesn't cover the search_target - wll fade back on contract
+    animateScale(search_content, "expand"); //contraction handled by general mousemove handler
   });
+
   search_object.appendChild(search_target);
+  search_object.appendChild(search_content); //lazy z-indexing by append order
 
   return search_object;
 }
@@ -176,12 +185,28 @@ function makeSearchObject(object){
 
 function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 
+  if(me.traveling){
+    if(!prev_game_obj.players[my_name].traveling){
+      //if just started traveling, fade out search div to show the black background
+      $(search_div).fadeOut(500);
+    }
+    return;
+  }
+  $(search_div).fadeIn(500);
+
+
   //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
   if(first_time || me.location != prev_game_obj.players[my_name].location){
 
     //background image and clear contents
     let place = game_obj.map.places[me.location];
     search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name + ".jpg')";
+    let position = "top left";
+    switch(place.name){
+      case "Cliffside Grove": position = "top left"; break;
+      case "Bear Den": position = "center bottom"; break;
+    }
+    search_div.style.backgroundPosition = position;
     search_div.innerHTML = "";
 
     //things

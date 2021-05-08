@@ -97,11 +97,11 @@ function isPopupOpen(){
 
 // Nested element child test ----------------------------------------
 
-function elementPartOf(element, id){
-    //checks if this element has a certain id, or one of its parents/grandparents/etc. has the id
+function elementPartOf(element, target_element){
+    //checks if this element is equal to another element, or one of its parents/grandparents/etc. is equal
     let test_element = element;
     while(test_element && test_element != document.body){
-      if(test_element.id == id){
+      if(test_element == target_element){
         return true;
       }
       test_element = test_element.parentElement;
@@ -131,7 +131,7 @@ function processItems(itemArray, cannotFindIds){
   for(let i=0; i<itemArray.length; i++){
     let item = itemArray[i];
     if(cannotFindIds.includes(item.id)) continue;
-    
+
     if(item.visible) addToObject(item, out.visible);
     else addToObject(item, out.hidden);
   }

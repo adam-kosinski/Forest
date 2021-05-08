@@ -23,7 +23,7 @@ let map_zoom_div_scale = 1; //bigger is more zoomed in
 
 
 function handleClick(e){
-  if(elementPartOf(e.target, "start_button")){
+  if(elementPartOf(e.target, start_button)){
     socket.emit("start_game");
   }
   if(e.button == 0){ //left click
@@ -45,7 +45,7 @@ function handleMousedown(e){
   // drag and drop
   //if it's part of the map_zoom_div but not draggable, drag the map_zoom_div
   let drag_target = e.target;
-  if(elementPartOf(e.target, "map_zoom_div") && !e.target.classList.contains("draggable")){ //util.js
+  if(elementPartOf(e.target, map_zoom_div) && !e.target.classList.contains("draggable")){ //util.js
     drag_target = map_zoom_div;
   }
 
@@ -80,7 +80,7 @@ function handleMousemove(e){
     let m_offset_y = e.pageY - drag_mouse_start.y;
     let m_offset_x = e.pageX - drag_mouse_start.x;
 
-    if(drag_element != map_zoom_div && elementPartOf(drag_element, "map_zoom_div")){
+    if(drag_element != map_zoom_div && elementPartOf(drag_element, map_zoom_div)){
       //account for zoom
       m_offset_y /= map_zoom_div_scale;
       m_offset_x /= map_zoom_div_scale;
@@ -129,6 +129,21 @@ function handleMousemove(e){
 
   }
 
+
+    //search_object search_content div contraction when mouse not on the search_object
+    let search_contents = search_div.getElementsByClassName("search_content");
+    for(let i=0; i<search_contents.length; i++){
+      //check if display is block, implies it's expanded
+      if(search_contents[i].classList.contains("showing")){
+        if(!elementPartOf(e.target, search_contents[i].parentElement)){
+          //contract
+          search_contents[i].classList.remove("showing");
+          $(search_contents[i].parentElement.firstElementChild).fadeIn(500); //fade search_target back in
+          animateScale(search_contents[i], "contract", function(){search_contents[i].style.display = "none"});
+        }
+      }
+    }
+
   //flashlight
   //NOTE: flashlight no longer located in search_div
   /*if(getComputedStyle(search_div).display == "block"){
@@ -175,7 +190,7 @@ function handleMousewheel(e){
 
   //gameboard zooming
   //check if the target is the gameboard, or a child of the gameboard, or a child of a child of the gameboard, etc
-  if(elementPartOf(e.target, "map_zoom_div")){ //util.js
+  if(elementPartOf(e.target, map_zoom_div)){ //util.js
     //get initial position
     let style = getComputedStyle(map_zoom_div);
     let left = Number(style.left.split("px")[0]);
