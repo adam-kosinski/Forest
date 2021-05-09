@@ -131,6 +131,13 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
   else {
     //only animate changes for individual things/items
     //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
+
+    //things
+
+
+    //items
+    
+
   /*
     //things
     //TODO
@@ -254,19 +261,30 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   else {
     //not the first update or a new location, just check for differences from previous update
 
-    //items
-    let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
-    item_differences.new.forEach(item => {
-      if(item.visible) return;
-      search_div.appendChild(makeSearchObject(item));
+    //things
+    let thing_differences = findDifferences(prev_place.things, place.things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+    thing_differences.new.forEach(thing => {
+      if(thing.visible) return;
+      search_div.appendChild(makeSearchObject(thing));
     });
-    item_differences.missing.forEach(item => {
-      if(item.visible) return;
-      let search_object = document.getElementById("search_object-item-" + item.id);
+    thing_differences.missing.forEach(thing => {
+      if(thing.visible) return;
+      let search_object = document.getElementById("search_object-thing-" + thing.id);
       $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
     });
   }
 
+  //items
+  let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
+  item_differences.new.forEach(item => {
+    if(item.visible) return;
+    search_div.appendChild(makeSearchObject(item));
+  });
+  item_differences.missing.forEach(item => {
+    if(item.visible) return;
+    let search_object = document.getElementById("search_object-item-" + item.id);
+    $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
+  });
 
 }
 

@@ -85,7 +85,7 @@ class Item {
         else {out.messages.push(result)}
     }
     else if(player.name == this.owner){
-      out.actions.push("Drop One");
+      out.actions.push("Drop");
       //out.actions.push("Drop All");
     }
     return out;
@@ -142,29 +142,18 @@ class Item {
 		player.items.push(this);
   }
   drop(player){
-/*
-		let item = this.copy();
-    item.quantity = 1; //only drop one!
-    item.owner = undefined;
+		console.log(player.name + " dropped " + this.name + ", id=" + this.id);
 
-    let place = server.getGame().map.places[player.location];
-    place.items.push(item)
-    this.quantity--; //from inventory, so no need to worry about changing n_visible_for
-    console.log("dropped one!");
-	*/
-  }
-	/*
-  drop_all(player){
-    let item = this.copy();
-    //no need to change the quantity here, we're dropping it all
-    item.owner = undefined;
+		let idx = player.items.indexOf(this);
+		if(idx < 0){
+			console.log("Item not found in player's item array, canceling 'drop' action.");
+			return;
+		}
+		player.items.splice(idx, 1);
 
-    let place = server.getGame().map.places[player.location];
-    place.items.push(item);
-    this.quantity = 0; //from inventory, so no need to worry about changing n_visible_for
-    console.log("dropped all!");
+		this.owner = undefined;
+		server.getGame().map.places[player.location].items.push(this);
   }
-	*/
 }
 
 
