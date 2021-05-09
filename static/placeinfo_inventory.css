@@ -249,8 +249,15 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	position: relative;
 }
 
-/*item styling for the inventory uses the same rules as the placeInfo board, see above*/
+#inventory_items div.item-container, #place_info div.thing-container {
+	margin: 0 0.65vw 3vh 0.65vw;
+	display: inline-block;
+	vertical-align: top;
+}
 
+#inventory_items div.item-container > p {
+	color: black;
+}
 
 
 #place_info .animator_circle, #inventory #inventory_items .animator_circle {

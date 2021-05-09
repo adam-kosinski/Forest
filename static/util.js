@@ -113,7 +113,7 @@ function elementPartOf(element, target_element){
 
 // Item processing --------------------------------------------
 
-function processItems(itemArray, cannotFindIds){
+function processItems(itemArray, cannotFindIds=[]){
   //returns an object with two properties, visible and hidden, which each refer to objects
   //each sub-object is of form {item_name-tag1-tag2: [array of item objects]}
   //items we can't find are omitted entirely from the return object
@@ -136,5 +136,36 @@ function processItems(itemArray, cannotFindIds){
     else addToObject(item, out.hidden);
   }
 
+  return out;
+}
+
+
+function findDifferences(prev, current, prevCannotFindIds=[], cannotFindIds=[]){
+  //prev and current are arrays of both item objects or both thing objects
+  //function returns {new:[], missing:[]}
+  //new contains all new objects in current compared to prev, missing contains all missing objects
+  //items/things we can't find aren't considered in the comparison
+
+  let out = {new:[], missing:[]};
+
+  //shallow copy arrays so we can splice them, and filter out stuff we can't find
+  prev = prev.slice().filter(obj => !prevCannotFindIds.includes(obj.id));
+  current = current.slice().filter(obj => !cannotFindIds.includes(obj.id));
+
+  //iterate through prev, checking if each entry's id is in current
+  //if so, splice out of current - this will leave only new entries in current by the end
+  //if not, push to missing
+  prev_iteration:
+  for(let i=0; i<prev.length; i++){
+    for(let j=0; j<current.length; j++){
+      if(prev[i].id == current[j].id){
+        current.splice(j, 1);
+        continue prev_iteration;
+      }
+    }
+    out.missing.push(prev[i]);
+  }
+
+  out.new = current;
   return out;
 }

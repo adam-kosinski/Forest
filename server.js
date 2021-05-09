@@ -196,34 +196,48 @@ io.on("connection", function(socket) {
 
 
   //interactions for things and items, shown in the contextmenu
-  socket.on("get_interactions", function(where, type, idx, callback){
+  socket.on("get_interactions", function(where, type, id, callback){
     //where is a place idx or "my"
     //type is "thing" or "item"
+    //id is thing/item id
     let player = game.players[id_to_name[socket.id]];
-    let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
-    callback(object.getInteractions(player));
+    let list = where == "my" ? player.items : game.map.places[where][type+"s"];
+    for(let i=0; i<list.length; i++){
+      if(list[i].id == id){
+        callback(list[i].getInteractions(player));
+        return;
+      }
+    }
+    callback(null);
   });
 
 
   //actions for things and items
-  socket.on("action", function(where, type, idx, action){
+  socket.on("action", function(where, type, id, action, callback){
     //where is a place idx or "my"
     //type is "thing" or "item"
-    action = action.toLowerCase().replace(/ /g, "_");
-    let player = game.players[id_to_name[socket.id]];
-    let object = where == "my" ? player.items[idx] : game.map.places[where][type+"s"][idx];
+    //id is thing/item id
+    action = action.toLowerCase().replace(/ /g, "_"); //to match method name
 
-    object[action](player, socket);
-    io.emit("update_state", game); //in case the action changed something
-    // ^ TODO have the acutal action emit update in the future, make sure to pass io (or have a getter function in exports)
+    let player = game.players[id_to_name[socket.id]];
+    let list = where == "my" ? player.items : game.map.places[where][type+"s"];
+    for(let i=0; i<list.length; i++){
+      if(list[i].id == id){
+        list[i][action](player, socket); //socket mostly for animals, if the method doesn't take socket as an arg it'll just be ignored
+        callback(true);
+        io.emit("update_state", game); //in case the action changed something
+        return;
+      }
+    }
+    callback(false); //item/thing not found
   });
 
 
   socket.on("getCannotFind", function(callback){
-    console.log(id_to_name);
-    console.log(socket.id);
+    //console.log(id_to_name);
+    //console.log(socket.id);
     let player = game.players[id_to_name[socket.id]];
-    console.log("name", id_to_name[socket.id], "player", player)
+    //console.log("name", id_to_name[socket.id], "player", player)
 
     let out = {itemIds:[], thingIds:[]}; //stores ids of items/things this player cannot find
 

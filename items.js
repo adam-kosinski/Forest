@@ -61,7 +61,7 @@ class Item {
 		this.type = "item";
 		this.id = next_item_id;
 		next_item_id++;
-    this.owned_by = undefined; //undefined or a player name (implies it's in their inventory)
+    this.owner = undefined; //undefined or a player name (implies it's in their inventory)
   }
 	//methods sometimes overridden ---------------------------
 	canTake(player){
@@ -80,11 +80,11 @@ class Item {
     */
     let out = {actions:[], messages:["Weight "+this.weight]};
 
-    if(!this.owned_by){
+    if(!this.owner){
         if(this.canTake(player) == "yes"){out.actions.push("Take")}
         else {out.messages.push(result)}
     }
-    else if(player.name == this.owned_by){
+    else if(player.name == this.owner){
       out.actions.push("Drop One");
       //out.actions.push("Drop All");
     }
@@ -126,28 +126,26 @@ class Item {
     return true;
   }
   take(player){
-		item.tags = [];
-    /*/for items the player finds in the forest
-    let item = this.copy(); //methods added later not copied - that's what we want
-    item.quantity = 1; //don't copy the quantity!
-    item.owned_by = player.name;
-    item.canTake = undefined; //after it's been taken, this item will never have a canTake function again (it's been "unlocked")
-    player.give(item);
+		console.log(player.name + " took " + this.name + ", id=" + this.id);
 
-    this.quantity--;
-    //take one away from visibility
-    for(let name in this.n_visible_for){
-      this.n_visible_for[name] = Math.max(0, this.n_visible_for[name] - 1);
-    }
+		let item_list = server.getGame().map.places[player.location].items;
+		let idx = item_list.indexOf(this);
+		if(idx < 0){
+			console.log("Item not found in place's item array, canceling 'take' action.");
+			return;
+		}
+		item_list.splice(idx, 1);
 
-    //IMPORTANT: never remove items entirely (just change quantity), this way the client can use its index to reliably track it over time
-		*/
+		this.tags = [];
+		this.owner = player.name;
+		this.visible = true; //technically it is, and if drop it by default it's visible
+		player.items.push(this);
   }
   drop(player){
 /*
 		let item = this.copy();
     item.quantity = 1; //only drop one!
-    item.owned_by = undefined;
+    item.owner = undefined;
 
     let place = server.getGame().map.places[player.location];
     place.items.push(item)
@@ -159,7 +157,7 @@ class Item {
   drop_all(player){
     let item = this.copy();
     //no need to change the quantity here, we're dropping it all
-    item.owned_by = undefined;
+    item.owner = undefined;
 
     let place = server.getGame().map.places[player.location];
     place.items.push(item);

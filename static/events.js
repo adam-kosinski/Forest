@@ -130,16 +130,17 @@ function handleMousemove(e){
   }
 
 
-    //search_object search_content div contraction when mouse not on the search_object
+    //search_object search_content div contraction when mouse not on the search_object or contextmenu
     let search_contents = search_div.getElementsByClassName("search_content");
     for(let i=0; i<search_contents.length; i++){
       //check if display is block, implies it's expanded
       if(search_contents[i].classList.contains("showing")){
-        if(!elementPartOf(e.target, search_contents[i].parentElement)){
+        if(!elementPartOf(e.target, search_contents[i].parentElement) && !elementPartOf(e.target, contextmenu)){
           //contract
           search_contents[i].classList.remove("showing");
           $(search_contents[i].parentElement.firstElementChild).fadeIn(500); //fade search_target back in
           animateScale(search_contents[i], "contract", function(){search_contents[i].style.display = "none"});
+          hide(contextmenu); //if it was open, it was for this item/thing
         }
       }
     }
@@ -221,15 +222,16 @@ function handleContextmenu(e){
   else {return;}
 
   contextmenu.innerHTML = "";
-/*
+
   //contextmenu for things and items
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
     let split = e.target.id.split("-");
-    let where = split[0]; //a place idx or "my"
-    if(where != "my"){where = Number(where);}
-    let type = split[1]; //"thing" or "item"
-    let idx = Number(split[2]);
+    let where = split[0] == "my" ? "my" : Number(split[0]); //"my" or location idx
+    let type = split[1]; //"item" or "thing"
+    let id = Number(split[2]);
 
+
+/*
     //if removing it (animation), don't allow contextmenu
     let here = game_obj.map.places[me.location];
     if(type == "item" && ((where == "my" && me.items[idx].quantity == 0) || (where != "my" && here.items[idx].n_visible_for[my_name] == 0))){
@@ -242,8 +244,15 @@ function handleContextmenu(e){
     }
 
     console.log("contextmenu allowed");
+*/
 
-    socket.emit("get_interactions", where, type, idx, function(interactions){
+    socket.emit("get_interactions", where, type, id, function(interactions){
+      if(interactions == null){
+        alert("Couldn't find item/thing on server. Someone may have taken the item before you, or something else weird might have happened. Reload the page to be safe.");
+        console.error("Error with get_interactions socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id);
+        return;
+      }
+
       let actions = interactions.actions;
       let messages = interactions.messages;
 
@@ -253,7 +262,13 @@ function handleContextmenu(e){
         menu_item.className = "action";
         menu_item.textContent = actions[i];
         menu_item.addEventListener("click", function(){
-          socket.emit("action", where, type, idx, actions[i]);
+          socket.emit("action", where, type, id, actions[i], function(success){
+            if(!success){
+              alert("Action failed because the item/thing wasn't found on the server. Someone may have beaten you to taking an item, or something else weird might have happened.");
+              console.warn("Action socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id + ", action: " + actions[i]);
+              //note: item/thing not found for an action emit will cause the server to gracefully do nothing
+            }
+          });
         });
         contextmenu.appendChild(menu_item);
       }
@@ -275,7 +290,6 @@ function handleContextmenu(e){
   //show the contextmenu, making sure it doesn't go offscreen
 
   //for some reason jquery can tell the width/height immediately (unlike getComputedStyle), but weirdly it only works if inside a setTimeout with 0 delay
-
   let size_timeout = setTimeout(function(){
     let left_offset = Math.min(0, window.innerWidth - ($(contextmenu).width() + e.pageX));
     contextmenu.style.left = e.pageX + left_offset + "px";
@@ -286,7 +300,6 @@ function handleContextmenu(e){
     show(contextmenu);
   }, 0);
 
-*/
 }
 
 

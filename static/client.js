@@ -179,6 +179,7 @@ socket.on("update_state", function(game){
 		updatePlaceInfo(cannotFind); //display.js
 		updateSearchDiv(cannotFind); //display.js
 		updateInventory(); //display.js
+		prevCannotFind = cannotFind; //prevCannotFind originally initialized in initGameDisplay() - see display.js
 	});
 });
 

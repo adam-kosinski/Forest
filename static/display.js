@@ -1,4 +1,5 @@
 
+
 function updateClientElement(data){
   //some other client updated an element, need to update that here
   let element = document.getElementById(data.id);
@@ -24,7 +25,8 @@ function makeThingOrItem(object, display_quantity=0){
   div.className = object.type + "-container";
 
   let circle = document.createElement("div");
-  circle.id = object.type + "-" + object.id;
+  let where = object.owner == my_name ? "my" : me.location;
+  circle.id = where + "-" + object.type + "-" + object.id;
   circle.className = object.type;
   let img_postfix = "";
   if(object.type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
@@ -154,6 +156,7 @@ function makeSearchObject(object){
   //when the mouse moves off the content div, it contracts back down
 
   let search_object = document.createElement("div");
+  search_object.id = "search_object-" + object.type + "-" + object.id;
   search_object.className = "search_object";
   search_object.style.top = object.coords.y;
   search_object.style.left = object.coords.x;
@@ -179,13 +182,13 @@ function makeSearchObject(object){
     let search_rect = search_div.getBoundingClientRect();
 
     let top = -Math.min(2*vw + 1, (rect.y - search_rect.y) - vw); //2vw (half height) + 1px (border) to center the image circle, -1vw in 2nd option to account for blur
-    let bottom_diff = (search_rect.y + search_rect.height) - (rect.y + rect.height) - vw; //-vw to account for blur of search_content
-    if(bottom_diff < 0) top = bottom_diff; //don't go off bottom, bigger priority than don't go off top b/c text
+    let bottom_diff = (search_rect.y + search_rect.height) - (rect.y + top + rect.height) - vw; //diff from if we'd used the 'top' value so far, -vw to account for blur of search_content
+    if(bottom_diff < 0) top += bottom_diff; //+= b/c we calculated bottom_diff assuming it was already offset by the previous 'top' value.
     search_content.style.top = top + "px";
 
     let left = -Math.min(2*vw + 1, (rect.x - search_rect.x) - vw);
-    let right_diff = (search_rect.x + search_rect.width) - (rect.x + rect.width) - vw;
-    if(right_diff < 0) left = right_diff;
+    let right_diff = (search_rect.x + search_rect.width) - (rect.x + left + rect.width) - vw;
+    if(right_diff < 0) left += right_diff;
     search_content.style.left = left + "px";
 
     //show
@@ -201,6 +204,9 @@ function makeSearchObject(object){
 }
 
 
+
+
+
 function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 
   if(me.traveling){
@@ -212,12 +218,12 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   }
   $(search_div).fadeIn(500);
 
+  let place = game_obj.map.places[me.location];
+  let prev_place = prev_game_obj.map.places[me.location];
 
   //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
   if(first_time || me.location != prev_game_obj.players[my_name].location){
-
     //background image and clear contents
-    let place = game_obj.map.places[me.location];
     search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name + ".jpg')";
     let position = "top left";
     switch(place.name){
@@ -245,106 +251,24 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       search_div.appendChild(search_object);
     }
   }
+  else {
+    //not the first update or a new location, just check for differences from previous update
 
-
-
-/*
-  //check for differences in visibility or quantity between now and previous state
-  let place = game_obj.map.places[me.location];
-  let prev_place = prev_game_obj.map.places[me.location];
-
-  let different = false;
-
-  //items
-  for(let i=0; i<place.items.length; i++){
-    if(!prev_place.items[i]){
-      different = true;
-      break;
-    }
-    if(place.items[i].n_visible_for[my_name] != prev_place.items[i].n_visible_for[my_name]){
-      different = true;
-      break;
-    }
-    if(place.items[i].quantity != prev_place.items[i].quantity){
-      different = true;
-      break;
-    }
+    //items
+    let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
+    item_differences.new.forEach(item => {
+      if(item.visible) return;
+      search_div.appendChild(makeSearchObject(item));
+    });
+    item_differences.missing.forEach(item => {
+      if(item.visible) return;
+      let search_object = document.getElementById("search_object-item-" + item.id);
+      $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
+    });
   }
 
-  if(different){
-    console.log("Visibility/quantity difference detected");
-    updateSearchTargets();
-  }
-  */
+
 }
-
-
-
-
-function updateSearchTargets(){
-  //update search targets in the process
-
-/*
-  let search_div = document.getElementById("search_div");
-
-  //clear previous targets
-  let prev_targets = search_div.getElementsByClassName("search_target");
-  while(prev_targets.length > 0){
-    let div = prev_targets[0];
-    div.parentElement.removeChild(div);
-  }
-
-  socket.emit("update_search_coords", function(place){
-    //note: we don't really need a callback (could just reference our game_obj copy), but this is a nice way to make sure the server is done updating first
-
-    console.log("place", place);
-
-    //add new search targets for items
-  	for(let i=0; i<place.items.length; i++){
-      let item = place.items[i];
-
-      //check that this item type has items that aren't yet visible to us
-      if(item.quantity > 0 && item.quantity > item.n_visible_for[my_name]) {
-
-        //iterate through hidden items and make a target for each one we didn't find yet
-        console.log("search coords for",item.name,item.search_coords);
-
-        let n_hidden = item.quantity - item.n_visible_for[my_name];
-        for(let j=0, n_targets_made=0; n_targets_made<n_hidden; j++){ //need two iterators, one for idx in search_coords, other to make sure we made the right number of search targets
-
-          //out of the n_hidden, some we may have found already, check if we have
-          if(item.search_coords[j].found_by.includes(my_name)){
-            console.log("already found, skipping idx",j);
-            continue;
-          }
-
-      		let search_target = document.createElement("div");
-      		search_target.classList.add("search_target");
-          search_target.classList.add("search-item-" + i); //used for removing this search target if an external source finds/removes it (e.g. climbing a tree, another player taking items) - see updateSearchDiv() below
-      		search_target.style.height = item.search_target_size;
-      		search_target.style.width = item.search_target_size;
-      		search_target.style.top = item.search_coords[j].y;
-      		search_target.style.left = item.search_coords[j].x;
-      		search_target.style.animationDelay = 3*Math.random() + "s";
-
-      		search_target.addEventListener("click",function(){
-            search_target.parentElement.removeChild(search_target);
-            console.log("found item",item.name,item.tags,j);
-            socket.emit("found", me.location, "item", i, j);
-      		});
-
-      		search_div.appendChild(search_target);
-          console.log("search target created");
-
-          n_targets_made++;
-        }
-      }
-    }
-  });
-
-*/
-}
-
 
 
 
@@ -364,18 +288,17 @@ function updateInventory(){
     inventory_items.appendChild(h1);
   }
   else { //not spectator
-    /*for(let i=0; i<me.items.length; i++){
-      let item = me.items[i];
-      let prev_item = prev_game_obj.players[my_name].items[i];
 
-      //ignore items that there are none of
-      if(item.quantity <= 0 && (!prev_item || prev_item.quantity <= 0)){continue;} //only check quantity, visibility is a given in your inventory
-      //but still show items that will be removed via animation below (the second check)
-
-      let div = makeThingOrItem("item", item, "my-item-" + i);
+    //update items
+    let processed_items = processItems(me.items); //see util.js
+     //items in a player's inventory should always be visible due to the take method on the server
+    if(Object.keys(processed_items.hidden).length > 0) console.error("Some inventory items hidden, processed_items:", processed_items);
+    for(key in processed_items.visible){
+      let item_list = processed_items.visible[key];
+      let div = makeThingOrItem(item_list[0], item_list.length);
       inventory_items.appendChild(div);
     }
-
+/*
     //animate differences
     if(getComputedStyle(inventory).display != "none"){
 
@@ -549,6 +472,7 @@ function initGameDisplay(game){
 
 
   socket.emit("getCannotFind", function(cannotFind){
+    prevCannotFind = cannotFind;
     updatePlaceInfo(cannotFind); //display.js
     updateSearchDiv(cannotFind, true); //display.js
     updateInventory(); //display.js
