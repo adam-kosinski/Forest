@@ -77,6 +77,8 @@ class Map {
 
 
 class Place {
+  //note: place image files should be named place_name.jpg, spaces replaced with underscores (to be consistent with item/thing naming)
+
   constructor(name, pos, region){
     //constants
     this.name = name;

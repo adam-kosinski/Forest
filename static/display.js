@@ -20,6 +20,7 @@ function updateClientElement(data){
 
 
 function makeThingOrItem(object, display_quantity=0){
+  let equality_string = equalityString(object); //util.js, objects with the same name and tags are 'equal'
 
   let div = document.createElement("div");
   div.className = object.type + "-container";
@@ -27,10 +28,9 @@ function makeThingOrItem(object, display_quantity=0){
   let circle = document.createElement("div");
   let where = object.owner == my_name ? "my" : me.location;
   circle.id = where + "-" + object.type + "-" + object.id;
-  circle.className = object.type;
-  let img_postfix = "";
-  if(object.type == "item" && object.tags.length > 0) img_postfix = "-" + object.tags.join("-");
-  circle.style.backgroundImage = "url('./static/images/" + object.type + "s/" + object.name + img_postfix + ".jpg')";
+  circle.classList.add(object.type);
+  circle.classList.add(equality_string);
+  circle.style.backgroundImage = "url('./static/images/" + object.type + "s/" + equality_string + ".jpg')";
   div.appendChild(circle);
 
   let p = document.createElement("p");
@@ -42,9 +42,12 @@ function makeThingOrItem(object, display_quantity=0){
 }
 
 
-function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
+
+
+
+function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   if(am_spectator){
-    place_info.style.display = "none";
+    place_info.style.display = "none"; //TODO: change this to let them see, just don't let the spectator interact
     return;
   }
 
@@ -64,10 +67,14 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
     return; //in general don't show anything while traveling
   }
 
+  //info used throughout the rest of the function
   let place = game_obj.map.places[me.location];
   let prev_place = prev_game_obj.map.places[me.location]; //for animations
   let prev_location = prev_game_obj.players[my_name].location;
+  let processed_items = processItems(place.items, cannotFind.itemIds); //see util.js
+  let prev_processed_items = processItems(prev_place.items, prevCannotFind.itemIds);
 
+  //place name display
   place_name_display.textContent = place.name;
   region_name_display.textContent = place.region;
 
@@ -83,75 +90,146 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}){
   place_info.style.backgroundPosition = position;
 
 
-  //things
-  thing_display.innerHTML = "";
-  for(let i=0; i<place.things.length; i++){
-    let thing = place.things[i];
-    if(!thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
 
-    let div = makeThingOrItem(thing);
-    thing_display.appendChild(div);
-  }
-
-  //items
-  item_display.innerHTML = "";
-  let processed_items = processItems(place.items, cannotFind.itemIds); //see util.js
-  //only show visible items in placeInfo
-  for(key in processed_items.visible){
-    let item_list = processed_items.visible[key];
-    let div = makeThingOrItem(item_list[0], item_list.length);
-    item_display.appendChild(div);
-  }
-
-
-  //animate things and items
-  //if new location, animate everything
-  if(me.location != prev_location){
+  //if new location or first update, create all things/items and animate them expanding out sequentially
+  if(me.location != prev_location || first_time){
     console.log("new place");
 
     $(place_name_display).fadeIn(1000);
     $(region_name_display).fadeIn(1000);
 
-    let things = Array.from(thing_display.children);
-    let items = Array.from(item_display.children);
-    let stuff = things.concat(items);
-    stuff.forEach(element => {element.style.opacity = 0});
+    let stuff_to_animate = [];
+
+    //create things
+    thing_display.innerHTML = "";
+    for(let i=0; i<place.things.length; i++){
+      let thing = place.things[i];
+      if(!thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
+
+      let div = makeThingOrItem(thing);
+      thing_display.appendChild(div);
+      stuff_to_animate.push(div);
+    }
+
+    //create items
+    item_display.innerHTML = "";
+    //only show visible items in placeInfo
+    for(key in processed_items.visible){
+      let item_list = processed_items.visible[key];
+      let div = makeThingOrItem(item_list[0], item_list.length); //arbitrarily use the first item of its kind (same name / tags)
+      item_display.appendChild(div);
+      stuff_to_animate.push(div);
+    }
+
+    //animate
+    stuff_to_animate.forEach(element => {element.style.opacity = 0});
 
     let i = 0;
     let interval = setInterval(function(){
-      if(i >= stuff.length){
+      if(i >= stuff_to_animate.length){
         clearInterval(interval);
         return;
       }
-      stuff[i].style.opacity = 1;
-      animateScale(stuff[i], "expand");
+      stuff_to_animate[i].style.opacity = 1;
+      animateScale(stuff_to_animate[i], "expand");
       i++;
     }, 150);
   }
   else {
-    //only animate changes for individual things/items
+    //not new location nor first update, figure out if anything changed and update/animate it
     //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
 
     //things
-
-
-    //items
-    
-
-  /*
-    //things
-    //TODO
-
-    //items
-    animateIndividualItems(place.items, prev_place.items, function(i){
-      let item_circle = document.getElementById(me.location + "-item-" + i);
-      if(item_circle){return item_circle.parentElement;}
-      else {return undefined;}
+    let thing_differences = findDifferences(prev_place.things, place.things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+    thing_differences.new.forEach(thing => {
+      if(!thing.visible) return;
+      thing_display.appendChild(makeSearchObject(thing));
     });
-  */
+    thing_differences.missing.forEach(thing => {
+      if(!thing.visible) return;
+      let equality_string = equalityString(thing);
+      let thing_container = thing_display.getElementsByClassName(equality_string)[0].parentElement;
+      animateScale(thing_container, "contract", function(){thing_container.parentElement.removeChild(thing_container)});
+    });
+
+    //items
+    updateVisibleItemAmounts(item_display, prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds);
   }
 
 }
+
+//function to update changing amounts of visible items, and animating it
+//intended for use with the place info item display, and the inventory (separate function to avoid duplicating code)
+
+function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFindIds=[], cannotFindIds=[]){
+  let processed_items = processItems(items, cannotFindIds); //util.js
+  let prev_processed_items = processItems(prev_items, prevCannotFindIds);
+  let item_differences = findDifferences(prev_items, items, prevCannotFindIds, cannotFindIds); //see util.js
+
+  item_differences.new.forEach(item => {
+    if(!item.visible) return;
+
+    let equality_string = equalityString(item);
+    let same_items = processed_items.visible[equality_string];
+    let prev_same_items = prev_processed_items.visible[equality_string];
+
+    //check if not there before
+    if(!prev_same_items){
+      let div = makeThingOrItem(item, same_items.length);
+      display_div.appendChild(div);
+      if(! (display_div == inventory_items && getComputedStyle(inventory).display == "none") ){ //special case for inventory, don't animate if not showing b/c then animation will trigger when open inventory later
+        animateScale(div, "expand");
+      }
+    }
+    else { //there before
+      //update the item's display
+      let item_container = display_div.getElementsByClassName(equality_string)[0].parentElement;
+      let new_item_container = makeThingOrItem(same_items[0], same_items.length);
+      item_container.replaceWith(new_item_container);
+
+      //animate a duplicate image of the item expanding on top
+      if(! (display_div == inventory_items && getComputedStyle(inventory).display == "none") ){ //special case for inventory, don't animate if not showing b/c then animation will trigger when open inventory later
+        let circle = document.createElement("div");
+        circle.className = "animator_circle";
+        circle.style.backgroundImage = new_item_container.firstElementChild.style.backgroundImage;
+        new_item_container.appendChild(circle);
+        animateScale(circle, "expand", function(){
+          circle.parentElement.removeChild(circle);
+        });
+      }
+    }
+  });
+  item_differences.missing.forEach(item => {
+    if(!item.visible) return;
+
+    let equality_string = equalityString(item);
+    let same_items = processed_items.visible[equality_string];
+    let prev_same_items = prev_processed_items.visible[equality_string];
+    let item_container = display_div.getElementsByClassName(equality_string)[0].parentElement;
+
+    //check if not there now - contract the item container and remove it
+    if(!same_items){
+      animateScale(item_container, "contract", function(){item_container.parentElement.removeChild(item_container)})
+    }
+    else {
+      //update the item's display
+      let new_item_container = makeThingOrItem(same_items[0], same_items.length);
+      item_container.replaceWith(new_item_container);
+
+      //animate a duplicate image of the item expanding on top
+      let circle = document.createElement("div");
+      circle.className = "animator_circle";
+      circle.style.backgroundImage = new_item_container.firstElementChild.style.backgroundImage;
+      new_item_container.appendChild(circle);
+      animateScale(circle, "contract", function(){
+        circle.parentElement.removeChild(circle);
+      });
+    }
+  });
+}
+
+
+
 
 
 function makeSearchObject(object){
@@ -172,7 +250,7 @@ function makeSearchObject(object){
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target_static");
+  search_target.classList.add("search_target");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
   search_target.style.animationDelay = 3*Math.random() + "s";
@@ -231,7 +309,7 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
   if(first_time || me.location != prev_game_obj.players[my_name].location){
     //background image and clear contents
-    search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name + ".jpg')";
+    search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name.replaceAll(" ","_") + ".jpg')";
     let position = "top left";
     switch(place.name){
       case "Cliffside Grove": position = "top left"; break;
@@ -272,33 +350,32 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       let search_object = document.getElementById("search_object-thing-" + thing.id);
       $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
     });
+
+    //items
+    let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
+    item_differences.new.forEach(item => {
+      if(item.visible) return;
+      search_div.appendChild(makeSearchObject(item));
+    });
+    item_differences.missing.forEach(item => {
+      if(item.visible) return;
+      let search_object = document.getElementById("search_object-item-" + item.id);
+      $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
+    });
+
   }
-
-  //items
-  let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
-  item_differences.new.forEach(item => {
-    if(item.visible) return;
-    search_div.appendChild(makeSearchObject(item));
-  });
-  item_differences.missing.forEach(item => {
-    if(item.visible) return;
-    let search_object = document.getElementById("search_object-item-" + item.id);
-    $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
-  });
-
 }
 
 
 
 
 
-function updateInventory(){
+function updateInventory(first_time=false){
   //we'll let spectators view the inventory board, that way they can see what stuff there is to find
-
-  inventory_items.innerHTML = "";
 
   if(am_spectator){
     //tell the spectator they don't have an inventory
+    inventory_items.innerHTML = "";
     let h1 = document.createElement("h1");
     h1.textContent = "N/A";
     h1.style.fontSize = "15vh";
@@ -307,7 +384,24 @@ function updateInventory(){
   }
   else { //not spectator
 
-    //update items
+    if(first_time){
+      inventory_items.innerHTML = ""; //just in case
+      let processed_items = processItems(me.items); //see util.js
+       //items in a player's inventory should always be visible due to the take method on the server
+      if(Object.keys(processed_items.hidden).length > 0) console.error("Some inventory items hidden, processed_items:", processed_items);
+      for(key in processed_items.visible){
+        let item_list = processed_items.visible[key];
+        let div = makeThingOrItem(item_list[0], item_list.length);
+        inventory_items.appendChild(div);
+      }
+    }
+    else {
+      //just update what's already there
+      let prev_items = prev_game_obj.players[my_name].items;
+      updateVisibleItemAmounts(inventory_items, prev_items, me.items); //let cannotFindIds arrays default to [] - we can find everything in our inventory
+    }
+
+    /*/update items
     let processed_items = processItems(me.items); //see util.js
      //items in a player's inventory should always be visible due to the take method on the server
     if(Object.keys(processed_items.hidden).length > 0) console.error("Some inventory items hidden, processed_items:", processed_items);
@@ -315,7 +409,7 @@ function updateInventory(){
       let item_list = processed_items.visible[key];
       let div = makeThingOrItem(item_list[0], item_list.length);
       inventory_items.appendChild(div);
-    }
+    }*/
 /*
     //animate differences
     if(getComputedStyle(inventory).display != "none"){
@@ -336,63 +430,6 @@ function updateInventory(){
 }
 
 
-
-
-//function to animate an item's quantity changing
-
-function animateIndividualItems(items, prev_items, getItemDiv){
-  //items is an array of Item objects (from the server)
-  //prev_items is what that array looked like last update
-  //getItemDiv is a function, taking the index of the item in the array as an argument and returning the div container of the item
-/*
-  for(let i=0; i<items.length; i++){
-    let item_div = getItemDiv(i);
-    if(!item_div){continue;} //item is not visible, don't animate
-
-    //check if more of this item here than before
-    if((items[i] && !prev_items[i]) ||
-        items[i].n_visible_for[my_name] > prev_items[i].n_visible_for[my_name])
-    {
-      //if previously none, animate the item expanding
-      if(!prev_items[i] || prev_items[i].n_visible_for[my_name] == 0){
-        animateScale(item_div, "expand");
-      }
-      else {
-        //animate a duplicate image of the item expanding on top
-        let circle = document.createElement("div");
-        circle.className = "animator_circle";
-        circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
-
-        item_div.appendChild(circle);
-        animateScale(circle, "expand", function(){
-          circle.parentElement.removeChild(circle);
-        });
-      }
-    }
-    //check if fewer of this item here than before
-    else if((!items[i] && prev_items[i]) ||
-              items[i].n_visible_for[my_name] < prev_items[i].n_visible_for[my_name])
-    {
-      //if no more here, animate the item contracting then change display to none
-      if(!items[i] || items[i].n_visible_for[my_name] == 0){
-        animateScale(item_div, "contract", function(){item_div.style.display = "none";});
-      }
-      else {
-        //animate a duplicate image of the item contracting on top
-        let circle = document.createElement("div");
-        circle.className = "animator_circle";
-        circle.style.backgroundImage = item_div.firstElementChild.style.backgroundImage;
-
-        item_div.appendChild(circle);
-        animateScale(circle, "contract", function(){
-          circle.parentElement.removeChild(circle);
-        });
-      }
-    }
-
-  }
-*/
-}
 
 
 
@@ -491,8 +528,8 @@ function initGameDisplay(game){
 
   socket.emit("getCannotFind", function(cannotFind){
     prevCannotFind = cannotFind;
-    updatePlaceInfo(cannotFind); //display.js
+    updatePlaceInfo(cannotFind, true); //display.js
     updateSearchDiv(cannotFind, true); //display.js
-    updateInventory(); //display.js
+    updateInventory(true); //display.js
   });
 }

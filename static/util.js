@@ -111,7 +111,7 @@ function elementPartOf(element, target_element){
 
 
 
-// Item processing --------------------------------------------
+// Item/Thing processing --------------------------------------------
 
 function processItems(itemArray, cannotFindIds=[]){
   //returns an object with two properties, visible and hidden, which each refer to objects
@@ -122,8 +122,7 @@ function processItems(itemArray, cannotFindIds=[]){
 
   //don't have duplicate code for visible vs hidden
   let addToObject = function(item, object){
-    let key = item.name;
-    if(item.tags.length > 0) key += "-" + item.tags.join("-");
+    let key = equalityString(item);
     if(object.hasOwnProperty(key)) object[key].push(item);
     else object[key] = [item];
   }
@@ -148,9 +147,9 @@ function findDifferences(prev, current, prevCannotFindIds=[], cannotFindIds=[]){
 
   let out = {new:[], missing:[]};
 
-  //shallow copy arrays so we can splice them, and filter out stuff we can't find
-  prev = prev.slice().filter(obj => !prevCannotFindIds.includes(obj.id));
-  current = current.slice().filter(obj => !cannotFindIds.includes(obj.id));
+  //filter out stuff we can't find (also makes a new array, letting us splice)
+  prev = prev.filter(obj => !prevCannotFindIds.includes(obj.id));
+  current = current.filter(obj => !cannotFindIds.includes(obj.id));
 
   //iterate through prev, checking if each entry's id is in current
   //if so, splice out of current - this will leave only new entries in current by the end
@@ -168,4 +167,13 @@ function findDifferences(prev, current, prevCannotFindIds=[], cannotFindIds=[]){
 
   out.new = current;
   return out;
+}
+
+
+function equalityString(object){
+  //object is either an Item or a Thing object
+  //items/things with the same equality string (name + tags) are the same
+  //equality strings used in processItems() above, and lots of functions in display.js
+  let string = object.name + (object.tags.length > 0 ? "-" + object.tags.join("-") : "");
+  return string.replaceAll(" ","_"); //some applications (e.g. class name) don't accept spaces
 }
