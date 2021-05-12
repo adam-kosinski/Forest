@@ -143,7 +143,9 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     let thing_differences = findDifferences(prev_place.things, place.things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
     thing_differences.new.forEach(thing => {
       if(!thing.visible) return;
-      thing_display.appendChild(makeSearchObject(thing));
+      let thing_container = makeThingOrItem(thing);
+      thing_display.appendChild(thing_container);
+      animateScale(thing_container, "expand");
     });
     thing_differences.missing.forEach(thing => {
       if(!thing.visible) return;
