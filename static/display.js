@@ -255,7 +255,7 @@ function makeSearchObject(object){
   search_target.classList.add("search_target");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
-  search_target.style.animationDelay = 3*Math.random() + "s";
+  search_target.style.animationDelay = 6*Math.random() + "s";
 
   search_target.addEventListener("click",function(){
     search_content.style.display = "block"; //need to have first for the offset calcs below to work
@@ -316,6 +316,7 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     switch(place.name){
       case "Cliffside Grove": position = "top left"; break;
       case "Bear Den": position = "center bottom"; break;
+      case "Redhill": position = "center center"; break;
     }
     search_div.style.backgroundPosition = position;
     search_div.innerHTML = "";
@@ -442,6 +443,7 @@ function initGameDisplay(game){
   game_obj = game; //game_obj is a global variable
   prev_game_obj = game; //originally no previous one
   me = game.players[my_name];
+  here = game.map.places[me.location];
 
   game_div.style.display = "block";
   place_info.style.display = "block"; //in case we were a spectator last round and this is hidden

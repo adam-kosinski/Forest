@@ -31,7 +31,7 @@ function handleClick(e){
       hide(contextmenu);
     }
   }
-  //console.log(e.offsetX, e.offsetY);
+  console.log(e.offsetX, e.offsetY);
   //note: when the contextmenu is generated, click event handlers for each menu item are attached individually, so we don't handle that here
 }
 

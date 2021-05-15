@@ -55,22 +55,42 @@ class Element {
 class Map {
   constructor(){
     this.adj_matrix = [
-      [0,1,0,0,0,0,0],
-      [1,0,1,0,0,0,0],
-      [0,1,0,1,0,0,0],
-      [0,0,1,0,1,0,1],
-      [0,0,0,1,0,1,1],
-      [0,0,0,0,1,0,0],
-      [0,0,0,1,1,0,0]
+      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0],
+      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,1,0,1,0,0,0,0,0,0,1,0,1,0],
+      [0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0],
+      [0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0],
+      [0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0],
+      [0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0],
+      [0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0],
+      [0,0,0,0,1,0,0,0,0,0,1,0,0,1,1,0],
+      [0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0],
+      [0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]
     ];
     this.places = [
-      new Place("0", {x:89,y:126}, "Waterfall of Wisdom"),
-      new Place("Cliffside Grove", {x:254,y:105}, "Prickly Pines"),
+      new Place("The Spiral Stones", {x:89,y:126}, "Waterfall of Wisdom"),
+      new Place("Clifftop Pines", {x:195,y:123}, "Prickly Pines"),
+      new Place("Cliff", {x:235,y:176}, "Waterfall of Wisdom"),
+      new Place("waterbase", {x:262,y:274}, "Waterfall of Wisdom"),
+      new Place("cliffbase", {x:331,y:246}, "Waterfall of Wisdom"),
+      new Place("waterfall river", {x:346,y:298}, "Waterfall of Wisdom"),
+
+      new Place("Cliffside Grove", {x:304,y:113}, "Prickly Pines"),
       new Place("Bear Den", {x:401,y:137}, "Prickly Pines"),
-      new Place("3", {x:501,y:212}, "Prickly Pines"),
-      new Place("4", {x:408,y:273}, "Prickly Pines"),
-      new Place("5", {x:323,y:270}, "Waterfall of Wisdom"),
-      new Place("6", {x:486,y:333}, "Prickly Pines")
+      new Place("Behind Bear", {x:418,y:56}, "Prickly Pines"),
+      new Place("Behind Bear Right", {x:511,y:95}, "Prickly Pines"),
+      new Place("Redhill", {x:467,y:189}, "Prickly Pines"),
+      new Place("backhill", {x:569,y:117}, "Prickly Pines"),
+      new Place("hillbase", {x:453,y:252}, "Prickly Pines"),
+      new Place("flowers", {x:564,y:267}, "Prickly Pines"),
+
+      new Place("log", {x:395,y:309}, "Roaring Rapids"),
+      new Place("river right", {x:450,y:344}, "Roaring Rapids")
     ];
   }
 }
@@ -79,11 +99,12 @@ class Map {
 class Place {
   //note: place image files should be named place_name.jpg, spaces replaced with underscores (to be consistent with item/thing naming)
 
-  constructor(name, pos, region){
+  constructor(name, pos, region, background_position="top left"){
     //constants
     this.name = name;
     this.pos = pos; //{x:_, y:_} -unscaled coords for position on the map_zoom_div
     this.region = region; //string - name of region
+    //this.background_position = background_position; //css value
 
     //these are defined during game generation
 

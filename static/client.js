@@ -171,6 +171,7 @@ socket.on("update_client_element", function(data){
 socket.on("update_state", function(game){
 	console.log("update");
 	me = game.players[my_name];
+	here = game.map.places[me.location];
 
 	prev_game_obj = game_obj;
 	game_obj = game;
