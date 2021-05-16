@@ -317,6 +317,11 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       case "Cliffside Grove": position = "top left"; break;
       case "Bear Den": position = "center bottom"; break;
       case "Redhill": position = "center center"; break;
+      case "Fern Haven": position = "center 75%"; break;
+      case "Thicket of Secrets": position = "center bottom"; break;
+      case "Sunlit Stand": position = "center 75%"; break;
+      case "Path": position = "center center"; break;
+      case "Middle": position = "center center"; break;
     }
     search_div.style.backgroundPosition = position;
     search_div.innerHTML = "";

@@ -25,7 +25,7 @@ class Game {
 
     //add player objects
     for(let i=0; i<player_names.length; i++){
-      let player = new Player(player_names[i], "squirrel", "Clifftop Pines");
+      let player = new Player(player_names[i], "squirrel", "Backhill");
       this.players[player.name] = player;
 
       let pos = this.map.places[player.location].pos;

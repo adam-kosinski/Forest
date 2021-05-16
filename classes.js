@@ -39,48 +39,40 @@ class Element {
 
 class Map {
   constructor(){
-    this.adj_matrix = [
-      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0],
-      [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,1,0,1,0,0,0,0,0,0,1,0,1,0],
-      [0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0],
-      [0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,1,0,1,1,1,0,0,0,0,0],
-      [0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0],
-      [0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0],
-      [0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0],
-      [0,0,0,0,1,0,0,0,0,0,1,0,0,1,1,0],
-      [0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0],
-      [0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]
-    ];
     //non-redundant, easily-editable way for me to define places, processed into actual places later in the constructor
     this.place_def = {
       "Waterfall of Wisdom": {
         "The Spiral Stones": {x:89, y:126, adj:["Clifftop Pines"]},
         "Cliff": {x:235, y:176, adj:["Clifftop Pines"]},
         "Waterbase": {x:262, y:274, adj:["Cliffbase", "Log"]},
-        "Cliffbase": {x:331, y:246, adj:["Waterbase", "Hillbase", "Log"]}
+        "Cliffbase": {x:331, y:246, adj:["Waterbase", "Fern Haven", "Log"]}
       },
       "Prickly Pines": {
         "Clifftop Pines": {x:195, y:123, adj:["The Spiral Stones", "Cliff", "Cliffside Grove"]},
         "Cliffside Grove": {x:304, y:113, adj:["Clifftop Pines", "Bear Den", "Behind Bear"]},
-        "Bear Den": {x:401, y:137, adj:["Cliffside Grove", "Behind Bear", "Behind Bear Right", "Redhill"]},
+        "Bear Den": {x:401, y:137, adj:["Cliffside Grove", "Behind Bear", "Behind Bear Right", "Redhill", "Backhill"]},
         "Behind Bear": {x:418, y:56, adj:["Cliffside Grove", "Bear Den", "Behind Bear Right"]},
-        "Behind Bear Right": {x:511, y:95, adj:["Bear Den", "Behind Bear", "Backhill"]},
-        "Redhill": {x:458, y:197, adj:["Bear Den", "Backhill", "Hillbase", "Clearing"]},
-        "Backhill": {x:569, y:117, adj:["Behind Bear Right", "Redhill"]},
-        "Hillbase": {x:453, y:252, adj:["Cliffbase", "Log", "Redhill", "Clearing"]},
-        "Clearing": {x:564, y:189, adj:["Redhill", "Redhill"]}
+        "Behind Bear Right": {x:511, y:95, adj:["Bear Den", "Behind Bear", "Backhill", "Darkhill"]},
+        "Redhill": {x:424, y:197, adj:["Bear Den", "Backhill", "Fern Haven"]},
+        "Backhill": {x:512, y:175, adj:["Bear Den", "Behind Bear Right", "Redhill", "Darkhill", "Fern Haven", "Misty Gloom"]},
+        "Fern Haven": {x:481, y:244, adj:["Cliffbase", "Log", "Redhill", "Clearing", "Backhill"]},
+        "Clearing": {x:543, y:300, adj:["Fern Haven", "River Right", "Sunlit Stand", "Middle"]},
+        "Sunlit Stand": {x:612, y:340, adj:["Clearing", "Middle"]},
+        "Darkhill": {x:587, y:107, adj:["Backhill", "Behind Bear Right", "The Silent Wood", "Thicket of Secrets"]},
+        "The Silent Wood": {x:642, y:72, adj:["Darkhill", "Grove of Souls", "Thicket of Secrets"]},
+        "Grove of Souls": {x:742, y:80, adj:["The Silent Wood"]},
+        "Thicket of Secrets": {x:650, y:150, adj:["Darkhill", "The Silent Wood", "Misty Gloom"]},
+        "Misty Gloom": {x:592, y:200, adj:["Thicket of Secrets", "Backhill", "Path", "Middle"]},
+        "Middle": {x:617, y:274, adj:["Clearing", "Sunlit Stand", "Misty Gloom", "Path"]},
+        "Sunset Edge": {x:765, y:188, adj:["Path"]},
+        "Path": {x:679, y:212, adj:["Sunset Edge", "Misty Gloom", "Middle"]}
       },
       "Roaring Rapids": {
-        "Log": {x:395, y:309, adj:["Waterbase", "Cliffbase", "Hillbase", "River Right"]},
-        "River Right": {x:450, y:344, adj:["Log"]}
+        "Log": {x:395, y:309, adj:["Waterbase", "Cliffbase", "Fern Haven", "River Right"]},
+        "River Right": {x:450, y:344, adj:["Log", "Clearing"]}
       }
     }
+
     this.places = {}; //object with key = place name, value = Place object
 
     //process this.place_def
