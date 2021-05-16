@@ -16,7 +16,7 @@ window.addEventListener("resize", handleWindowResize);
 let drag_element; //undefined means not currently dragging (same for next two)
 let drag_offset_start; // {top: y, left: x} -what the element's offsets were at drag start
 let drag_mouse_start; // {x: pageX, y: pageY} - what the mouse's coords were at drag start
-let drag_place; //id of node we're "over" (near), undefined if none
+let drag_place; //place name of node we're "over" (near), undefined if none
 
 let map_zoom_div_scale = 1; //bigger is more zoomed in
 
@@ -61,14 +61,9 @@ function handleMousedown(e){
       y: e.pageY
     };
 
-    //compute adjacent places so we know if player is allowed to go there
+    //find adjacent places so we know if player is allowed to go there
     if(!am_spectator){
-      adj_places = []; //global var
-      for(let c=0; c<game_obj.map.adj_matrix[me.location].length; c++){
-        if(game_obj.map.adj_matrix[me.location][c] == 1){
-          adj_places.push(c);
-        }
-      }
+      adj_places = game_obj.map.places[me.location].adj_place_names.slice(); //shallow copy just in case
     }
   }
 
@@ -225,26 +220,11 @@ function handleContextmenu(e){
 
   //contextmenu for things and items
   if(e.target.classList.contains("thing") || e.target.classList.contains("item")){
-    let split = e.target.id.split("-");
-    let where = split[0] == "my" ? "my" : Number(split[0]); //"my" or location idx
+    let split = e.target.id.split("|");
+    let where = split[0]; //"my" or location name
     let type = split[1]; //"item" or "thing"
     let id = Number(split[2]);
-
-
-/*
-    //if removing it (animation), don't allow contextmenu
-    let here = game_obj.map.places[me.location];
-    if(type == "item" && ((where == "my" && me.items[idx].quantity == 0) || (where != "my" && here.items[idx].n_visible_for[my_name] == 0))){
-      contextmenu.style.display = "none";
-      return;
-    }
-    if(type == "thing" && !here.things[idx].visible){
-      contextmenu.style.display = "none";
-      return;
-    }
-
-    console.log("contextmenu allowed");
-*/
+    let equality_string = split[3]; //not used right now but might in the future
 
     socket.emit("get_interactions", where, type, id, function(interactions){
       if(interactions == null){

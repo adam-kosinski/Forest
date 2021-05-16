@@ -58,6 +58,12 @@ class Thing {
 		let i = this.tags.indexOf(tag);
 		if(i != -1) this.tags.splice(i, 1);
 	}
+  equalityString(){
+		//same function as in client's util.js - things with the same equality string (same name and tags) are the same
+		this.tags.sort(); //just in case
+		let string = this.name + (this.tags.length > 0 ? "-" + this.tags.join("-") : "");
+		return string.replaceAll(" ","_");
+	}
 }
 
 

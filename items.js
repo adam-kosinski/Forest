@@ -114,16 +114,12 @@ class Item {
     this.deepCopyPropertiesTo(out); //copies methods too
     return out;
   }
-  sameAs(item){
-    if(this.name != item.name) return false;
-    if(this.tags.length != item.tags.length) return false;
-    //then have same name and same number of tags, check if tags are the same (note: we assume tags are alphabetically sorted)
-		this.tags.sort(); //just in case...
-    for(let i=0; i<this.tags.length; i++){
-      if(this.tags[i] != item.tags[i]) return false;
-    }
-    return true;
-  }
+	equalityString(){
+		//same function as in client's util.js - items with the same equality string (same name and tags) are the same
+		this.tags.sort(); //just in case
+		let string = this.name + (this.tags.length > 0 ? "-" + this.tags.join("-") : "");
+		return string.replaceAll(" ","_");
+	}
   take(player){
 		console.log(player.name + " took " + this.name + ", id=" + this.id);
 

@@ -25,7 +25,7 @@ class Game {
 
     //add player objects
     for(let i=0; i<player_names.length; i++){
-      let player = new Player(player_names[i], "squirrel", 1);
+      let player = new Player(player_names[i], "squirrel", "Clifftop Pines");
       this.players[player.name] = player;
 
       let pos = this.map.places[player.location].pos;
@@ -35,17 +35,17 @@ class Game {
 
 
     //add animals
-    for(let i=0; i<this.map.places.length; i++){
-      if(this.map.places[i].name == "Bear Den"){
-        this.map.places[i].things.push(new things.BearDen());
+    for(let place_name in this.map.places){
+      if(place_name == "Bear Den"){
+        this.map.places[place_name].things.push(new things.BearDen());
       }
     }
     this.animals.bear = new animals.Bear();
 
 
     //iterate through places, adding things and items
-    for(let i=0; i<this.map.places.length; i++){
-      let place = this.map.places[i];
+    for(let place_name in this.map.places){
+      let place = this.map.places[place_name];
 
       if(place.region == "Prickly Pines"){
         //forest floor
@@ -68,6 +68,7 @@ class Game {
         }
       }
     }
+
 
   }
 }

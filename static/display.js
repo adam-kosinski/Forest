@@ -27,9 +27,9 @@ function makeThingOrItem(object, display_quantity=0){
 
   let circle = document.createElement("div");
   let where = object.owner == my_name ? "my" : me.location;
-  circle.id = where + "-" + object.type + "-" + object.id;
-  circle.classList.add(object.type);
-  circle.classList.add(equality_string);
+  circle.id = where + "|" + object.type + "|" + object.id + "|" + equality_string;
+  circle.classList.add(object.type); //styling
+  circle.classList.add(equality_string); //for searching by equality_string
   circle.style.backgroundImage = "url('./static/images/" + object.type + "s/" + equality_string + ".jpg')";
   div.appendChild(circle);
 
@@ -468,26 +468,30 @@ function initGameDisplay(game){
   let ctx = canvas.getContext("2d");
   ctx.strokeStyle = "rgba(255, 228, 196, 0.6)"; //bisque
   ctx.lineWidth = 2;
-  //iterate through adjacency matrix, without redundancies
-  for(let r=0; r<game_obj.map.adj_matrix.length; r++){
+  //iterate through the places (which also contain an adjacency list)
+  let edges_drawn = []; //strings formatted place1-place2
+  for(let place_name in game_obj.map.places){
+    let place = game_obj.map.places[place_name];
 
     //create this node
     let node = document.createElement("div");
-    node.id = "node_" + r;
+    node.id = "node_" + place_name;
     node.className = "node";
-    node.style.top = game_obj.map.places[r].pos.y + "px";
-    node.style.left = game_obj.map.places[r].pos.x + "px";
+    node.style.top = place.pos.y + "px";
+    node.style.left = place.pos.x + "px";
     map_overlay.appendChild(node);
 
-    for(let c=r+1; c<game_obj.map.adj_matrix[0].length; c++){
-      if(game_obj.map.adj_matrix[r][c] == 1){
+    place.adj_place_names.forEach(adj_place_name => {
+      if(!edges_drawn.includes([place_name, adj_place_name].sort().join("-"))){
+        edges_drawn.push([place_name, adj_place_name].sort().join("-"));
+        let adj_place = game_obj.map.places[adj_place_name];
         ctx.beginPath();
-        ctx.moveTo(game_obj.map.places[r].pos.x, game_obj.map.places[r].pos.y);
-        ctx.lineTo(game_obj.map.places[c].pos.x, game_obj.map.places[c].pos.y);
+        ctx.moveTo(place.pos.x, place.pos.y);
+        ctx.lineTo(adj_place.pos.x, adj_place.pos.y);
         ctx.stroke();
         ctx.closePath();
       }
-    }
+    });
   }
 
 

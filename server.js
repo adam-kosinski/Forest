@@ -173,7 +173,7 @@ io.on("connection", function(socket) {
 
 
 
-  socket.on("walk", function(destination){
+  socket.on("walk", function(destination){ //destination is a place name string
     let player = game.players[id_to_name[socket.id]];
     if(player.location != destination){
 
