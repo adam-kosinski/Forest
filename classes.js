@@ -56,20 +56,30 @@ class Map {
         "Redhill": {x:424, y:197, adj:["Bear Den", "Backhill", "Fern Haven"]},
         "Backhill": {x:512, y:175, adj:["Bear Den", "Behind Bear Right", "Redhill", "Darkhill", "Fern Haven", "Misty Gloom"]},
         "Fern Haven": {x:481, y:244, adj:["Cliffbase", "Log", "Redhill", "Clearing", "Backhill"]},
-        "Clearing": {x:543, y:300, adj:["Fern Haven", "River Right", "Sunlit Stand", "Middle"]},
-        "Sunlit Stand": {x:612, y:340, adj:["Clearing", "Middle"]},
+        "Clearing": {x:543, y:300, adj:["Fern Haven", "River Right", "Middle", "Pine Overlook"]},
+        "Sunlit Stand": {x:672, y:338, adj:["Middle", "Right Side", "Pine Overlook"]},
         "Darkhill": {x:587, y:107, adj:["Backhill", "Behind Bear Right", "The Silent Wood", "Thicket of Secrets"]},
         "The Silent Wood": {x:642, y:72, adj:["Darkhill", "Grove of Souls", "Thicket of Secrets"]},
         "Grove of Souls": {x:742, y:80, adj:["The Silent Wood"]},
         "Thicket of Secrets": {x:650, y:150, adj:["Darkhill", "The Silent Wood", "Misty Gloom"]},
         "Misty Gloom": {x:592, y:200, adj:["Thicket of Secrets", "Backhill", "Path", "Middle"]},
-        "Middle": {x:617, y:274, adj:["Clearing", "Sunlit Stand", "Misty Gloom", "Path"]},
-        "Sunset Edge": {x:765, y:188, adj:["Path"]},
-        "Path": {x:679, y:212, adj:["Sunset Edge", "Misty Gloom", "Middle"]}
+        "Middle": {x:617, y:274, adj:["Clearing", "Sunlit Stand", "Misty Gloom", "Path", "Right Side"]},
+        "Sunset Edge": {x:765, y:188, adj:["Path", "Right Side"]},
+        "Path": {x:679, y:212, adj:["Sunset Edge", "Misty Gloom", "Middle", "Right Side"]},
+        "Right Side": {x:742, y:275, adj:["Path", "Middle", "Stream Top", "Sunlit Stand", "Sunset Edge"]},
+        "Mountain Stream": {x:909, y:233, adj:["Stream Top"]},
+        "Stream Top": {x:854, y:280, adj:["Mountain Stream", "Stream Mid", "Right Side"]},
+        "Stream Mid": {x:860, y:346, adj:["Stream Top"]}
       },
       "Roaring Rapids": {
         "Log": {x:395, y:309, adj:["Waterbase", "Cliffbase", "Fern Haven", "River Right"]},
-        "River Right": {x:450, y:344, adj:["Log", "Clearing"]}
+        "River Right": {x:450, y:344, adj:["Log", "Clearing"]},
+        "Pine Overlook": {x:577, y:360, adj:["Clearing", "Sunlit Stand"]}
+      },
+      "Old Oaks": {
+        "Opposite Pines": {x:846, y:403, adj:["Bottom Opp Pines"]},
+        "Bottom Opp Pines": {x:763, y:434, adj:["Opposite Pines"]},
+        "The Great Oak": {x:792, y:728, adj:[]}
       }
     }
 

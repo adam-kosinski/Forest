@@ -166,7 +166,6 @@ function handleMouseup(e){
     else {
       //tell the server we're at a new position
       if(drag_place != me.location){
-        $(map_div).fadeOut(500);
         socket.emit("walk", drag_place);
       }
     }

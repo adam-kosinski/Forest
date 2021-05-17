@@ -322,6 +322,8 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       case "Sunlit Stand": position = "center 75%"; break;
       case "Path": position = "center center"; break;
       case "Middle": position = "center center"; break;
+      case "Stream Mid": position = "75% bottom"; break;
+      case "Cliffbase": position = "left 75%"; break;
     }
     search_div.style.backgroundPosition = position;
     search_div.innerHTML = "";
