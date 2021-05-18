@@ -244,7 +244,7 @@ function handleContextmenu(e){
         menu_item.className = "action";
         menu_item.textContent = actions[i];
         menu_item.addEventListener("click", function(){
-          socket.emit("action", where, type, id, actions[i], function(success){
+          socket.emit("action", where, type, id, actions[i], {}, function(success){
             if(!success){
               alert("Action failed because the item/thing wasn't found on the server. Someone may have beaten you to taking an item, or something else weird might have happened.");
               console.warn("Action socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id + ", action: " + actions[i]);

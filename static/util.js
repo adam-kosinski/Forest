@@ -141,23 +141,27 @@ function processItems(itemArray, cannotFindIds=[]){
 
 function findDifferences(prev, current, prevCannotFindIds=[], cannotFindIds=[]){
   //prev and current are arrays of both item objects or both thing objects
-  //function returns {new:[], missing:[]}
-  //new contains all new objects in current compared to prev, missing contains all missing objects
+  //function returns {new:[], missing:[], changed:[]}
+  //new contains all new objects in current compared to prev, missing contains all missing objects,
+    //changed contains objects that aren't new or missing, but a property changed - represented as {prev:object, current:object}
   //items/things we can't find aren't considered in the comparison
 
-  let out = {new:[], missing:[]};
+  let out = {new:[], missing:[], changed:[]};
 
   //filter out stuff we can't find (also makes a new array, letting us splice)
   prev = prev.filter(obj => !prevCannotFindIds.includes(obj.id));
   current = current.filter(obj => !cannotFindIds.includes(obj.id));
 
   //iterate through prev, checking if each entry's id is in current
-  //if so, splice out of current - this will leave only new entries in current by the end
+  //if so, check if changed, then splice out of current - this will leave only new entries in current by the end
   //if not, push to missing
   prev_iteration:
   for(let i=0; i<prev.length; i++){
     for(let j=0; j<current.length; j++){
       if(prev[i].id == current[j].id){
+        if(JSON.stringify(prev[i]) != JSON.stringify(current[j])){
+          out.changed.push({prev:prev[i], current:current[j]});
+        }
         current.splice(j, 1);
         continue prev_iteration;
       }
@@ -172,8 +176,18 @@ function findDifferences(prev, current, prevCannotFindIds=[], cannotFindIds=[]){
 
 function equalityString(object){
   //object is either an Item or a Thing object
-  //items/things with the same equality string (name + tags) are the same
+  //items/things with the same equality string (name + tags + stackability) are the same; unstackable objects always have unique equality strings
   //equality strings used in processItems() above, and lots of functions in display.js
   let string = object.name + (object.tags.length > 0 ? "-" + object.tags.join("-") : "");
+  if(!object.stackable) string += "~" + object.id;
   return string.replaceAll(" ","_"); //some applications (e.g. class name) don't accept spaces
+}
+
+function imageSrc(object){
+  //similar to equality string, but removes uniqueness of unstackables, and checks for const_name
+  //also does path and .jpg
+  let image_name = (object.const_name ? object.const_name : object.name);
+  image_name += (object.tags.length > 0 ? "-" + object.tags.join("-") : "");
+  image_name = image_name.replaceAll(" ","_");
+  return "./static/images/" + object.type + "s/" + image_name + ".jpg";
 }

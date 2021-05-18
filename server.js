@@ -202,34 +202,38 @@ io.on("connection", function(socket) {
     //id is thing/item id
     let player = game.players[id_to_name[socket.id]];
     let list = where == "my" ? player.items : game.map.places[where][type+"s"];
-    for(let i=0; i<list.length; i++){
-      if(list[i].id == id){
-        callback(list[i].getInteractions(player));
-        return;
-      }
+
+    let target = list.find(object => object.id==id);
+    if(target === undefined){
+      callback(null);
+      return;
     }
-    callback(null);
+    callback(target.getInteractions(player));
   });
 
 
   //actions for things and items
-  socket.on("action", function(where, type, id, action, callback){
+  socket.on("action", function(where, type, id, action, data, callback){
     //where is a place idx or "my"
     //type is "thing" or "item"
     //id is thing/item id
+    //data is an object that stores inputs to the action ("arguments") if needed
     action = action.toLowerCase().replace(/ /g, "_"); //to match method name
 
     let player = game.players[id_to_name[socket.id]];
     let list = where == "my" ? player.items : game.map.places[where][type+"s"];
-    for(let i=0; i<list.length; i++){
-      if(list[i].id == id){
-        list[i][action](player, socket); //socket mostly for animals, if the method doesn't take socket as an arg it'll just be ignored
-        callback(true);
-        io.emit("update_state", game); //in case the action changed something
-        return;
-      }
+
+    let target = list.find(object => object.id==id);
+    if(target === undefined){
+      callback(false);
+      return;
     }
-    callback(false); //item/thing not found
+
+    target[action](player, socket, data);
+    //socket mostly for animals, if the method doesn't take socket as an arg it'll just be ignored
+    //same for data - not all methods have 3 args
+    callback(true);
+    io.emit("update_state", game);
   });
 
 

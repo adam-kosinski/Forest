@@ -20,7 +20,7 @@ function updateClientElement(data){
 
 
 function makeThingOrItem(object, display_quantity=0){
-  let equality_string = equalityString(object); //util.js, objects with the same name and tags are 'equal'
+  let equality_string = equalityString(object); //util.js, objects with the same name and tags (if unstackable) are 'equal'
 
   let div = document.createElement("div");
   div.className = object.type + "-container";
@@ -30,12 +30,12 @@ function makeThingOrItem(object, display_quantity=0){
   circle.id = where + "|" + object.type + "|" + object.id + "|" + equality_string;
   circle.classList.add(object.type); //styling
   circle.classList.add(equality_string); //for searching by equality_string
-  circle.style.backgroundImage = "url('./static/images/" + object.type + "s/" + equality_string + ".jpg')";
+  circle.style.backgroundImage = "url('" + imageSrc(object) + "')"; //imageSrc() in util.js
   div.appendChild(circle);
 
   let p = document.createElement("p");
   p.textContent = object.name;
-  if(display_quantity > 0) p.textContent += " (" + display_quantity + ")";
+  if(display_quantity > 0 && object.stackable) p.textContent += " (" + display_quantity + ")";
 
   div.appendChild(p);
   return div;
@@ -175,7 +175,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
     let same_items = processed_items.visible[equality_string];
     let prev_same_items = prev_processed_items.visible[equality_string];
 
-    //check if not there before
+    //check if item type (equality string) not there before
     if(!prev_same_items){
       let div = makeThingOrItem(item, same_items.length);
       display_div.appendChild(div);
@@ -193,7 +193,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
       if(! (display_div == inventory_items && getComputedStyle(inventory).display == "none") ){ //special case for inventory, don't animate if not showing b/c then animation will trigger when open inventory later
         let circle = document.createElement("div");
         circle.className = "animator_circle";
-        circle.style.backgroundImage = new_item_container.firstElementChild.style.backgroundImage;
+        circle.style.backgroundImage = "url('" + imageSrc(item) + "')";
         new_item_container.appendChild(circle);
         animateScale(circle, "expand", function(){
           circle.parentElement.removeChild(circle);
@@ -221,12 +221,29 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
       //animate a duplicate image of the item expanding on top
       let circle = document.createElement("div");
       circle.className = "animator_circle";
-      circle.style.backgroundImage = new_item_container.firstElementChild.style.backgroundImage;
+      circle.style.backgroundImage = "url('" + imageSrc(item) + "')";
       new_item_container.appendChild(circle);
       animateScale(circle, "contract", function(){
         circle.parentElement.removeChild(circle);
       });
     }
+  });
+  item_differences.changed.forEach(pair => {
+    //TODO:
+    //deal with visibility changing
+    //deal with weight changing?
+
+    if(!pair.current.visible) return; //NOTE: this ignores the possibility of visibility changing, TODO PLEASE FIX
+
+    console.log("changed", pair);
+    let equality_string = equalityString(pair.current);
+    let prev_equality_string = equalityString(pair.prev);
+    let same_items = processed_items.visible[equality_string];
+    let item_container = display_div.getElementsByClassName(prev_equality_string)[0].parentElement;
+
+    //update the item's display
+    let new_item_container = makeThingOrItem(same_items[0], same_items.length);
+    item_container.replaceWith(new_item_container);
   });
 }
 

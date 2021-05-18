@@ -47,6 +47,9 @@ class Game {
     for(let place_name in this.map.places){
       let place = this.map.places[place_name];
 
+      for(let n=0; n<5; n++) place.items.push(new items.Dirt());
+      place.items.push(new items.Container("Basket", "normal", 3));
+
       if(place.region == "Prickly Pines"){
         //forest floor
         place.things.push(new things.ForestFloor("Prickly Pines"));
