@@ -1,3 +1,6 @@
+BUG - when digging for the first time, we get phantom dirt. This probably occurs because of
+weirdness with multiple items being added at once and how display.js updates the item display.
+
 remove game_active variable for the client
 
 update server client connection to better version from JumpShootOnline

@@ -152,7 +152,10 @@ class ForestFloor extends Thing {
     console.log(player.name + " dug!");
     socket.emit("activity_progress", "Digging", 1000); //TODO change time based on weight
     setTimeout(function(){
-      server.getGame().map.places[player.location].things.push(new Hole());
+      let place = server.getGame().map.places[player.location];
+      place.things.push(new Hole());
+      place.items.push(new items.Dirt());
+      place.items.push(new items.Dirt());
       socket.emit("activity_progress"); //no args mean clear the progress bar
       server.getIO().emit("update_state", server.getGame());
     }, 1000);
@@ -255,6 +258,8 @@ class DisturbedGround extends Thing {
     socket.emit("activity_progress", "Digging", 1000); //TODO change time based on weight
     setTimeout(function(){
       place.things.push(hole);
+      place.items.push(new items.Dirt());
+      place.items.push(new items.Dirt());
       socket.emit("activity_progress"); //no args mean clear the progress bar
       server.getIO().emit("update_state", server.getGame());
     }, 1000);
