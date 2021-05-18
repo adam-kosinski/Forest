@@ -264,3 +264,4 @@ io.on("connection", function(socket) {
 
 
 exports.getGame = function(){return game;}
+exports.getIO = function(){return io;}

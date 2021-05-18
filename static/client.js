@@ -185,6 +185,11 @@ socket.on("update_state", function(game){
 });
 
 
+socket.on("alert", function(message){
+	customAlert(message);
+});
+
+
 socket.on("activity_progress", function(activity, duration){
 	if(activity){
 		let progress_bar = document.getElementById("activity_progress");

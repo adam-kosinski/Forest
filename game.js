@@ -47,28 +47,41 @@ class Game {
     for(let place_name in this.map.places){
       let place = this.map.places[place_name];
 
-      for(let n=0; n<5; n++) place.items.push(new items.Dirt());
       place.items.push(new items.Container("Basket", "normal", 3));
 
-      if(place.region == "Prickly Pines"){
-        //forest floor
-        place.things.push(new things.ForestFloor("Prickly Pines"));
-        //add trees
-        let n_pine_trees = 4 - Math.floor(Math.random()*3);
-        for(let n=0; n<n_pine_trees; n++){
-          let tree = new things.Tree("Pine");
-          place.things.push(tree);
-          tree.items.forEach(item => place.items.push(item));
-        }
+      let disturbed = new things.DisturbedGround();
+      disturbed.addBuriedItem(new items.Pinecone());
+      place.things.push(disturbed);
 
-        //add dead pine needles on the ground (done here instead of in Tree to make it uniform in the prickly pines)
-        let n_dead_needles = Math.floor(Math.random()*15)+35
-        for(let i=0; i<n_dead_needles; i++) place.items.push(new items.Leaf("Pine", false, "Brown"));
+      let hole = new things.Hole();
+      for(let i=0; i<4; i++){
+        let pinecone = new items.Pinecone();
+        pinecone.visible = true;
+        hole.addItem(pinecone);
+      }
+      place.things.push(hole);
 
-        //chance to have a pinecone regardless of pine trees
-        if(Math.random() > 0.6){
-          place.items.push(new items.Pinecone());
-        }
+
+      switch(place.region){
+        case "Prickly Pines":
+          //forest floor
+          place.things.push(new things.ForestFloor("Prickly Pines"));
+          //add trees
+          let n_pine_trees = 4 - Math.floor(Math.random()*3);
+          for(let n=0; n<n_pine_trees; n++){
+            let pine = new things.Tree("Pine");
+            place.things.push(pine);
+            pine.items.forEach(item => place.items.push(item));
+          }
+          //add dead pine needles on the ground (done here instead of in Tree to make it uniform in the prickly pines)
+          let n_dead_needles = Math.floor(Math.random()*15)+35
+          for(let i=0; i<n_dead_needles; i++) place.items.push(new items.Leaf("Pine", false, "Brown"));
+
+          //chance to have a pinecone regardless of pine trees
+          if(Math.random() > 0.6){
+            place.items.push(new items.Pinecone());
+          }
+        break;
       }
     }
 

@@ -150,8 +150,17 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     thing_differences.missing.forEach(thing => {
       if(!thing.visible) return;
       let equality_string = equalityString(thing);
-      let thing_container = thing_display.getElementsByClassName(equality_string)[0].parentElement;
+      let thing_container = thing_display.getElementsByClassName(equality_string)[0].parentElement; //note this works because things all have unique equality strings (b/c they're not stackable)
       animateScale(thing_container, "contract", function(){thing_container.parentElement.removeChild(thing_container)});
+    });
+    thing_differences.changed.forEach(pair => {
+      if(!pair.current.visible) return; //TODO PLEASE FIX assumes visibility is constant
+      let prev_equality_string = equalityString(pair.prev);
+
+      console.log("thing changed", pair);
+      let thing_container = thing_display.getElementsByClassName(prev_equality_string)[0].parentElement; //note this works because things all have unique equality strings (b/c they're not stackable)
+      let new_thing_container = makeThingOrItem(pair.current);
+      thing_container.replaceWith(new_thing_container);
     });
 
     //items
@@ -235,7 +244,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
 
     if(!pair.current.visible) return; //NOTE: this ignores the possibility of visibility changing, TODO PLEASE FIX
 
-    console.log("changed", pair);
+    console.log("item changed", pair);
     let equality_string = equalityString(pair.current);
     let prev_equality_string = equalityString(pair.prev);
     let same_items = processed_items.visible[equality_string];
