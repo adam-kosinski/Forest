@@ -140,21 +140,21 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     //note: prev_place doesn't refer to the place we were last time, it refers to the state of where we are now, one update before
 
     //things
-    let thing_differences = findDifferences(prev_place.things, place.things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+    let prev_visible_things = prev_place.things.filter(thing => thing.visible);
+    let visible_things = place.things.filter(thing => thing.visible);
+    let thing_differences = findDifferences(prev_visible_things, visible_things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+
     thing_differences.new.forEach(thing => {
-      if(!thing.visible) return;
       let thing_container = makeThingOrItem(thing);
       thing_display.appendChild(thing_container);
       animateScale(thing_container, "expand");
     });
     thing_differences.missing.forEach(thing => {
-      if(!thing.visible) return;
       let equality_string = equalityString(thing);
       let thing_container = thing_display.getElementsByClassName(equality_string)[0].parentElement; //note this works because things all have unique equality strings (b/c they're not stackable)
       animateScale(thing_container, "contract", function(){thing_container.parentElement.removeChild(thing_container)});
     });
     thing_differences.changed.forEach(pair => {
-      if(!pair.current.visible) return; //TODO PLEASE FIX assumes visibility is constant
       let prev_equality_string = equalityString(pair.prev);
 
       console.log("thing changed", pair);
@@ -173,13 +173,15 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 //intended for use with the place info item display, and the inventory (separate function to avoid duplicating code)
 
 function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFindIds=[], cannotFindIds=[]){
+  //filter for visible items
+  prev_items = prev_items.filter(item => item.visible);
+  items = items.filter(item => item.visible);
+
   let processed_items = processItems(items, cannotFindIds); //util.js
   let prev_processed_items = processItems(prev_items, prevCannotFindIds);
   let item_differences = findDifferences(prev_items, items, prevCannotFindIds, cannotFindIds); //see util.js
 
   item_differences.new.forEach(item => {
-    if(!item.visible) return;
-
     let equality_string = equalityString(item);
     let same_items = processed_items.visible[equality_string];
     let prev_same_items = prev_processed_items.visible[equality_string];
@@ -211,8 +213,6 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
     }
   });
   item_differences.missing.forEach(item => {
-    if(!item.visible) return;
-
     let equality_string = equalityString(item);
     let same_items = processed_items.visible[equality_string];
     let prev_same_items = prev_processed_items.visible[equality_string];
@@ -239,10 +239,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
   });
   item_differences.changed.forEach(pair => {
     //TODO:
-    //deal with visibility changing
     //deal with weight changing?
-
-    if(!pair.current.visible) return; //NOTE: this ignores the possibility of visibility changing, TODO PLEASE FIX
 
     console.log("item changed", pair);
     let equality_string = equalityString(pair.current);
@@ -278,7 +275,7 @@ function makeSearchObject(object){
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target");
+  search_target.classList.add("search_target_static");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
   search_target.style.animationDelay = 6*Math.random() + "s";
@@ -359,7 +356,7 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       let thing = place.things[i];
       if(thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
 
-      let search_object = makeSearchObject(item);
+      let search_object = makeSearchObject(thing);
       search_div.appendChild(search_object);
     }
 
@@ -376,27 +373,40 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     //not the first update or a new location, just check for differences from previous update
 
     //things
-    let thing_differences = findDifferences(prev_place.things, place.things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+    let prev_hidden_things = prev_place.things.filter(thing => !thing.visible);
+    let hidden_things = place.things.filter(thing => !thing.visible);
+    let thing_differences = findDifferences(prev_hidden_things, hidden_things, prevCannotFind.thingIds, cannotFind.thingIds); //see util.js
+
     thing_differences.new.forEach(thing => {
-      if(thing.visible) return;
       search_div.appendChild(makeSearchObject(thing));
     });
     thing_differences.missing.forEach(thing => {
-      if(thing.visible) return;
       let search_object = document.getElementById("search_object-thing-" + thing.id);
       $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
     });
+    thing_differences.changed.forEach(pair => {
+      /*let search_object = document.getElementById("search_object-thing-" + pair.prev.id);
+      $(search_object).fadeOut(500, function(){
+        let new_search_object = makeSearchObject(pair.current);
+        search_object.replaceWith(new_search_object);
+      });*/
+    });
+
 
     //items
-    let item_differences = findDifferences(prev_place.items, place.items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
+    let prev_hidden_items = prev_place.items.filter(item => !item.visible);
+    let hidden_items = place.items.filter(item => !item.visible);
+    let item_differences = findDifferences(prev_hidden_items, hidden_items, prevCannotFind.itemIds, cannotFind.itemIds); //see util.js
+
     item_differences.new.forEach(item => {
-      if(item.visible) return;
       search_div.appendChild(makeSearchObject(item));
     });
     item_differences.missing.forEach(item => {
-      if(item.visible) return;
       let search_object = document.getElementById("search_object-item-" + item.id);
       $(search_object).fadeOut(500, function(){search_object.parentElement.removeChild(search_object)});
+    });
+    item_differences.changed.forEach(pair => {
+
     });
 
   }
@@ -424,7 +434,7 @@ function updateInventory(first_time=false){
       inventory_items.innerHTML = ""; //just in case
       let processed_items = processItems(me.items); //see util.js
        //items in a player's inventory should always be visible due to the take method on the server
-      if(Object.keys(processed_items.hidden).length > 0) console.error("Some inventory items hidden, processed_items:", processed_items);
+      if(Object.keys(processed_items.hidden).length > 0) console.warn("Some inventory items hidden, processed_items:", processed_items);
       for(key in processed_items.visible){
         let item_list = processed_items.visible[key];
         let div = makeThingOrItem(item_list[0], item_list.length);
@@ -437,31 +447,6 @@ function updateInventory(first_time=false){
       updateVisibleItemAmounts(inventory_items, prev_items, me.items); //let cannotFindIds arrays default to [] - we can find everything in our inventory
     }
 
-    /*/update items
-    let processed_items = processItems(me.items); //see util.js
-     //items in a player's inventory should always be visible due to the take method on the server
-    if(Object.keys(processed_items.hidden).length > 0) console.error("Some inventory items hidden, processed_items:", processed_items);
-    for(key in processed_items.visible){
-      let item_list = processed_items.visible[key];
-      let div = makeThingOrItem(item_list[0], item_list.length);
-      inventory_items.appendChild(div);
-    }*/
-/*
-    //animate differences
-    if(getComputedStyle(inventory).display != "none"){
-
-      let items = me.items;
-      let prev_items = prev_game_obj.players[my_name].items;
-      //update n_visible_for, since the animation function checks that, not quantity
-      items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
-      prev_items.forEach(item => {item.n_visible_for[my_name] = item.quantity});
-
-      animateIndividualItems(items, prev_items, function(i){
-        let item_circle = document.getElementById("my-item-" + i);
-        if(item_circle){return item_circle.parentElement;}
-        else {return undefined;}
-      });
-    }*/
   }
 }
 

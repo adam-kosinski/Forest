@@ -206,6 +206,9 @@ class Hole extends Thing {
       let item = this.items.pop();
       ground.addBuriedItem(item);
     }
+    ground.visible = this.visible;
+    ground.coords = this.coords;
+
     let place = server.getGame().map.places[player.location];
     place.removeThing(this);
 
@@ -232,7 +235,7 @@ class DisturbedGround extends Thing {
   }
   getInteractions(){
     return {
-      actions: ["Dig", "Inspect"],
+      actions: ["Toggle","Dig", "Inspect"],
       messages: ["Someone or something disturbed the ground here"]
     };
   }
@@ -244,13 +247,16 @@ class DisturbedGround extends Thing {
   }
   dig(player, socket){ //action
     console.log(player.name + " dug at " + this.name + ", id=" + this.id);
-    //make a hole and transfer our items to it, remove this disturbed ground
+    //make a hole and transfer our items/properties to it, remove this disturbed ground
     let hole = new Hole();
     while(this.items.length > 0){
       let item = this.items.pop();
       item.canFind = function(){return "yes";}
       hole.addItem(item);
     }
+    hole.visible = this.visible;
+    hole.coords = this.coords;
+
     let place = server.getGame().map.places[player.location];
     place.removeThing(this);
 
@@ -267,6 +273,9 @@ class DisturbedGround extends Thing {
   inspect(player, socket){ //action
     console.log(player.name + " inspected " + this.name + ", id=" + this.id);
     socket.emit("alert", this.inspect_result);
+  }
+  toggle(){
+    this.visible = !this.visible;
   }
 }
 

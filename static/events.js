@@ -130,7 +130,12 @@ function handleMousemove(e){
     for(let i=0; i<search_contents.length; i++){
       //check if display is block, implies it's expanded
       if(search_contents[i].classList.contains("showing")){
-        if(!elementPartOf(e.target, search_contents[i].parentElement) && !elementPartOf(e.target, contextmenu)){
+        if( !elementPartOf(e.target, search_contents[i].parentElement) &&
+            !elementPartOf(e.target, contextmenu) &&
+            !elementPartOf(e.target, document.getElementById("disable_page_div")) &&
+            !elementPartOf(e.target, document.getElementById("prompt")) &&
+            !elementPartOf(e.target, document.getElementById("alert"))
+          ){
           //contract
           search_contents[i].classList.remove("showing");
           $(search_contents[i].parentElement.firstElementChild).fadeIn(500); //fade search_target back in
@@ -231,7 +236,7 @@ function handleContextmenu(e){
     socket.emit("get_interactions", where, type, id, function(interactions){
       if(interactions == null){
         alert("Couldn't find item/thing on server. Someone may have taken the item before you, or something else weird might have happened. Reload the page to be safe.");
-        console.error("Error with get_interactions socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id);
+        console.warn("Error with get_interactions socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id);
         return;
       }
 
