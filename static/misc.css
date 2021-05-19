@@ -15,6 +15,8 @@ game div
 
 #contextmenu: 25
 
+#element_highlighter: 75
+
 #dark_fade: 50
 */
 
@@ -226,3 +228,20 @@ p {
 	display: none;
 	z-index: 50;
 }
+
+
+
+/* element highlighter ----------------------------------------*/
+
+.element_highlighter {
+	background-color: #000b;
+	z-index: 75;
+	position: absolute;
+	display: none;
+}
+
+/*top and bottom stretch across whole screen, left and right have height of the highlighted element*/
+#top_darkener {top: 0; width: 100vw;}
+#left_darkener {left: 0;}
+#right_darkener {right: 0;}
+#bottom_darkener {bottom: 0; width: 100vw;}

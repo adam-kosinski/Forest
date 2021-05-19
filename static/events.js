@@ -325,4 +325,7 @@ function handleKeydown(e){
 
 function handleWindowResize(e){
   hide(contextmenu);
+  if(highlighted_element){
+    highlightElement(highlighted_element); //see util.js
+  }
 }

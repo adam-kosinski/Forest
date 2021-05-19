@@ -111,6 +111,52 @@ function elementPartOf(element, target_element){
 
 
 
+//Element highlighting ---------------------------------------------------
+
+let highlighted_element; //to remember the element upon window resize (see event handler in events.js)
+
+function highlightElement(element){
+  //If the element is visible, darkens the rest of the screen, while still allowing clicking on the element
+  //The element's z-index doesn't matter
+
+  //check if visible - note can't check display style property b/c could still not be visible if a parent has display = "none"
+  if(element.offsetHeight == 0) return; //offsetHeight is the display height of the element (including padding borders etc) - won't be 0 if the element is showing in any meaningful way
+
+  highlighted_element = element;
+
+  let top_div = document.getElementById("top_darkener");
+  let left_div = document.getElementById("left_darkener");
+  let right_div = document.getElementById("right_darkener");
+  let bottom_div = document.getElementById("bottom_darkener");
+
+  let rect = element.getBoundingClientRect();
+  top_div.style.height = rect.y + "px";
+
+  left_div.style.width = rect.x + "px";
+  left_div.style.height = rect.height + "px";
+  left_div.style.top = rect.y + "px";
+
+  right_div.style.width = window.innerWidth - (rect.x + rect.width) + "px";
+  right_div.style.height = rect.height + "px";
+  right_div.style.top = rect.y + "px";
+
+  bottom_div.style.height = window.innerHeight - (rect.y + rect.height) + "px";
+
+  show(top_div);
+  show(left_div);
+  show(right_div);
+  show(bottom_div);
+}
+
+function clearElementHighlight(){
+  highlighted_element = undefined;
+  hide(document.getElementById("top_darkener"));
+  hide(document.getElementById("left_darkener"));
+  hide(document.getElementById("right_darkener"));
+  hide(document.getElementById("bottom_darkener"));
+}
+
+
 // Item/Thing processing --------------------------------------------
 
 function processItems(itemArray, cannotFindIds=[]){
