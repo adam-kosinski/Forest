@@ -54,7 +54,7 @@ class Game {
       place.things.push(disturbed);
 
       let hole = new things.Hole();
-      for(let i=0; i<4; i++){
+      for(let i=0; i<3; i++){
         let pinecone = new items.Pinecone();
         pinecone.visible = true;
         hole.addItem(pinecone);

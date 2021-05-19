@@ -20,16 +20,14 @@ function updateClientElement(data){
 
 
 function makeThingOrItem(object, display_quantity=0){
-  let equality_string = equalityString(object); //util.js, objects with the same name and tags (if unstackable) are 'equal'
-
   let div = document.createElement("div");
   div.className = object.type + "-container";
 
   let circle = document.createElement("div");
   let where = object.owner == my_name ? "my" : me.location;
-  circle.id = where + "|" + object.type + "|" + object.id + "|" + equality_string;
+  circle.id = where + "|" + object.type + "|" + object.id;
   circle.classList.add(object.type); //styling
-  circle.classList.add(equality_string); //for searching by equality_string
+  circle.classList.add(equalityString(object)); //for searching by equality_string, see util.js for details on equality strings
   circle.style.backgroundImage = "url('" + imageSrc(object) + "')"; //imageSrc() in util.js
   div.appendChild(circle);
 
@@ -173,7 +171,7 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 //intended for use with the place info item display, and the inventory (separate function to avoid duplicating code)
 
 function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFindIds=[], cannotFindIds=[]){
-  let debug = true;
+  let debug = false;
 
   //filter for visible items
   prev_items = prev_items.filter(item => item.visible);

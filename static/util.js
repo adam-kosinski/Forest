@@ -183,6 +183,7 @@ function equalityString(object){
   return string.replaceAll(" ","_"); //some applications (e.g. class name) don't accept spaces
 }
 
+
 function imageSrc(object){
   //similar to equality string, but removes uniqueness of unstackables, and checks for const_name
   //also does path and .jpg

@@ -68,6 +68,7 @@ class Item {
 
 		//these properties not overridden in child constructors -----------------------------------
 		this.type = "item";
+		this.className = Object.getPrototypeOf(this).constructor.name; //used in client's client_actions.js file
 		this.id = next_item_id;
 		next_item_id++;
     this.owner = undefined; //undefined or a player name (implies it's in their inventory)

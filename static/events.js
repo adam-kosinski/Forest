@@ -31,7 +31,7 @@ function handleClick(e){
       hide(contextmenu);
     }
   }
-  console.log(e.offsetX, e.offsetY);
+  //console.log(e.offsetX, e.offsetY);
   //note: when the contextmenu is generated, click event handlers for each menu item are attached individually, so we don't handle that here
 }
 
@@ -68,6 +68,7 @@ function handleMousedown(e){
   }
 
 }
+
 
 function handleMousemove(e){
   //drag and drop ----------------------
@@ -156,6 +157,7 @@ function handleMousemove(e){
   }*/
 }
 
+
 function handleMouseup(e){
 
   //drag and drop ---------------------
@@ -188,7 +190,6 @@ function handleMouseup(e){
 }
 
 
-
 function handleMousewheel(e){
 
   //gameboard zooming
@@ -218,7 +219,6 @@ function handleMousewheel(e){
 }
 
 
-
 function handleContextmenu(e){
   if(disable_contextmenu){e.preventDefault();}
   else {return;}
@@ -231,7 +231,10 @@ function handleContextmenu(e){
     let where = split[0]; //"my" or location name
     let type = split[1]; //"item" or "thing"
     let id = Number(split[2]);
-    let equality_string = split[3]; //not used right now but might in the future
+
+    //get object of the item/thing
+    let list = where=="my" ? me.items : here[type+"s"];
+    let object = list.find(obj => obj.id==id);
 
     socket.emit("get_interactions", where, type, id, function(interactions){
       if(interactions == null){
@@ -249,13 +252,13 @@ function handleContextmenu(e){
         menu_item.className = "action";
         menu_item.textContent = actions[i];
         menu_item.addEventListener("click", function(){
-          socket.emit("action", where, type, id, actions[i], {}, function(success){
-            if(!success){
-              alert("Action failed because the item/thing wasn't found on the server. Someone may have beaten you to taking an item, or something else weird might have happened.");
-              console.warn("Action socket emit from contextmenu, couldn't find item/thing. where: " + where + ", type: " + type + ", id: " + id + ", action: " + actions[i]);
-              //note: item/thing not found for an action emit will cause the server to gracefully do nothing
-            }
-          });
+          let key = object.className + "-" + actions[i];
+          if(client_actions.hasOwnProperty(key)) {
+            client_actions[key](where, object);
+          }
+          else {
+            client_actions["default"](where, object, actions[i]);
+          }
         });
         contextmenu.appendChild(menu_item);
       }
@@ -318,6 +321,7 @@ function handleKeydown(e){
     hide(map_div);
   }
 }
+
 
 function handleWindowResize(e){
   hide(contextmenu);

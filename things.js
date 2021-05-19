@@ -34,6 +34,7 @@ class Thing {
 
     //not overridden by children
     this.type = "thing";
+    this.className = Object.getPrototypeOf(this).constructor.name; //used in client's client_actions.js file
     this.stackable = false; //Things are never stackable, including this property to be consistent with Items
     this.id = next_thing_id;
     next_thing_id++;
@@ -164,21 +165,30 @@ class ForestFloor extends Thing {
 
 
 class Hole extends Thing {
-  constructor(){
+  constructor(capacity=3){
     super();
     this.name = "Empty Hole";
     this.const_name = "Hole";
     this.items = []; //items in this hole
     this.visible = true;
+
+    this.hole_capacity = capacity; //how many items can fit in the hole
   }
   getInteractions(){
     let out = {actions:["Fill In"], messages:[]};
     if(this.items.length > 0){
       out.actions.push("Remove Items");
     }
+    if(this.items.length < this.hole_capacity){
+      out.actions.push("Put Item In");
+    }
+    else {
+      out.messages.push("Hole cannot fit more items.");
+    }
     return out;
   }
   addItem(item){
+    if(this.items.length >= this.hole_capacity) console.log("Hole capacity exceeded, id=" + this.id);
     this.items.push(item);
     this.name = "Hole with Items (" + this.items.length + ")";
   }

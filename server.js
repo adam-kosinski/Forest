@@ -218,6 +218,8 @@ io.on("connection", function(socket) {
     //type is "thing" or "item"
     //id is thing/item id
     //data is an object that stores inputs to the action ("arguments") if needed
+    //callback called with arg = true if found the item/thing, arg = false if not
+
     action = action.toLowerCase().replace(/ /g, "_"); //to match method name
 
     let player = game.players[id_to_name[socket.id]];
