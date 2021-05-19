@@ -173,6 +173,8 @@ function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 //intended for use with the place info item display, and the inventory (separate function to avoid duplicating code)
 
 function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFindIds=[], cannotFindIds=[]){
+  let debug = true;
+
   //filter for visible items
   prev_items = prev_items.filter(item => item.visible);
   items = items.filter(item => item.visible);
@@ -180,14 +182,18 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
   let processed_items = processItems(items, cannotFindIds); //util.js
   let prev_processed_items = processItems(prev_items, prevCannotFindIds);
   let item_differences = findDifferences(prev_items, items, prevCannotFindIds, cannotFindIds); //see util.js
+  let new_equality_strings = []; //so we don't create multiple new divs if multiple of the same type of item that wasn't there before arrive at once
 
   item_differences.new.forEach(item => {
+    if(debug) console.log("new visible item", item);
     let equality_string = equalityString(item);
     let same_items = processed_items.visible[equality_string];
     let prev_same_items = prev_processed_items.visible[equality_string];
 
     //check if item type (equality string) not there before
-    if(!prev_same_items){
+    if(!prev_same_items && !new_equality_strings.includes(equalityString(item))){
+      if(debug) console.log("--> not there before");
+      new_equality_strings.push(equalityString(item));
       let div = makeThingOrItem(item, same_items.length);
       display_div.appendChild(div);
       if(! (display_div == inventory_items && getComputedStyle(inventory).display == "none") ){ //special case for inventory, don't animate if not showing b/c then animation will trigger when open inventory later
@@ -195,6 +201,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
       }
     }
     else { //there before
+      if(debug) console.log("--> there before");
       //update the item's display
       let item_container = display_div.getElementsByClassName(equality_string)[0].parentElement;
       let new_item_container = makeThingOrItem(same_items[0], same_items.length);
@@ -213,6 +220,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
     }
   });
   item_differences.missing.forEach(item => {
+    if(debug) console.log("missing visible item", item);
     let equality_string = equalityString(item);
     let same_items = processed_items.visible[equality_string];
     let prev_same_items = prev_processed_items.visible[equality_string];
@@ -220,9 +228,11 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
 
     //check if not there now - contract the item container and remove it
     if(!same_items){
+      if(debug) console.log("--> not there now");
       animateScale(item_container, "contract", function(){item_container.parentElement.removeChild(item_container)})
     }
     else {
+      if(debug) console.log("--> still some there");
       //update the item's display
       let new_item_container = makeThingOrItem(same_items[0], same_items.length);
       item_container.replaceWith(new_item_container);
@@ -241,7 +251,7 @@ function updateVisibleItemAmounts(display_div, prev_items, items, prevCannotFind
     //TODO:
     //deal with weight changing?
 
-    console.log("item changed", pair);
+    if(debug) console.log("item changed", pair);
     let equality_string = equalityString(pair.current);
     let prev_equality_string = equalityString(pair.prev);
     let same_items = processed_items.visible[equality_string];

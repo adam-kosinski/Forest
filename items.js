@@ -255,7 +255,6 @@ class Stick extends Item {
 }
 
 
-
 class Container extends Item {
 	constructor(name, type, capacity){
 		//type: "normal" or "watertight"
@@ -307,7 +306,6 @@ class Container extends Item {
 		this.name = "Empty " + this.const_name + " (0/" + this.container_capacity + ")";
 	}
 }
-
 
 
 class Dirt extends Item {
