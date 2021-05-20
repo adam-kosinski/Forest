@@ -193,9 +193,13 @@ class Hole extends Thing {
     this.name = "Hole with Items (" + this.items.length + ")";
   }
   put_item_in(player, socket, data){
-    //data.itemId should refer to an item in the player's inventory
+    //data.item_id should refer to an item in the player's inventory
+    let item = player.items.find(obj => obj.id==data.item_id);
+    if(item === undefined) {console.log("Couldn't find item in inventory to put in hole, canceling action, item_id=" + data.item_id); return;}
+    console.log(player.name + " put item " + item.name + " (id=" + item.id + ") in hole, id=" + this.id);
 
-    //TODO: work on this after the client side is functional
+    player.removeItem(item);
+    this.addItem(item);
 
     this.name = "Hole with Items (" + this.items.length + ")";
   }

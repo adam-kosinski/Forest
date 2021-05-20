@@ -300,12 +300,12 @@ function handleKeypress(e){
     disable_contextmenu = !disable_contextmenu;
     console.log("Disable contextmenu:", disable_contextmenu);
   }
-  if(e.key == " " && game_active){
+  if(e.key == " " && game_active && !highlighted_element){
     hide(map_div);
     getComputedStyle(inventory).display == "block" ? hide(inventory) : show(inventory);
     //we'll let spectators view the inventory board, that way they can see what stuff there is to find
   }
-  if(e.key == "m"){
+  if(e.key == "m" && !highlighted_element){
     hide(inventory);
     getComputedStyle(map_div).display == "block" ? hide(map_div) : show(map_div);
   }
@@ -319,6 +319,7 @@ function handleKeydown(e){
     hide(contextmenu);
     hide(inventory);
     hide(map_div);
+    clearElementHighlight();
   }
 }
 

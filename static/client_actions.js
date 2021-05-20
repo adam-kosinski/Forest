@@ -23,6 +23,28 @@ let client_actions = {
   },
   "Hole-Put Item In": function(where, object){
     console.log("hole put item in");
-    socket.emit("action", where, object.type, object.id, "Put Item In", {}, action_callback);
+    show(inventory);
+
+    highlightElement(inventory_items, "Select item to put in hole (press Esc to cancel)");
+    inventory_items.classList.add("highlight_items");
+    //these things undone if press escape or if click an item (below)
+
+    //event handler for selecting an item
+    $("#inventory_items .item").click(function(e){
+      console.log("item clicked");
+      $("#inventory_items .item").off("click"); //remove event handler from items
+      clearElementHighlight();
+      inventory_items.classList.remove("highlight_items");
+
+      let split = e.target.id.split("|");
+      let item_where = split[0];
+      if(item_where != "my"){
+        console.warn("Somehow selected an item not in the inventory for putting in a hole, canceling action.");
+        return;
+      }
+      let item_id = Number(split[2]);
+
+      socket.emit("action", where, object.type, object.id, "Put Item In", {item_id: item_id}, action_callback);
+    });
   }
 };

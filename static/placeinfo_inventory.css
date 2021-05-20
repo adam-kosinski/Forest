@@ -102,6 +102,11 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	color: white;
 }
 
+.highlight_items div.item:hover {
+	box-shadow: 0 0 20px 5px yellow;
+	cursor: pointer;
+}
+
 
 @keyframes expand {
 	from {transform: scale(0);}

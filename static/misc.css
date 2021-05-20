@@ -15,7 +15,7 @@ game div
 
 #contextmenu: 25
 
-#element_highlighter: 75
+.element_highlighter: 75
 
 #dark_fade: 50
 */
@@ -245,3 +245,10 @@ p {
 #left_darkener {left: 0;}
 #right_darkener {right: 0;}
 #bottom_darkener {bottom: 0; width: 100vw;}
+
+#element_highlighter_text {
+	color: white;
+	transform: translate(-50%, -100%);
+	background-color: transparent;
+	font-size: 30px;
+}

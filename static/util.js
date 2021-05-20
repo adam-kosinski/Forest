@@ -115,7 +115,7 @@ function elementPartOf(element, target_element){
 
 let highlighted_element; //to remember the element upon window resize (see event handler in events.js)
 
-function highlightElement(element){
+function highlightElement(element, text=""){
   //If the element is visible, darkens the rest of the screen, while still allowing clicking on the element
   //The element's z-index doesn't matter
 
@@ -128,6 +128,7 @@ function highlightElement(element){
   let left_div = document.getElementById("left_darkener");
   let right_div = document.getElementById("right_darkener");
   let bottom_div = document.getElementById("bottom_darkener");
+  let text_p = document.getElementById("element_highlighter_text");
 
   let rect = element.getBoundingClientRect();
   top_div.style.height = rect.y + "px";
@@ -146,6 +147,13 @@ function highlightElement(element){
   show(left_div);
   show(right_div);
   show(bottom_div);
+
+  text_p.textContent = text;
+  if(text.length > 0){
+    text_p.style.left = rect.x + rect.width/2 + "px";
+    text_p.style.top = rect.y + "px";
+    show(text_p);
+  }
 }
 
 function clearElementHighlight(){
@@ -154,6 +162,7 @@ function clearElementHighlight(){
   hide(document.getElementById("left_darkener"));
   hide(document.getElementById("right_darkener"));
   hide(document.getElementById("bottom_darkener"));
+  hide(document.getElementById("element_highlighter_text"));
 }
 
 
