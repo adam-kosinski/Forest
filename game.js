@@ -48,6 +48,8 @@ class Game {
     for(let place_name in this.map.places){
       let place = this.map.places[place_name];
 
+      place.items.push(new items.Container("Basket", "normal", 3));
+
       //rocks
       if(Math.random() < 0.6){
         let n_rocks = Math.floor(Math.random()*5);

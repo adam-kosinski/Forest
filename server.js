@@ -179,7 +179,7 @@ io.on("connection", function(socket) {
 
       player.traveling = true;
 
-      let walk_duration = 1000; //ms, TODO: determine algorithmically based on weight
+      let walk_duration = player.getActionDuration(1000);
 
       socket.emit("activity_progress", "Traveling", walk_duration);
       io.emit("update_state", game); //tell everyone this player left

@@ -151,7 +151,9 @@ class ForestFloor extends Thing {
   }
   dig(player, socket){
     console.log(player.name + " dug!");
-    socket.emit("activity_progress", "Digging", 1000); //TODO change time based on weight
+    let duration = player.getActionDuration(1000);
+    socket.emit("activity_progress", "Digging", duration);
+
     setTimeout(function(){
       let place = server.getGame().map.places[player.location];
       place.things.push(new Hole());
@@ -159,7 +161,7 @@ class ForestFloor extends Thing {
       place.items.push(new items.Dirt());
       socket.emit("activity_progress"); //no args mean clear the progress bar
       server.getIO().emit("update_state", server.getGame());
-    }, 1000);
+    }, duration);
   }
 }
 
@@ -227,12 +229,13 @@ class Hole extends Thing {
     place.removeThing(this);
 
     //fill in using the activity bar
-    socket.emit("activity_progress", "Filling In Hole", 1000); //TODO change time based on weight
+    let duration = player.getActionDuration(1000);
+    socket.emit("activity_progress", "Filling In Hole", duration);
     setTimeout(function(){
       place.things.push(ground);
       socket.emit("activity_progress"); //no args mean clear the progress bar
       server.getIO().emit("update_state", server.getGame());
-    }, 1000);
+    }, duration);
   }
 }
 
@@ -275,14 +278,15 @@ class DisturbedGround extends Thing {
     place.removeThing(this);
 
     //dig using the activity bar
-    socket.emit("activity_progress", "Digging", 1000); //TODO change time based on weight
+    let duration = player.getActionDuration(1000);
+    socket.emit("activity_progress", "Digging", duration);
     setTimeout(function(){
       place.things.push(hole);
       place.items.push(new items.Dirt());
       place.items.push(new items.Dirt());
       socket.emit("activity_progress"); //no args mean clear the progress bar
       server.getIO().emit("update_state", server.getGame());
-    }, 1000);
+    }, duration);
   }
   inspect(player, socket){ //action
     console.log(player.name + " inspected " + this.name + ", id=" + this.id);

@@ -175,7 +175,6 @@ class Item {
 class Leaf extends Item {
   constructor(species, alive, color){
     super();
-		this.stackable = false;
     this.species = species;
     this.alive = alive;
     this.color = color;

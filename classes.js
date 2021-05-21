@@ -18,8 +18,8 @@ class Player {
     this.items = []; //inventory
     this.weight_thresholds = [ //if past a threshold multiply the time it takes to do actions by the multiplier. Weight range is how large this threshold is past the previous one
       {name: "Fast", color: "#aec230", multiplier: 1, weight_range: 10},
-      {name: "Medium", color: "#8ba133", multiplier: 1.5, weight_range: 10},
-      {name: "Slow", color: "#547d2a", multiplier: 2, weight_range: 15}
+      {name: "Medium", color: "#8ba133", multiplier: 2, weight_range: 10},
+      {name: "Slow", color: "#547d2a", multiplier: 4, weight_range: 15}
     ];
     //note: adding up all the weight ranges gives you the max_weight
 
@@ -29,9 +29,30 @@ class Player {
     //the more an animal trusts you, the more they will tell you / the more quests they will give. Keys are NPC animal names, values are trust level
     this.trust = {};
   }
-  getActionDuration(normal_duration){
-    //normal duration (ms) = duration w/o carrying items
+  getTotalWeight(){
+    let total_weight = 0;
+    for(let i=0; i<this.items.length; i++){
+      total_weight += this.items[i].weight;
+      if(this.items[i].is_container){
+        total_weight += this.items[i].holding.reduce((accum, item) => accum + item.weight, 0);
+      }
+    }
+    return total_weight;
+  }
+  getActionDuration(base_duration){
+    //base duration (ms) = duration w/o carrying items
     //returns duration in ms
+    //note: rounding down at the threshold border, matching updateTotalWeight() in client's display.js
+
+    //figure out which segment (aka threshold) we're on
+    let weight = this.getTotalWeight();
+    let seg = 0;
+    while(weight > this.weight_thresholds[seg].weight_range && seg < this.weight_thresholds.length){
+      weight -= this.weight_thresholds[seg].weight_range;
+      seg++;
+    }
+    let multiplier = this.weight_thresholds[seg].multiplier;
+    return base_duration * multiplier;
   }
   removeItem(item){
     for(let i=0; i<this.items.length; i++){

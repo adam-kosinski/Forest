@@ -504,7 +504,7 @@ function updateTotalWeight(){
     }
   }
 
-  //move marker
+  //move weight marker
   let max_weight = me.weight_thresholds.reduce((accum, obj) => accum + obj.weight_range, 0);
   let marker = document.getElementById("weight_bar_marker");
   marker.textContent = total_weight;
@@ -513,7 +513,7 @@ function updateTotalWeight(){
   //indicate current segment
   let test_weight = total_weight;
   let seg = 0;
-  while(test_weight >= me.weight_thresholds[seg].weight_range && seg < me.weight_thresholds.length){
+  while(test_weight > me.weight_thresholds[seg].weight_range && seg < me.weight_thresholds.length){
     test_weight -= me.weight_thresholds[seg].weight_range;
     seg++;
   }

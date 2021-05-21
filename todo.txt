@@ -1,9 +1,11 @@
 BUG - contextmenu occasionally rendering part offscreen
 
+Get rid of map, just have game.place_def and game.places
+
 Implement weight affecting time it takes to do actions, uniformly across actions somehow
 - maybe through a Player method on the server?
 
-remove game_active variable for the client
+remove game_active variable for the client?
 
 update server client connection to better version from JumpShootOnline
 
