@@ -43,24 +43,18 @@ class Game {
     this.animals.bear = new animals.Bear();
 
 
+
     //iterate through places, adding things and items
     for(let place_name in this.map.places){
       let place = this.map.places[place_name];
 
-      place.items.push(new items.Container("Basket", "normal", 3));
-
-      let disturbed = new things.DisturbedGround();
-      disturbed.addBuriedItem(new items.Pinecone());
-      place.things.push(disturbed);
-
-      let hole = new things.Hole();
-      for(let i=0; i<3; i++){
-        let pinecone = new items.Pinecone();
-        pinecone.visible = true;
-        hole.addItem(pinecone);
+      //rocks
+      if(Math.random() < 0.6){
+        let n_rocks = Math.floor(Math.random()*5);
+        for(let i=0; i<n_rocks; i++){
+          place.items.push(new items.Rock());
+        }
       }
-      place.things.push(hole);
-
 
       switch(place.region){
         case "Prickly Pines":
@@ -80,6 +74,13 @@ class Game {
           //chance to have a pinecone regardless of pine trees
           if(Math.random() > 0.6){
             place.items.push(new items.Pinecone());
+          }
+        break;
+        case "Roaring Rapids":
+          //pebbles
+          let n_pebbles = 15 + Math.floor(Math.random()*10);
+          for(let i=0; i<n_pebbles; i++){
+            place.items.push(new items.Pebble());
           }
         break;
       }

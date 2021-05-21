@@ -448,6 +448,38 @@ function updateInventory(first_time=false){
         let div = makeThingOrItem(item_list[0], item_list.length);
         inventory_items.appendChild(div);
       }
+
+      //generate weight bar according to player thresholds
+      let weight_bar = document.getElementById("weight_bar");
+      let current_max_weight = 0;
+
+      for(let i=0; i<me.weight_thresholds.length; i++){
+        let threshold = me.weight_thresholds[i];
+
+        let segment = document.createElement("div");
+        segment.className = "weight_bar_segment";
+        segment.style.backgroundColor = threshold.color;
+        segment.style.flex = threshold.weight_range;
+        weight_bar.appendChild(segment);
+
+        let speed_label = document.createElement("p");
+        speed_label.className = "speed_label";
+        speed_label.textContent = threshold.name;
+        segment.appendChild(speed_label);
+
+        let weight_label_left = document.createElement("p");
+        weight_label_left.className = "weight_label_left";
+        weight_label_left.textContent = current_max_weight;
+        segment.appendChild(weight_label_left);
+
+        current_max_weight += threshold.weight_range;
+        if(i+1 == me.weight_thresholds.length){
+          let weight_label_right = document.createElement("p");
+          weight_label_right.className = "weight_label_right";
+          weight_label_right.textContent = current_max_weight;
+          segment.appendChild(weight_label_right);
+        }
+      }
     }
     else {
       //just update what's already there
@@ -455,12 +487,42 @@ function updateInventory(first_time=false){
       updateVisibleItemAmounts(inventory_items, prev_items, me.items); //let cannotFindIds arrays default to [] - we can find everything in our inventory
     }
 
+    updateTotalWeight();
   }
 }
 
 
 
+function updateTotalWeight(){
+  //called by updateInventory()
 
+  let total_weight = 0;
+  for(let i=0; i<me.items.length; i++){
+    total_weight += me.items[i].weight;
+    if(me.items[i].is_container){
+      total_weight += me.items[i].holding.reduce((accum, item) => accum + item.weight, 0);
+    }
+  }
+
+  //move marker
+  let max_weight = me.weight_thresholds.reduce((accum, obj) => accum + obj.weight_range, 0);
+  let marker = document.getElementById("weight_bar_marker");
+  marker.textContent = total_weight;
+  marker.style.left = (100*total_weight/max_weight) + "%";
+
+  //indicate current segment
+  let test_weight = total_weight;
+  let seg = 0;
+  while(test_weight >= me.weight_thresholds[seg].weight_range && seg < me.weight_thresholds.length){
+    test_weight -= me.weight_thresholds[seg].weight_range;
+    seg++;
+  }
+  let segments = document.getElementsByClassName("weight_bar_segment");
+  for(let i=0; i<segments.length; i++){
+    if(i == seg) segments[i].classList.add("current_segment");
+    else segments[i].classList.remove("current_segment");
+  }
+}
 
 
 

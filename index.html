@@ -78,8 +78,8 @@
 			</div>
 
 			<div id="inventory">
-				<div id="inventory_display">
-					<table>
+				<div id="inventory_board">
+					<table id="inventory_table">
 						<tbody>
 							<tr>
 								<td><h1>Items to Find:</h1></td>
@@ -93,6 +93,16 @@
 								<td></td>
 								<td colspan="3">
 									<div id="inventory_items"></div>
+									<div id="total_weight_inventory">
+										<div id="weight_bar_left_labels">
+											<p>Action Speed:</p>
+											<p>Total Weight:</p>
+										</div>
+										<div id="weight_bar_container">
+											<div id="weight_bar_marker">5</div>
+											<div id="weight_bar"></div> <!--filled in updateInventory()'s first run, display.js-->
+										</div>
+									</div>
 								</td>
 							</tr>
 						</tbody>

@@ -175,6 +175,7 @@ class Item {
 class Leaf extends Item {
   constructor(species, alive, color){
     super();
+		this.stackable = false;
     this.species = species;
     this.alive = alive;
     this.color = color;
@@ -235,7 +236,7 @@ class Pebble extends Item {
 		this.name = "Pebble";
 		this.categories = ["Rock"];
 		this.weight = 3;
-		this.visible = Math.random() > 0.8; //pebbles usually everywhere
+		this.visible = Math.random() < 0.7; //lots of pebbles will be made if they're in a place
 	}
 }
 

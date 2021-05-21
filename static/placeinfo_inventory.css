@@ -60,7 +60,7 @@
 	overflow-y: auto;
 }
 
-#place_info div.item-container, #place_info div.thing-container {
+#place_info div.item-container, #place_info div.thing-container, #inventory_items div.item-container {
 	margin: 0 0.65vw 3vh 0.65vw;
 	display: inline-block;
 	vertical-align: top;
@@ -136,7 +136,7 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	display: none;
 }
 
-#inventory_display {
+#inventory_board {
 	width: 70vw;
 	height: 90vh;
 	left: 5vw;
@@ -145,18 +145,18 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	border: 5px solid saddlebrown;
 }
 
-#inventory_display table {
+#inventory_board #inventory_table {
 	border-collapse: collapse;
 	width: 100%;
 	height: 100%;
 	background-color: saddlebrown;
 }
 
-#inventory_display table * {
+#inventory_table * {
 	position: static;
 }
 
-#inventory_display h1 {
+#inventory_board h1 {
 	font-size: 5.1vh;
 	font-weight: normal;
 	color: white;
@@ -170,38 +170,40 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	transform: translate(-50%, 0);
 }
 
-#inventory_display tr:first-child td:first-child {
+/*note: these arrows from when we had a table inside the main table and didn't want to style that one*/
+#inventory_table > tbody > tr:first-child > td:first-child {
 	height: 18vh;
 	width: 32vh; /*We're scaling only by height changes, except for the inventory item title*/
 	background-image: url("./images/goal_title.svg");
 }
-#inventory_display tr td:nth-child(2) {
+#inventory_table > tbody > tr > td:nth-child(2) {
 	width: 1.6vh;
 	background-image: url("./images/divider.svg");
 	outline: 1px solid black;
 }
-#inventory_display tr:first-child td:nth-child(3) {
+#inventory_table > tbody > tr:first-child > td:nth-child(3) {
 	width: 16.2vh;
 	background-image: url("./images/inventory_title_left.svg");
 }
-#inventory_display tr:first-child td:nth-child(4) {
+#inventory_table > tbody > tr:first-child > td:nth-child(4) {
 	background-image: url("./images/inventory_title_center.svg");
 	background-size: auto 18vh;
 }
-#inventory_display tr:first-child td:nth-child(5) {
+#inventory_table > tbody > tr:first-child > td:nth-child(5) {
 	width: 9.8vh;
 	background-image: url("./images/inventory_title_right.svg");
 }
-#inventory_display tr:nth-child(2) td:first-child {
+#inventory_table > tbody > tr:nth-child(2) > td:first-child {
 	background-image: url("./images/goal_item_background.svg");
 	background-attachment: local;
 	background-size: contain;
 }
-#inventory_display tr:nth-child(2) td:nth-child(3) {
+#inventory_table > tbody > tr:nth-child(2) > td:nth-child(3) {
 	background-image: url("./images/parchment.svg");
+	vertical-align: top;
 }
 
-#inventory_display td {
+#inventory_table td {
 	background-size: cover;
 }
 
@@ -244,8 +246,8 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 
 #inventory_items {
 	max-width: 100%;
-	height: calc(100% - 12.5vh);
-	padding: 9.5vh calc(1vw + 1vh) 3vh calc(1vw + 1vh);
+	height: calc(100% - 21vh); /*to account for padding and total weight display*/
+	padding: 9.5vh calc(1vw + 1vh) 0 calc(1vw + 1vh); /*top right bottom left*/
 	text-align: center;
 	overflow-y: auto;
 }
@@ -254,15 +256,125 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	position: relative;
 }
 
-#inventory_items div.item-container, #place_info div.thing-container {
-	margin: 0 0.65vw 3vh 0.65vw;
-	display: inline-block;
-	vertical-align: top;
-}
+/*note: inventory_items div.item_container styled above along with the place info item/thing containers */
 
 #inventory_items div.item-container > p {
 	color: black;
 }
+
+
+/* total weight display -----------------------------------------------------------*/
+
+#total_weight_inventory {
+	width: 100%;
+	height: 10vh;
+	border-radius: 10px;
+}
+
+#total_weight_inventory > div {
+	display: inline-block;
+	vertical-align: bottom;
+}
+
+#weight_bar_left_labels {
+	width: 12vh;
+	background-color: red;
+	font-size: 2vh;
+	font-weight: bold;
+	position: relative;
+	top: 5vh;
+	text-align: center;
+	margin-left: 1vh;
+}
+#weight_bar_left_labels p:nth-child(1) {
+	position: absolute;
+	top: -2.5vh;
+	width: 100%;
+}
+#weight_bar_left_labels p:nth-child(2) {
+	position: absolute;
+	/*top: 3vh;*/
+	width: 100%;
+}
+
+#weight_bar_container {
+	position: relative;
+	top: 5vh;
+	width: calc(100% - 17vh); /* -15vh For left labels, inline block gap, and bottom labels*/
+}
+
+#weight_bar_marker {
+	width: 2.5vh;
+	height: 2.5vh;
+	background-color: #d4b64a;
+	border: 2px solid #968236;
+	position: absolute;
+	top: -4vh;
+	text-align: center;
+	font-weight: bold;
+	font-size: 2vh;
+	transform: translate(-50%, 0);
+
+	transition: left 0.5s;
+	left: 80%;
+}
+#weight_bar_marker::after {
+	content: ""; /*Needed for it to show up*/
+	display: block;
+	position: absolute;
+	--height: 1vh;
+	height: var(--height);
+	width: 0;
+	bottom:	calc(-1 * var(--height) - 2px);
+	left: 50%;
+	transform: translate(-50%, 0);
+	border: 1px solid #968236;
+}
+
+#weight_bar {
+	height: 3vh;
+	display: flex;
+}
+
+#weight_bar .weight_bar_segment {
+	height: 3vh;
+	flex: 1; /*this is a shorthand property for 3 properties, but giving one value basically means
+	the proportion of the whole width to take up*/
+
+	display: flex; /*to align children text*/
+	align-items: center;
+	position: relative;
+}
+
+.weight_bar_segment p.speed_label {
+	text-align: center;
+	flex: 1 1 auto;
+	font-size: 2.5vh;
+}
+
+.current_segment p.speed_label {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+#weight_bar p.weight_label_right {
+	position: absolute;
+	right: 0;
+	bottom: -3vh;
+	transform: translate(50%, 0);
+	font-size: 3vh;
+	font-weight: normal;
+}
+
+#weight_bar p.weight_label_left {
+	position: absolute;
+	left: 0;
+	bottom: -3vh;
+	transform: translate(-50%, 0);
+	font-size: 3vh;
+	font-weight: normal;
+}
+
 
 
 #place_info .animator_circle, #inventory #inventory_items .animator_circle {
