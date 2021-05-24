@@ -1,4 +1,3 @@
-/*Shorthand functions to let us use --gh and --gw (game.scss) easily*/
 /* place info panel -------------------------------------*/
 #place_info {
   height: 100%;
@@ -129,18 +128,18 @@ div.item-container > p, div.thing-container > p {
 
 /* inventory ---------------------------------------------*/
 #inventory {
-  width: 100vw;
-  height: 100vh;
+  width: calc(100 * var(--gw));
+  height: calc(100 * var(--gh));
   background-color: rgba(0, 30, 18, 0.75);
   z-index: 5;
   display: none;
 }
 
 #inventory_board {
-  width: 70vw;
-  height: 90vh;
-  left: 5vw;
-  top: 5vh;
+  width: calc(70 * var(--gw));
+  height: calc(90 * var(--gh));
+  left: calc(5 * var(--gw));
+  top: calc(5 * var(--gh));
   background-color: saddlebrown;
   border: 5px solid saddlebrown;
 }
@@ -157,45 +156,45 @@ div.item-container > p, div.thing-container > p {
 }
 
 #inventory_board h1 {
-  font-size: 5.1vh;
+  font-size: calc(5.1 * var(--gh));
   font-weight: normal;
   color: white;
   text-align: center;
   position: relative;
-  top: -1vh;
+  top: calc(-1 * var(--gh));
 }
 
 #inventory_title {
-  left: calc(0.5*(70vw - 33.6vh));
+  left: calc(0.5*(calc(70 * var(--gw)) - calc(33.6 * var(--gh))));
   transform: translate(-50%, 0);
 }
 
 /*note: these arrows from when we had a table inside the main table and didn't want to style that one*/
 #inventory_table > tbody > tr:first-child > td:first-child {
-  height: 18vh;
-  width: 32vh;
+  height: calc(18 * var(--gh));
+  width: calc(32 * var(--gh));
   /*We're scaling only by height changes, except for the inventory item title*/
   background-image: url("../images/goal_title.svg");
 }
 
 #inventory_table > tbody > tr > td:nth-child(2) {
-  width: 1.6vh;
+  width: calc(1.6 * var(--gh));
   background-image: url("../images/divider.svg");
   outline: 1px solid black;
 }
 
 #inventory_table > tbody > tr:first-child > td:nth-child(3) {
-  width: 16.2vh;
+  width: calc(16.2 * var(--gh));
   background-image: url("../images/inventory_title_left.svg");
 }
 
 #inventory_table > tbody > tr:first-child > td:nth-child(4) {
   background-image: url("../images/inventory_title_center.svg");
-  background-size: auto 18vh;
+  background-size: auto calc(18 * var(--gh));
 }
 
 #inventory_table > tbody > tr:first-child > td:nth-child(5) {
-  width: 9.8vh;
+  width: calc(9.8 * var(--gh));
   background-image: url("../images/inventory_title_right.svg");
 }
 
@@ -215,47 +214,47 @@ div.item-container > p, div.thing-container > p {
 }
 
 .wreath {
-  height: 11.2vh;
-  top: -2vh;
+  height: calc(11.2 * var(--gh));
+  top: calc(-2 * var(--gh));
 }
 
 #wreath_left {
-  left: -6vh;
+  left: calc(-6 * var(--gh));
 }
 
 #wreath_right {
   transform: scaleX(-1);
-  right: -6vh;
+  right: calc(-6 * var(--gh));
 }
 
 .vines {
-  height: 37.6vh;
-  top: 9.8vh;
+  height: calc(37.6 * var(--gh));
+  top: calc(9.8 * var(--gh));
 }
 
 #vines_tile {
-  top: 9.8vh;
-  left: 32vh;
+  top: calc(9.8 * var(--gh));
+  left: calc(32 * var(--gh));
   background-image: url("../images/vines_tile.svg");
   position: absolute;
-  height: 17.6vh;
-  width: calc(100% - 34vh);
+  height: calc(17.6 * var(--gh));
+  width: calc(100% - calc(34 * var(--gh)));
   background-size: cover;
 }
 
 #vines_left {
-  left: -3.7vh;
+  left: calc(-3.7 * var(--gh));
 }
 
 #vines_right {
-  right: -5vh;
+  right: calc(-5 * var(--gh));
 }
 
 #inventory_items {
   max-width: 100%;
-  height: calc(100% - 21vh);
+  height: calc(100% - calc(21 * var(--gh)));
   /*to account for padding and total weight display*/
-  padding: 9.5vh calc(1vw + 1vh) 0 calc(1vw + 1vh);
+  padding: calc(9.5 * var(--gh)) calc(calc(1 * var(--gw)) + calc(1 * var(--gh))) 0 calc(calc(1 * var(--gw)) + calc(1 * var(--gh)));
   /*top right bottom left*/
   text-align: center;
   overflow-y: auto;
@@ -273,7 +272,7 @@ div.item-container > p, div.thing-container > p {
 /* total weight display -----------------------------------------------------------*/
 #total_weight_inventory {
   width: 100%;
-  height: 10vh;
+  height: calc(10 * var(--gh));
   border-radius: 10px;
 }
 
@@ -283,45 +282,44 @@ div.item-container > p, div.thing-container > p {
 }
 
 #weight_bar_left_labels {
-  width: 12vh;
+  width: calc(12 * var(--gh));
   background-color: red;
-  font-size: 2vh;
+  font-size: calc(2 * var(--gh));
   font-weight: bold;
   position: relative;
-  top: 5vh;
+  top: calc(5 * var(--gh));
   text-align: center;
-  margin-left: 1vh;
+  margin-left: calc(1 * var(--gh));
 }
 
 #weight_bar_left_labels p:nth-child(1) {
   position: absolute;
-  top: -2.5vh;
+  top: calc(-2.5 * var(--gh));
   width: 100%;
 }
 
 #weight_bar_left_labels p:nth-child(2) {
   position: absolute;
-  /*top: 3vh;*/
   width: 100%;
 }
 
 #weight_bar_container {
   position: relative;
-  top: 5vh;
-  width: calc(100% - 17vh);
-  /* -15vh For left labels, inline block gap, and bottom labels*/
+  top: calc(5 * var(--gh));
+  width: calc(100% - calc(17 * var(--gh)));
+  /* -17 for left labels, inline block gap, and bottom labels*/
 }
 
 #weight_bar_marker {
-  width: 2.5vh;
-  height: 2.5vh;
+  width: calc(2.5 * var(--gh));
+  height: calc(2.5 * var(--gh));
   background-color: #d4b64a;
   border: 2px solid #968236;
   position: absolute;
-  top: -4vh;
+  top: calc(-4 * var(--gh));
   text-align: center;
   font-weight: bold;
-  font-size: 2vh;
+  font-size: calc(2 * var(--gh));
   transform: translate(-50%, 0);
   transition: left 0.5s;
   left: 80%;
@@ -332,7 +330,7 @@ div.item-container > p, div.thing-container > p {
   /*Needed for it to show up*/
   display: block;
   position: absolute;
-  --height: 1vh;
+  --height: calc(1 * var(--gh));
   height: var(--height);
   width: 0;
   bottom: calc(-1 * var(--height) - 2px);
@@ -342,12 +340,12 @@ div.item-container > p, div.thing-container > p {
 }
 
 #weight_bar {
-  height: 3vh;
+  height: calc(3 * var(--gh));
   display: flex;
 }
 
 #weight_bar .weight_bar_segment {
-  height: 3vh;
+  height: calc(3 * var(--gh));
   flex: 1;
   /*this is a shorthand property for 3 properties, but giving one value basically means
   the proportion of the whole width to take up*/
@@ -360,7 +358,7 @@ div.item-container > p, div.thing-container > p {
 .weight_bar_segment p.speed_label {
   text-align: center;
   flex: 1 1 auto;
-  font-size: 2.5vh;
+  font-size: calc(2.5 * var(--gh));
 }
 
 .current_segment p.speed_label {
@@ -371,18 +369,18 @@ div.item-container > p, div.thing-container > p {
 #weight_bar p.weight_label_right {
   position: absolute;
   right: 0;
-  bottom: -3vh;
+  bottom: calc(-3 * var(--gh));
   transform: translate(50%, 0);
-  font-size: 3vh;
+  font-size: calc(3 * var(--gh));
   font-weight: normal;
 }
 
 #weight_bar p.weight_label_left {
   position: absolute;
   left: 0;
-  bottom: -3vh;
+  bottom: calc(-3 * var(--gh));
   transform: translate(-50%, 0);
-  font-size: 3vh;
+  font-size: calc(3 * var(--gh));
   font-weight: normal;
 }
 
