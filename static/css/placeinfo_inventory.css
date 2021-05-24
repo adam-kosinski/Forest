@@ -1,0 +1,395 @@
+/*Shorthand functions to let us use --gh and --gw (game.scss) easily*/
+/* place info panel -------------------------------------*/
+#place_info {
+  height: 100%;
+  width: 20%;
+  left: 100%;
+  transform: translate(-100%, 0);
+  background-color: bisque;
+  border-left: 2px solid burlywood;
+  border-right: 2px solid burlywood;
+  text-align: center;
+  font-size: calc(2.5 * var(--gh));
+  color: white;
+  z-index: 10;
+  background-size: cover;
+}
+
+#place_info * {
+  position: relative;
+}
+
+#place_info #place_info_darkener {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#place_title {
+  height: calc(9 * var(--gh));
+  width: 85%;
+  z-index: 5;
+  background-color: #fffa;
+  box-shadow: 0 0 calc(2.1 * var(--gh)) calc(2.1 * var(--gh)) #fffa;
+  color: black;
+  border-radius: calc(3 * var(--gh));
+  left: 0;
+  right: 0;
+  margin: auto;
+  margin-top: calc(2 * var(--gh));
+}
+
+#place_name_display {
+  margin-top: calc(0.5 * var(--gh));
+  font-size: 2em;
+}
+
+#place_info #top_line {
+  border-top: 1px solid burlywood;
+  position: absolute;
+  width: calc(18 * var(--gw));
+  top: calc(14 * var(--gh));
+  left: calc(1 * var(--gw));
+}
+
+#place_scroll_container {
+  height: calc(85.5 * var(--gh));
+  margin-top: calc(3.5 * var(--gh));
+  padding: 0 calc(1 * var(--gw)) 0 calc(1 * var(--gw));
+  overflow-y: auto;
+}
+
+#place_info div.item-container, #place_info div.thing-container, #inventory_items div.item-container {
+  margin: 0 calc(0.65 * var(--gw)) calc(3 * var(--gh)) calc(0.65 * var(--gw));
+  display: inline-block;
+  vertical-align: top;
+}
+
+#thing_display {
+  border-bottom: 1px solid burlywood;
+  min-height: calc(15 * var(--gh));
+  padding: calc(1.5 * var(--gh)) 0 calc(1.5 * var(--gh)) 0;
+}
+
+#item_display_title {
+  margin: calc(1 * var(--gh));
+}
+
+/*note: the below item/thing styling is also used for the inventory and search_div*/
+div.item-container, div.thing-container {
+  /*currently the styling for this is done separately under #place_info and #search_div*/
+}
+
+div.item, div.thing, div.animator_circle {
+  position: static;
+  width: calc(4 * var(--gw));
+  height: calc(4 * var(--gw));
+  border-radius: calc(4 * var(--gw));
+  border: 1px solid burlywood;
+  background-color: beige;
+  background-size: cover;
+  background-position: center;
+}
+
+div.item-container > p, div.thing-container > p {
+  /*select p elements that are direct children of a .item-container or .thing-container*/
+  position: static;
+  width: calc(4 * var(--gw));
+  font-family: serif;
+  margin-top: calc(0.5 * var(--gw));
+  font-size: calc(0.8 * var(--gw));
+  text-align: center;
+  color: white;
+}
+
+.highlight_items div.item:hover {
+  box-shadow: 0 0 20px 5px yellow;
+  cursor: pointer;
+}
+
+@keyframes expand {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.expand {
+  animation-name: expand;
+  animation-duration: 0.5s;
+}
+
+.contract {
+  animation-name: expand;
+  animation-duration: 0.5s;
+  animation-direction: reverse;
+}
+
+/* inventory ---------------------------------------------*/
+#inventory {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 30, 18, 0.75);
+  z-index: 5;
+  display: none;
+}
+
+#inventory_board {
+  width: 70vw;
+  height: 90vh;
+  left: 5vw;
+  top: 5vh;
+  background-color: saddlebrown;
+  border: 5px solid saddlebrown;
+}
+
+#inventory_board #inventory_table {
+  border-collapse: collapse;
+  width: 100%;
+  height: 100%;
+  background-color: saddlebrown;
+}
+
+#inventory_table * {
+  position: static;
+}
+
+#inventory_board h1 {
+  font-size: 5.1vh;
+  font-weight: normal;
+  color: white;
+  text-align: center;
+  position: relative;
+  top: -1vh;
+}
+
+#inventory_title {
+  left: calc(0.5*(70vw - 33.6vh));
+  transform: translate(-50%, 0);
+}
+
+/*note: these arrows from when we had a table inside the main table and didn't want to style that one*/
+#inventory_table > tbody > tr:first-child > td:first-child {
+  height: 18vh;
+  width: 32vh;
+  /*We're scaling only by height changes, except for the inventory item title*/
+  background-image: url("../images/goal_title.svg");
+}
+
+#inventory_table > tbody > tr > td:nth-child(2) {
+  width: 1.6vh;
+  background-image: url("../images/divider.svg");
+  outline: 1px solid black;
+}
+
+#inventory_table > tbody > tr:first-child > td:nth-child(3) {
+  width: 16.2vh;
+  background-image: url("../images/inventory_title_left.svg");
+}
+
+#inventory_table > tbody > tr:first-child > td:nth-child(4) {
+  background-image: url("../images/inventory_title_center.svg");
+  background-size: auto 18vh;
+}
+
+#inventory_table > tbody > tr:first-child > td:nth-child(5) {
+  width: 9.8vh;
+  background-image: url("../images/inventory_title_right.svg");
+}
+
+#inventory_table > tbody > tr:nth-child(2) > td:first-child {
+  background-image: url("../images/goal_item_background.svg");
+  background-attachment: local;
+  background-size: contain;
+}
+
+#inventory_table > tbody > tr:nth-child(2) > td:nth-child(3) {
+  background-image: url("../images/parchment.svg");
+  vertical-align: top;
+}
+
+#inventory_table td {
+  background-size: cover;
+}
+
+.wreath {
+  height: 11.2vh;
+  top: -2vh;
+}
+
+#wreath_left {
+  left: -6vh;
+}
+
+#wreath_right {
+  transform: scaleX(-1);
+  right: -6vh;
+}
+
+.vines {
+  height: 37.6vh;
+  top: 9.8vh;
+}
+
+#vines_tile {
+  top: 9.8vh;
+  left: 32vh;
+  background-image: url("../images/vines_tile.svg");
+  position: absolute;
+  height: 17.6vh;
+  width: calc(100% - 34vh);
+  background-size: cover;
+}
+
+#vines_left {
+  left: -3.7vh;
+}
+
+#vines_right {
+  right: -5vh;
+}
+
+#inventory_items {
+  max-width: 100%;
+  height: calc(100% - 21vh);
+  /*to account for padding and total weight display*/
+  padding: 9.5vh calc(1vw + 1vh) 0 calc(1vw + 1vh);
+  /*top right bottom left*/
+  text-align: center;
+  overflow-y: auto;
+}
+
+#inventory #inventory_items * {
+  position: relative;
+}
+
+/*note: inventory_items div.item_container styled above along with the place info item/thing containers */
+#inventory_items div.item-container > p {
+  color: black;
+}
+
+/* total weight display -----------------------------------------------------------*/
+#total_weight_inventory {
+  width: 100%;
+  height: 10vh;
+  border-radius: 10px;
+}
+
+#total_weight_inventory > div {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+#weight_bar_left_labels {
+  width: 12vh;
+  background-color: red;
+  font-size: 2vh;
+  font-weight: bold;
+  position: relative;
+  top: 5vh;
+  text-align: center;
+  margin-left: 1vh;
+}
+
+#weight_bar_left_labels p:nth-child(1) {
+  position: absolute;
+  top: -2.5vh;
+  width: 100%;
+}
+
+#weight_bar_left_labels p:nth-child(2) {
+  position: absolute;
+  /*top: 3vh;*/
+  width: 100%;
+}
+
+#weight_bar_container {
+  position: relative;
+  top: 5vh;
+  width: calc(100% - 17vh);
+  /* -15vh For left labels, inline block gap, and bottom labels*/
+}
+
+#weight_bar_marker {
+  width: 2.5vh;
+  height: 2.5vh;
+  background-color: #d4b64a;
+  border: 2px solid #968236;
+  position: absolute;
+  top: -4vh;
+  text-align: center;
+  font-weight: bold;
+  font-size: 2vh;
+  transform: translate(-50%, 0);
+  transition: left 0.5s;
+  left: 80%;
+}
+
+#weight_bar_marker::after {
+  content: "";
+  /*Needed for it to show up*/
+  display: block;
+  position: absolute;
+  --height: 1vh;
+  height: var(--height);
+  width: 0;
+  bottom: calc(-1 * var(--height) - 2px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  border: 1px solid #968236;
+}
+
+#weight_bar {
+  height: 3vh;
+  display: flex;
+}
+
+#weight_bar .weight_bar_segment {
+  height: 3vh;
+  flex: 1;
+  /*this is a shorthand property for 3 properties, but giving one value basically means
+  the proportion of the whole width to take up*/
+  display: flex;
+  /*to align children text*/
+  align-items: center;
+  position: relative;
+}
+
+.weight_bar_segment p.speed_label {
+  text-align: center;
+  flex: 1 1 auto;
+  font-size: 2.5vh;
+}
+
+.current_segment p.speed_label {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#weight_bar p.weight_label_right {
+  position: absolute;
+  right: 0;
+  bottom: -3vh;
+  transform: translate(50%, 0);
+  font-size: 3vh;
+  font-weight: normal;
+}
+
+#weight_bar p.weight_label_left {
+  position: absolute;
+  left: 0;
+  bottom: -3vh;
+  transform: translate(-50%, 0);
+  font-size: 3vh;
+  font-weight: normal;
+}
+
+#place_info .animator_circle, #inventory #inventory_items .animator_circle {
+  position: absolute;
+  top: 0;
+  box-shadow: 0 0 5px 5px white;
+}
+
+/*# sourceMappingURL=placeinfo_inventory.css.map */

@@ -1,3 +1,12 @@
+/*Shorthand functions to let us use --gh and --gw (game.scss) easily*/
+@function h($gh){
+	@return calc(#{$gh} * var(--gh));
+}
+
+@function w($gw){
+	@return calc(#{$gw} * var(--gw));
+}
+
 /* place info panel -------------------------------------*/
 
 #place_info {
@@ -9,7 +18,7 @@
 	border-left: 2px solid burlywood;
 	border-right: 2px solid burlywood;
 	text-align: center;
-	font-size: 2.5vh;
+	font-size: h(2.5);
 	color: white;
 	z-index: 10;
 	background-size: cover;
@@ -27,53 +36,53 @@
 }
 
 #place_title {
-	height: 9vh;
+	height: h(9);
 	width: 85%;
 	z-index: 5;
 	background-color: #fffa;
-	box-shadow: 0 0 2.1vh 2.1vh #fffa;
+	box-shadow: 0 0 h(2.1) h(2.1) #fffa;
 	color: black;
-	border-radius: 3vh;
+	border-radius: h(3);
 	left: 0;
 	right: 0;
 	margin: auto;
-	margin-top: 2vh;
+	margin-top: h(2);
 }
 
 #place_name_display {
-	margin-top: 0.5vh;
+	margin-top: h(0.5);
 	font-size: 2em;
 }
 
 #place_info #top_line {
 	border-top: 1px solid burlywood;
 	position: absolute;
-	width: 18vw;
-	top: 14vh;
-	left: 1vw;
+	width: w(18);
+	top: h(14);
+	left: w(1);
 }
 
 #place_scroll_container {
-	height: 85.5vh;
-	margin-top: 3.5vh;
-	padding: 0 1vw 0 1vw;
+	height: h(85.5);
+	margin-top: h(3.5);
+	padding: 0 w(1) 0 w(1);
 	overflow-y: auto;
 }
 
 #place_info div.item-container, #place_info div.thing-container, #inventory_items div.item-container {
-	margin: 0 0.65vw 3vh 0.65vw;
+	margin: 0 w(0.65) h(3) w(0.65);
 	display: inline-block;
 	vertical-align: top;
 }
 
 #thing_display {
 	border-bottom: 1px solid burlywood;
-	min-height: 15vh;
-	padding: 1.5vh 0 1.5vh 0;
+	min-height: h(15);
+	padding: h(1.5) 0 h(1.5) 0;
 }
 
 #item_display_title {
-	margin: 1vh;
+	margin: h(1);
 }
 
 /*note: the below item/thing styling is also used for the inventory and search_div*/
@@ -83,9 +92,9 @@ div.item-container, div.thing-container {
 
 div.item, div.thing, div.animator_circle {
 	position: static;
-	width: 4vw;
-	height: 4vw;
-	border-radius: 4vw;
+	width: w(4);
+	height: w(4);
+	border-radius: w(4);
 	border: 1px solid burlywood;
 	background-color: beige;
 	background-size: cover;
@@ -94,10 +103,10 @@ div.item, div.thing, div.animator_circle {
 
 div.item-container > p, div.thing-container > p { /*select p elements that are direct children of a .item-container or .thing-container*/
 	position: static;
-	width: 4vw;
+	width: w(4);
 	font-family: serif;
-	margin-top: 0.5vw;
-	font-size: 0.8vw;
+	margin-top: w(0.5);
+	font-size: w(0.8);
 	text-align: center;
 	color: white;
 }
@@ -174,32 +183,32 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 #inventory_table > tbody > tr:first-child > td:first-child {
 	height: 18vh;
 	width: 32vh; /*We're scaling only by height changes, except for the inventory item title*/
-	background-image: url("./images/goal_title.svg");
+	background-image: url("../images/goal_title.svg");
 }
 #inventory_table > tbody > tr > td:nth-child(2) {
 	width: 1.6vh;
-	background-image: url("./images/divider.svg");
+	background-image: url("../images/divider.svg");
 	outline: 1px solid black;
 }
 #inventory_table > tbody > tr:first-child > td:nth-child(3) {
 	width: 16.2vh;
-	background-image: url("./images/inventory_title_left.svg");
+	background-image: url("../images/inventory_title_left.svg");
 }
 #inventory_table > tbody > tr:first-child > td:nth-child(4) {
-	background-image: url("./images/inventory_title_center.svg");
+	background-image: url("../images/inventory_title_center.svg");
 	background-size: auto 18vh;
 }
 #inventory_table > tbody > tr:first-child > td:nth-child(5) {
 	width: 9.8vh;
-	background-image: url("./images/inventory_title_right.svg");
+	background-image: url("../images/inventory_title_right.svg");
 }
 #inventory_table > tbody > tr:nth-child(2) > td:first-child {
-	background-image: url("./images/goal_item_background.svg");
+	background-image: url("../images/goal_item_background.svg");
 	background-attachment: local;
 	background-size: contain;
 }
 #inventory_table > tbody > tr:nth-child(2) > td:nth-child(3) {
-	background-image: url("./images/parchment.svg");
+	background-image: url("../images/parchment.svg");
 	vertical-align: top;
 }
 
@@ -229,7 +238,7 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 #vines_tile {
 	top: 9.8vh;
 	left: 32vh;
-	background-image: url("./images/vines_tile.svg");
+	background-image: url("../images/vines_tile.svg");
 	position: absolute;
 	height: 17.6vh;
 	width: calc(100% - 34vh);

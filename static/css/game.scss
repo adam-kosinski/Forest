@@ -1,12 +1,21 @@
+:root {
+	--max_width: 100vw;
+	--max_height: 100vh;
+	--aspect_ratio: 1.78; /* my laptop in full screen */
+	--game_width: min(var(--max_width), var(--max_height) * var(--aspect_ratio));
+	--game_height: calc(var(--game_width) / var(--aspect_ratio));
+	--gw: calc(var(--game_width) / 100);
+	--gh: calc(var(--game_height) / 100);
+	/* gw, gh, to replace vw, vh*/
+}
+
+$gw: var(--gw);
+
 /* game div --------------------------------------------*/
 #game_div {
 	display: none;
-	--max_width: 100vw;
-	--max_height: 100vh;
-	--aspect_ratio: 1.78; /* 0.8 b/c that's how wide the search_div is relative to this*/
-	--width: min(var(--max_width), var(--max_height) * var(--aspect_ratio));
-	width: var(--width);
-	height: calc(var(--width) / var(--aspect_ratio));
+	width: var(--game_width);
+	height: var(--game_height);
 	top: 0;
 	left: 0;
 	right: 0;

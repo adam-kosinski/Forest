@@ -30,6 +30,7 @@ let io = socketIO(server);
 
 app.set("port", 5000);
 app.use("/static", express.static(__dirname + "/static"));
+app.use("/css", express.static(__dirname + "/css"));
 
 // Routing
 app.get("/", function(request, response) {

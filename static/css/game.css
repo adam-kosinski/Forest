@@ -1,0 +1,192 @@
+:root {
+  --max_width: 100vw;
+  --max_height: 100vh;
+  --aspect_ratio: 1.78;
+  /* my laptop in full screen */
+  --game_width: min(var(--max_width), var(--max_height) * var(--aspect_ratio));
+  --game_height: calc(var(--game_width) / var(--aspect_ratio));
+  --gw: calc(var(--game_width) / 100);
+  --gh: calc(var(--game_height) / 100);
+  /* gw, gh, to replace vw, vh*/
+}
+
+/* game div --------------------------------------------*/
+#game_div {
+  display: none;
+  width: var(--game_width);
+  height: var(--game_height);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+/* game board ---------------------------------------*/
+#map_div {
+  z-index: 15;
+  display: none;
+}
+
+#map_darkener {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#map_image {
+  --height: 1125px;
+  height: var(--height);
+  width: calc(var(--height) * 959 / 750);
+  /*height * aspect ratio, want to define both in css so the overlay canvas knows what size to be*/
+}
+
+.node {
+  height: 15px;
+  width: 15px;
+  border-radius: 15px;
+  background-color: bisque;
+  opacity: 0.6;
+  transform: translate(-50%, -50%);
+}
+
+.player_token {
+  height: 30px;
+  width: 30px;
+  border-radius: 30px;
+  background-color: saddlebrown;
+  border: 3px solid black;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.player_token.draggable {
+  cursor: move;
+}
+
+/* contextmenu ------------------------------------------*/
+#contextmenu {
+  display: none;
+  background-color: white;
+  border: 1px solid lightgray;
+  box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.3);
+  z-index: 25;
+}
+
+#contextmenu div {
+  font-family: sans-serif;
+  position: static;
+  border-bottom: 1px solid lightgray;
+  padding: 5px;
+  white-space: nowrap;
+}
+
+#contextmenu div:not(.action) {
+  background-color: #eee;
+}
+
+#contextmenu div.action:hover {
+  background-color: lightskyblue;
+  cursor: pointer;
+}
+
+/* stuff relating to actions -------------------------------------------------*/
+#search_div {
+  width: 80%;
+  height: 100%;
+  background-color: black;
+  z-index: 1;
+  background-size: cover;
+}
+
+@keyframes breathe {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#search_div .search_target {
+  opacity: 0;
+  /*so they start off invisible before the animation kicks in*/
+  border-radius: 5px;
+  background-image: radial-gradient(closest-side, yellow, transparent 50%);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  /*so it's centered with the position coordinates of the search object div*/
+  animation-name: breathe;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  /*default values that should be overwritten by js*/
+  animation-delay: 0s;
+  /*set individually so the targets breathe out of sync*/
+  left: 50%;
+  top: 50%;
+  width: 1.5vh;
+  height: 1.5vh;
+}
+
+#search_div .search_target_static {
+  /*for debugging only*/
+  border-radius: 5px;
+  background-image: radial-gradient(closest-side, yellow, transparent 50%);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  border: 3px solid orange;
+  width: 1.5vh;
+  height: 1.5vh;
+}
+
+#search_div div.item-container, #search_div div.thing-container {
+  /*aka search_content div*/
+  display: none;
+  /*top and left offsets calculated in display.js in the search_target event listener*/
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 1vw 1vw rgba(0, 0, 0, 0.75);
+  border-radius: 1vw;
+}
+
+#flashlight_canvas {
+  display: none;
+  z-index: 10;
+  filter: blur(10px);
+  transform: translate(-50%, -50%);
+  /*the illuminated spot is in the center of the canvas, make that at the canvas's position*/
+}
+
+/* progress div -------------------------------------------*/
+#progress_div {
+  width: 100vw;
+  height: 100vh;
+  z-index: 30;
+  background-color: #0008;
+  color: white;
+  display: none;
+}
+
+#progress_div * {
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+}
+
+#activity_name {
+  font-size: 6vh;
+  top: 40vh;
+}
+
+#activity_progress {
+  width: 80vh;
+  height: 4vh;
+  top: 50vh;
+}
+
+/*# sourceMappingURL=game.css.map */

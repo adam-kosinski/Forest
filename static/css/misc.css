@@ -1,0 +1,267 @@
+/* z-index table
+
+#disable_page_div: 40
+.popup: 45
+
+game div
+	map_div: 15
+	- background image, canvas, nodes, added in order to ensure correct viewing
+	- .player_token: 10 (11 for my player token)
+	#place_info: 10
+	#inventory: 5
+	#search_div: 1
+	- #flashlight_canvas: 10
+	#progress_div: 30
+
+#contextmenu: 25
+
+.element_highlighter: 75
+
+#dark_fade: 50
+*/
+html, body {
+  margin: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: black;
+}
+
+body * {
+  position: absolute;
+  user-select: none;
+}
+
+body {
+  font-family: Bilbo, serif;
+}
+
+p {
+  margin: 0;
+}
+
+/* custom prompt and alert implementation ----------------------------- */
+#disable_page_div {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 40;
+  display: none;
+}
+
+.popup {
+  width: 300px;
+  left: 0;
+  right: 0;
+  top: 10vh;
+  margin: auto;
+  background-color: bisque;
+  border: 4px solid burlywood;
+  padding: 12px;
+  z-index: 45;
+  display: none;
+}
+
+.popup * {
+  font-family: serif;
+  font-size: 18px;
+  position: relative;
+}
+
+.popup p {
+  width: 275px;
+}
+
+#prompt_input {
+  margin-top: 12px;
+  padding: 5px;
+  width: calc(100% - 14px);
+  /*there's a 2px border in addition to the padding => 14px total extra width*/
+}
+
+.popup .button_div {
+  text-align: right;
+}
+
+.popup button {
+  width: 70px;
+  height: 40px;
+  right: 0;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  margin: 12px 0 0 12px;
+}
+
+.popup .ok_button {
+  background-color: forestgreen;
+  color: white;
+}
+
+/* home screen ----------------------------------------------------*/
+#home_screen {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../images/wondrous_woods.jpg");
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+  text-align: center;
+}
+
+#home_screen * {
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+}
+
+#home_screen_gradient {
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(transparent, black);
+}
+
+#home_screen h1 {
+  bottom: 7vh;
+  font-weight: normal;
+  font-size: 10vh;
+  color: white;
+  text-shadow: 0 0 15px;
+}
+
+#player_display {
+  width: 80vw;
+  height: 60vh;
+  top: 10vh;
+}
+
+.connected_player {
+  /*divs will be added to the player display wrapper div as players join*/
+  width: 36vh;
+  height: 20vh;
+  position: relative;
+  display: inline-block;
+  padding: 2vh 0 1vh 0;
+  font-size: 3vh;
+}
+
+.connected_player img {
+  width: 36vh;
+  transform: scaleX(0.75);
+  top: 13vh;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.connected_player > div {
+  width: 16vh;
+  height: 18vh;
+  border-radius: 15vh;
+  background-color: #fff8;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+#home_screen .connected_player p {
+  width: 0;
+  /*seems to center the circletype*/
+  top: 14.9vh;
+  left: 2vh;
+}
+
+.connected_player p * {
+  position: static;
+  /*Otherwise all the letters of the circletype are on top of each other*/
+}
+
+#start_button {
+  width: 50vh;
+  height: 4vh;
+  font-size: 4vh;
+  bottom: 4vh;
+  cursor: pointer;
+  color: white;
+  text-shadow: 0 0 15px;
+}
+
+#start_button * {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  margin: 0 0.5vh 0 0.5vh;
+}
+
+#start_button img {
+  height: 4vh;
+}
+
+#start_button img.flip {
+  transform: scaleX(-1);
+}
+
+#start_button img.blur {
+  display: none;
+}
+
+#start_button:hover {
+  font-weight: bold;
+}
+
+#start_button:hover img.no_blur {
+  display: none;
+}
+
+#start_button:hover img.blur {
+  display: inline-block;
+}
+
+/* dark fade --------------------------------------------*/
+#dark_fade {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0;
+  display: none;
+  z-index: 50;
+}
+
+/* element highlighter ----------------------------------------*/
+.element_highlighter {
+  background-color: #000b;
+  z-index: 75;
+  position: absolute;
+  display: none;
+}
+
+/*top and bottom stretch across whole screen, left and right have height of the highlighted element*/
+#top_darkener {
+  top: 0;
+  width: 100vw;
+}
+
+#left_darkener {
+  left: 0;
+}
+
+#right_darkener {
+  right: 0;
+}
+
+#bottom_darkener {
+  bottom: 0;
+  width: 100vw;
+}
+
+#element_highlighter_text {
+  color: white;
+  transform: translate(-50%, -100%);
+  background-color: transparent;
+  font-size: 30px;
+}
+
+/*# sourceMappingURL=misc.css.map */
