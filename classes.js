@@ -18,8 +18,8 @@ class Player {
     this.items = []; //inventory
     this.weight_thresholds = [ //if past a threshold multiply the time it takes to do actions by the multiplier. Weight range is how large this threshold is past the previous one
       {name: "Fast", color: "#aec230", multiplier: 1, weight_range: 10},
-      {name: "Medium", color: "#8ba133", multiplier: 2, weight_range: 10},
-      {name: "Slow", color: "#547d2a", multiplier: 4, weight_range: 15}
+      {name: "Medium", color: "#8ba133", multiplier: 4, weight_range: 15},
+      {name: "Slow", color: "#547d2a", multiplier: 8, weight_range: 10}
     ];
     //note: adding up all the weight ranges gives you the max_weight
 

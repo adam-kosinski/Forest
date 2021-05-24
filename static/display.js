@@ -283,7 +283,7 @@ function makeSearchObject(object){
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target_static");
+  search_target.classList.add("search_target");
   search_target.style.height = object.search_target_size;
   search_target.style.width = object.search_target_size;
   search_target.style.animationDelay = 6*Math.random() + "s";

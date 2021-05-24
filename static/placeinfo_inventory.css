@@ -1,9 +1,9 @@
 /* place info panel -------------------------------------*/
 
 #place_info {
-	height: 100vh;
-	width: 20vw;
-	left: 100vw;
+	height: 100%;
+	width: 20%;
+	left: 100%;
 	transform: translate(-100%, 0);
 	background-color: bisque;
 	border-left: 2px solid burlywood;

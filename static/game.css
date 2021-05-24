@@ -1,6 +1,17 @@
 /* game div --------------------------------------------*/
 #game_div {
 	display: none;
+	--max_width: 100vw;
+	--max_height: 100vh;
+	--aspect_ratio: 1.78; /* 0.8 b/c that's how wide the search_div is relative to this*/
+	--width: min(var(--max_width), var(--max_height) * var(--aspect_ratio));
+	width: var(--width);
+	height: calc(var(--width) / var(--aspect_ratio));
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
 }
 
 /* game board ---------------------------------------*/
@@ -85,8 +96,8 @@
 /* stuff relating to actions -------------------------------------------------*/
 
 #search_div {
-	width: 80vw; /*#place_info is 20vw wide*/
-	height: 100vh;
+	width: 80%;
+	height: 100%;
 	background-color: black;
 	z-index: 1;
 	background-size: cover;
