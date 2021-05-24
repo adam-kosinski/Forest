@@ -284,8 +284,9 @@ function makeSearchObject(object){
 
   let search_target = document.createElement("div");
   search_target.classList.add("search_target");
-  search_target.style.height = object.search_target_size;
-  search_target.style.width = object.search_target_size;
+  let size = "calc(" + object.search_target_size + " * var(--gw))";
+  search_target.style.height = size;
+  search_target.style.width = size;
   search_target.style.animationDelay = 6*Math.random() + "s";
 
   search_target.addEventListener("click",function(){

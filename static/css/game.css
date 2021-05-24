@@ -30,8 +30,8 @@
 
 #map_darkener {
   position: fixed;
-  width: 100vw;
-  height: 100vh;
+  width: w(100);
+  height: h(100);
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -128,8 +128,8 @@
   /*set individually so the targets breathe out of sync*/
   left: 50%;
   top: 50%;
-  width: 1.5vh;
-  height: 1.5vh;
+  width: w(1);
+  height: w(1);
 }
 
 #search_div .search_target_static {
@@ -139,8 +139,8 @@
   cursor: pointer;
   transform: translate(-50%, -50%);
   border: 3px solid orange;
-  width: 1.5vh;
-  height: 1.5vh;
+  width: w(1);
+  height: w(1);
 }
 
 #search_div div.item-container, #search_div div.thing-container {
@@ -149,8 +149,8 @@
   /*top and left offsets calculated in display.js in the search_target event listener*/
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 1vw 1vw rgba(0, 0, 0, 0.75);
-  border-radius: 1vw;
+  box-shadow: 0 0 w(1) w(1) rgba(0, 0, 0, 0.75);
+  border-radius: w(1);
 }
 
 #flashlight_canvas {
@@ -163,8 +163,8 @@
 
 /* progress div -------------------------------------------*/
 #progress_div {
-  width: 100vw;
-  height: 100vh;
+  width: w(100);
+  height: h(100);
   z-index: 30;
   background-color: #0008;
   color: white;
@@ -179,14 +179,14 @@
 }
 
 #activity_name {
-  font-size: 6vh;
-  top: 40vh;
+  font-size: h(6);
+  top: h(40);
 }
 
 #activity_progress {
-  width: 80vh;
-  height: 4vh;
-  top: 50vh;
+  width: h(80);
+  height: h(4);
+  top: h(50);
 }
 
 /*# sourceMappingURL=game.css.map */
