@@ -343,6 +343,10 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
   if(first_time || me.location != prev_game_obj.players[my_name].location){
     //background image and clear contents
+    let img = document.createElement("img");
+    img.src = "./static/images/" + place.region + "/" + place.name.replaceAll(" ","_") + ".jpg";
+
+
     search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name.replaceAll(" ","_") + ".jpg')";
     let position = "top left";
     switch(place.name){
@@ -358,7 +362,7 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
       case "Cliffbase": position = "left 75%"; break;
     }
     search_div.style.backgroundPosition = position;
-    search_div.innerHTML = "";
+    $("#search_div .search_object").remove();
 
     //things
     for(let i=0; i<place.things.length; i++){

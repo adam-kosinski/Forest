@@ -30,8 +30,8 @@
 
 #map_darkener {
   position: fixed;
-  width: w(100);
-  height: h(100);
+  width: calc(100 * var(--gw));
+  height: calc(100 * var(--gh));
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -128,8 +128,8 @@
   /*set individually so the targets breathe out of sync*/
   left: 50%;
   top: 50%;
-  width: w(1);
-  height: w(1);
+  width: calc(1 * var(--gw));
+  height: calc(1 * var(--gw));
 }
 
 #search_div .search_target_static {
@@ -139,8 +139,8 @@
   cursor: pointer;
   transform: translate(-50%, -50%);
   border: 3px solid orange;
-  width: w(1);
-  height: w(1);
+  width: calc(1 * var(--gw));
+  height: calc(1 * var(--gw));
 }
 
 #search_div div.item-container, #search_div div.thing-container {
@@ -149,8 +149,8 @@
   /*top and left offsets calculated in display.js in the search_target event listener*/
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 w(1) w(1) rgba(0, 0, 0, 0.75);
-  border-radius: w(1);
+  box-shadow: 0 0 calc(1 * var(--gw)) calc(1 * var(--gw)) rgba(0, 0, 0, 0.75);
+  border-radius: calc(1 * var(--gw));
 }
 
 #flashlight_canvas {
@@ -163,8 +163,8 @@
 
 /* progress div -------------------------------------------*/
 #progress_div {
-  width: w(100);
-  height: h(100);
+  width: calc(100 * var(--gw));
+  height: calc(100 * var(--gh));
   z-index: 30;
   background-color: #0008;
   color: white;
@@ -179,14 +179,14 @@
 }
 
 #activity_name {
-  font-size: h(6);
-  top: h(40);
+  font-size: calc(6 * var(--gh));
+  top: calc(40 * var(--gh));
 }
 
 #activity_progress {
-  width: h(80);
-  height: h(4);
-  top: h(50);
+  width: calc(80 * var(--gh));
+  height: calc(4 * var(--gh));
+  top: calc(50 * var(--gh));
 }
 
 /*# sourceMappingURL=game.css.map */

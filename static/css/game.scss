@@ -1,3 +1,13 @@
+//Shorthand functions to let us use --gh and --gw (game.scss) easily
+//Note: need to use SASS interpolation e.g. #{h(3)} when inside a calc() or a css variable name
+@function h($gh){
+	@return calc(#{$gh} * var(--gh));
+}
+@function w($gw){
+	@return calc(#{$gw} * var(--gw));
+}
+
+
 :root {
 	--max_width: 100vw;
 	--max_height: 100vh;
@@ -9,7 +19,6 @@
 	/* gw, gh, to replace vw, vh*/
 }
 
-$gw: var(--gw);
 
 /* game div --------------------------------------------*/
 #game_div {
