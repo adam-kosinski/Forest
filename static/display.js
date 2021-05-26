@@ -342,45 +342,76 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
 
   //if first update or new location, completely reset the search div - otherwise look if there are items/things missing or added and just change those
   if(first_time || me.location != prev_game_obj.players[my_name].location){
-    //background image and clear contents
+
+    //clear search_div
+    $("#search_div .search_object").remove();
+    let ctx = search_canvas.getContext("2d");
+    ctx.clearRect(0, 0, search_canvas.width, search_canvas.height);
+
+    //make an image element to draw on the background canvas with
+    //this won't be visible, will be opacity 0 and only display as long as needed for drawing it (can only reliably get aspect ratio if displayed)
     let img = document.createElement("img");
     img.src = "./static/images/" + place.region + "/" + place.name.replaceAll(" ","_") + ".jpg";
+    img.style.opacity = 0;
+    search_div.appendChild(img);
+
+    img.addEventListener("load", function(){
+
+      let aspect_ratio = $(img).width() / $(img).height();
+      let draw_width = Math.max(search_canvas.width, search_canvas.height * aspect_ratio);
+      let draw_height = draw_width / aspect_ratio;
+
+      let center = {x:0, y:0}; //values 0-1, what point in the image we should attempt to put as close to the center as possible
+      switch(place.name){
+        case "Cliffside Grove": center = {x:0.5, y:0.5}; break;
+        case "Bear Den": center = {x:0.5, y:1}; break;
+        case "Redhill": center = {x:0.5, y:0.5};break;
+        case "Fern Haven": center = {x:0.5, y:0.75}; break;
+        case "Thicket of Secrets": center = {x:0.5, y:1}; break;
+        case "Sunlit Stand": center = {x:0.5, y:0.75}; break;
+        case "Path": center = {x:0.5, y:0.5}; break;
+        case "Middle": center = {x:0.5, y:0.5}; break;
+        case "Stream Mid": center = {x:0.75, y:1}; break;
+        case "Cliffbase": center = {x:0, y:0.75}; break;
+      }
+
+      //find offset in positive units b/c easier to work with (then make negative when we do it - offsets have to be neg since img starts aligned to top left of canvas)
+      let max_x_offset = Math.max(0, draw_width - search_canvas.width); //always positive
+      let max_y_offset = Math.max(0, draw_height - search_canvas.height);
+      let target_x_offset = Math.max(0, draw_width*center.x - search_canvas.width/2); //target center has to be bigger than default (search_canvas) center in order to shift
+      let target_y_offset = Math.max(0, draw_height*center.y - search_canvas.height/2);
+      let offset = {
+        x: Math.min(max_x_offset, target_x_offset),
+        y: Math.min(max_y_offset, target_y_offset)
+      }
+      console.log(max_x_offset, max_y_offset, offset);
+      ctx.drawImage(img, -offset.x, -offset.y, draw_width, draw_height);
+      $(img).remove();
 
 
-    search_div.style.backgroundImage = "url('./static/images/" + place.region + "/" + place.name.replaceAll(" ","_") + ".jpg')";
-    let position = "top left";
-    switch(place.name){
-      case "Cliffside Grove": position = "top left"; break;
-      case "Bear Den": position = "center bottom"; break;
-      case "Redhill": position = "center center"; break;
-      case "Fern Haven": position = "center 75%"; break;
-      case "Thicket of Secrets": position = "center bottom"; break;
-      case "Sunlit Stand": position = "center 75%"; break;
-      case "Path": position = "center center"; break;
-      case "Middle": position = "center center"; break;
-      case "Stream Mid": position = "75% bottom"; break;
-      case "Cliffbase": position = "left 75%"; break;
-    }
-    search_div.style.backgroundPosition = position;
-    $("#search_div .search_object").remove();
+      //make hidden search objects - doing this inside the background image load handler, so we'll have
+      //access to the background pixels and can use those to modify the search targets
 
-    //things
-    for(let i=0; i<place.things.length; i++){
-      let thing = place.things[i];
-      if(thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
+      //things
+      for(let i=0; i<place.things.length; i++){
+        let thing = place.things[i];
+        if(thing.visible || cannotFind.thingIds.includes(thing.id)) continue;
 
-      let search_object = makeSearchObject(thing);
-      search_div.appendChild(search_object);
-    }
+        let search_object = makeSearchObject(thing);
+        search_div.appendChild(search_object);
+      }
 
-    //items
-    for(let i=0; i<place.items.length; i++){
-      let item = place.items[i];
-      if(item.visible || cannotFind.itemIds.includes(item.id)) continue;
+      //items
+      for(let i=0; i<place.items.length; i++){
+        let item = place.items[i];
+        if(item.visible || cannotFind.itemIds.includes(item.id)) continue;
 
-      let search_object = makeSearchObject(item);
-      search_div.appendChild(search_object);
-    }
+        let search_object = makeSearchObject(item);
+        search_div.appendChild(search_object);
+      }
+    });
+
+
   }
   else {
     //not the first update or a new location, just check for differences from previous update
@@ -544,7 +575,7 @@ function initGameDisplay(game){
   let map_overlay = document.getElementById("map_overlay");
   let map_image = document.getElementById("map_image");
 
-  //board canvas for graph lines
+  //map canvas for graph lines
   let canvas = document.createElement("canvas");
   canvas.id = "map_canvas";
   let map_height = getComputedStyle(map_image).height.split("px")[0];
@@ -557,7 +588,7 @@ function initGameDisplay(game){
 
 
 
-  //board graph nodes (circular divs) and lines connecting them (drawn on canvas)
+  //map graph nodes (circular divs) and lines connecting them (drawn on canvas)
   let ctx = canvas.getContext("2d");
   ctx.strokeStyle = "rgba(255, 228, 196, 0.6)"; //bisque
   ctx.lineWidth = 2;
@@ -607,6 +638,11 @@ function initGameDisplay(game){
     my_token.style.zIndex = 11;
   }
 
+  //search_canvas
+  let search_aspect_ratio = 0.8 * Number(getComputedStyle(document.documentElement).getPropertyValue("--aspect_ratio")); //see game.scss
+  search_aspect_ratio = Number(search_aspect_ratio.toFixed(3)); //3 decimals, to fix floating point
+  search_canvas.width = 1536; //=1920*0.8, search_div size in fullscreen on my monitor
+  search_canvas.height = 1536 / search_aspect_ratio;
 
   //flashlight canvas
   let fc = flashlight_canvas; //alias

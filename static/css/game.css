@@ -2,7 +2,7 @@
   --max_width: 100vw;
   --max_height: 100vh;
   --aspect_ratio: 1.78;
-  /* my laptop in full screen */
+  /* My laptop in full screen. This var is also referenced in initGameDisplay() */
   --game_width: min(var(--max_width), var(--max_height) * var(--aspect_ratio));
   --game_height: calc(var(--game_width) / var(--aspect_ratio));
   --gw: calc(var(--game_width) / 100);
@@ -94,10 +94,15 @@
 /* stuff relating to actions -------------------------------------------------*/
 #search_div {
   width: 80%;
+  /*note: initGameDisplay() is making an assumption this is 80%*/
   height: 100%;
   background-color: black;
   z-index: 1;
-  background-size: cover;
+}
+
+#search_canvas {
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes breathe {
