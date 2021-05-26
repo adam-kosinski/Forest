@@ -250,7 +250,8 @@ function imageSrc(object){
 
 
 
-//color processing (for making search objects in display.js)
+
+//Color processing (for making search objects in display.js) -------------------------------------------
 
 class RGBA {
   constructor(r=0, g=0, b=0, a=1){
@@ -258,6 +259,9 @@ class RGBA {
     this.g = g;
     this.b = b;
     this.a = a;
+  }
+  copy(){
+    return new RGBA(this.r, this.g, this.b, this.a);
   }
   relativeLuminance(){
     //The formula used to convert to black/white, where relative luminance for black is 0 and for white is 1
@@ -280,13 +284,10 @@ class RGBA {
   }
   scale(channel, scalar){
     if(scalar < 0) return;
-    let out = new RGBA(this.r, this.g, this.b, this.a);
-    if(channel == "a"){
-      out[channel] = Math.round(Math.min(1, Math.sqrt(this[channel]**2 * scalar)));
-    }
-    else {
-      out[channel] = Math.round(Math.min(255, Math.sqrt(this[channel]**2 * scalar)));
-    }
+
+    let out = this.copy();
+    if(channel == "a") {out[channel] = Math.round(Math.min(1, Math.sqrt(this[channel]**2 * scalar)));}
+    else {out[channel] = Math.round(Math.min(255, Math.sqrt(this[channel]**2 * scalar)));}
     return out;
   }
   scaleBrightness(scalar){

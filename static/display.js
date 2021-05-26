@@ -283,7 +283,7 @@ function makeSearchObject(object){
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target_static");
+  search_target.classList.add("search_target");
   let size = "calc(" + object.search_target_size + " * var(--gw))";
   search_target.style.height = size;
   search_target.style.width = size;
@@ -294,18 +294,32 @@ function makeSearchObject(object){
   let sx = search_canvas.width * object.coords.x / 100;
   let sy = search_canvas.height * object.coords.y / 100;
   let canvas_px_per_gw = search_canvas.width / (100 * search_div_width_fraction);
-  let px_size = object.search_target_size * canvas_px_per_gw;
-  let image_data = ctx.getImageData(sx-0.5*px_size, sy-0.5*px_size, px_size, px_size); //note: this inlcudes around the glowy bit, since only the center of the search target glows
+  let px_size = object.search_target_size * canvas_px_per_gw * 0.5;
+  let image_data = ctx.getImageData(sx-0.5*px_size, sy-0.5*px_size, px_size, px_size); //note: this includes around the glowy bit, since only the center of the search target glows
+
   let avg_color = processImageData(image_data).average;
-  console.log(avg_color);
-  let glow_color = avg_color.scaleBrightness(10).toString();
-  console.log("glow", glow_color, "contrast", avg_color.contrastRatioWith(avg_color.scaleBrightness(10)));
-  search_target.style.backgroundImage = "radial-gradient(closest-side, " + glow_color + ", transparent 50%)";
+  let glow_color = avg_color.copy();
+  let white_contrast = avg_color.contrastRatioWith(new RGBA(255, 255, 255, 1));
+  console.log("white_contrast", white_contrast);
+  if(white_contrast > 2.5){ //if brightening will help increase contrast enough
+    while(glow_color.contrastRatioWith(avg_color) < 2){
+      glow_color = glow_color.scaleBrightness(2);
+    }
+  }
+  else {
+    glow_color = new RGBA(255, 255, 255, 1);
+    //TODO: do something else, the whole point of checking white contrast was to see if going whiter would help
+  }
+
+  search_target.style.backgroundImage = "radial-gradient(closest-side, " + glow_color.toString() + ", transparent 50%)";
+  //search_target.style.backgroundColor = glow_color.toString();
 
   search_target.addEventListener("click",function(){
     search_content.style.display = "block"; //need to have first for the offset calcs below to work
     search_content.style.top = "0px"; //reset so we can recalculate the offsets
     search_content.style.left = "0px";
+
+    console.log("contrast", glow_color.contrastRatioWith(avg_color), white_contrast);
 
     //calculate top and left offsets of search_content to not go offscreen, ideally centering on the search_object's coords
     //doing this on every click in case the window was resized since the search_object was generated or last clicked on
