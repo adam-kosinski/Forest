@@ -33,6 +33,7 @@ let place_radius = 50; //px around a place's center where a token is considered 
 let flashlight_radius = 20; //in vh
 let map_max_scale = 3;
 let map_min_scale = 0.25;
+let search_div_width_fraction = 0.8; //fraction of game_div
 
 //game-state variables, need to reset these if ending a game --------------------------
 

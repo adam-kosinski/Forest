@@ -26,7 +26,10 @@ class Thing {
 
     //sometimes overridden
     this.const_name = undefined; //used for images if defined (in the case when this.name can change)
-    this.coords = {x:"50%", y:"50%"}; //where this Thing is located in the search_div, if hidden. "0-100%" for x and y
+    this.coords = {
+      x: 2+Math.floor(Math.random()*96),
+			y: 2+Math.floor(Math.random()*96)
+    }; //where this Thing is located in the search_div, if hidden. "0-100%" for x and y
 		this.search_target_size = 1; //in gw units (1/100 of game div width) - width and height styling for this Thing's search target div, when hidden
     this.tags = []; //array of strings, alphabetically sorted (but usually empty or only one tag)
                     //used to differentiate Things with the same name, to save space with the name (e.g. name = Forest Floor vs. Prickly Pines Forest Floor)

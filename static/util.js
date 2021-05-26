@@ -247,3 +247,75 @@ function imageSrc(object){
   image_name = image_name.replaceAll(" ","_");
   return "./static/images/" + object.type + "s/" + image_name + ".jpg";
 }
+
+
+
+//color processing (for making search objects in display.js)
+
+class RGBA {
+  constructor(r=0, g=0, b=0, a=1){
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+  }
+  relativeLuminance(){
+    //The formula used to convert to black/white, where relative luminance for black is 0 and for white is 1
+    //From https://www.w3.org/WAI/GL/wiki/Relative_luminance
+    let Rs = this.r/255;
+    let Gs = this.g/255;
+    let Bs = this.b/255;
+    let R = Rs <= 0.04045 ? Rs/12.92 : ((Rs+0.055)/1.055)**2.4;
+    let G = Gs <= 0.04045 ? Gs/12.92 : ((Gs+0.055)/1.055)**2.4;
+    let B = Bs <= 0.04045 ? Bs/12.92 : ((Bs+0.055)/1.055)**2.4;
+    return 0.2126*R + 0.7152*G + 0.0722*B;
+  }
+  contrastRatioWith(other){
+    //other is an RGBA object
+    //Contrast between two colors, ranges 1 to 21
+    //From https://www.w3.org/WAI/GL/wiki/Contrast_ratio
+    let darker = Math.min(this.relativeLuminance(), other.relativeLuminance());
+    let lighter = Math.max(this.relativeLuminance(), other.relativeLuminance());
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+  scale(channel, scalar){
+    if(scalar < 0) return;
+    let out = new RGBA(this.r, this.g, this.b, this.a);
+    if(channel == "a"){
+      out[channel] = Math.round(Math.min(1, Math.sqrt(this[channel]**2 * scalar)));
+    }
+    else {
+      out[channel] = Math.round(Math.min(255, Math.sqrt(this[channel]**2 * scalar)));
+    }
+    return out;
+  }
+  scaleBrightness(scalar){
+    return this.scale("r", scalar).scale("g", scalar).scale("b", scalar);
+  }
+  toString(){
+    return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")"
+  }
+}
+
+function processImageData(image_data){
+  let out = {};
+  let data = image_data.data;
+
+  //Average the colors by averaging their squares then taking the square root
+  //Referenced this for correct color averaging: https://sighack.com/post/averaging-rgb-colors-the-right-way
+  let avg = new RGBA();
+  let n_pixels = data.length / 4;
+  for(let i=0; i<data.length; i+=4){
+    avg.r += data[i]**2 / n_pixels;
+    avg.g += data[i+1]**2 / n_pixels;
+    avg.b += data[i+2]**2 / n_pixels;
+    avg.a += (data[i+3]/255)**2 / n_pixels;
+  }
+  avg.r = Math.round(Math.sqrt(avg.r));
+  avg.g = Math.round(Math.sqrt(avg.g));
+  avg.b = Math.round(Math.sqrt(avg.b));
+  avg.a = Math.round(Math.sqrt(avg.a));
+  out.average = avg;
+
+  return out;
+}

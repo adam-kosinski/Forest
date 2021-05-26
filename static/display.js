@@ -276,18 +276,31 @@ function makeSearchObject(object){
   let search_object = document.createElement("div");
   search_object.id = "search_object-" + object.type + "-" + object.id;
   search_object.className = "search_object";
-  search_object.style.top = object.coords.y;
-  search_object.style.left = object.coords.x;
+  search_object.style.top = object.coords.y + "%";
+  search_object.style.left = object.coords.x + "%";
 
   let search_content = makeThingOrItem(object);
   search_content.classList.add("search_content");
 
   let search_target = document.createElement("div");
-  search_target.classList.add("search_target");
+  search_target.classList.add("search_target_static");
   let size = "calc(" + object.search_target_size + " * var(--gw))";
   search_target.style.height = size;
   search_target.style.width = size;
   search_target.style.animationDelay = 6*Math.random() + "s";
+
+  //set glow color based on background
+  let ctx = search_canvas.getContext("2d");
+  let sx = search_canvas.width * object.coords.x / 100;
+  let sy = search_canvas.height * object.coords.y / 100;
+  let canvas_px_per_gw = search_canvas.width / (100 * search_div_width_fraction);
+  let px_size = object.search_target_size * canvas_px_per_gw;
+  let image_data = ctx.getImageData(sx-0.5*px_size, sy-0.5*px_size, px_size, px_size); //note: this inlcudes around the glowy bit, since only the center of the search target glows
+  let avg_color = processImageData(image_data).average;
+  console.log(avg_color);
+  let glow_color = avg_color.scaleBrightness(10).toString();
+  console.log("glow", glow_color, "contrast", avg_color.contrastRatioWith(avg_color.scaleBrightness(10)));
+  search_target.style.backgroundImage = "radial-gradient(closest-side, " + glow_color + ", transparent 50%)";
 
   search_target.addEventListener("click",function(){
     search_content.style.display = "block"; //need to have first for the offset calcs below to work
@@ -300,7 +313,7 @@ function makeSearchObject(object){
     let rect = search_content.getBoundingClientRect();
     let search_rect = search_div.getBoundingClientRect();
 
-    let top = -Math.min(2*vw + 1, (rect.y - search_rect.y) - vw); //2vw (half height) + 1px (border) to center the image circle, -1vw in 2nd option to account for blur
+    let top = - Math.min(2*vw + 1, (rect.y - search_rect.y) - vw); //2vw (half height) + 1px (border) to center the image circle, -1vw in 2nd option to account for blur
     let bottom_diff = (search_rect.y + search_rect.height) - (rect.y + top + rect.height) - vw; //diff from if we'd used the 'top' value so far, -vw to account for blur of search_content
     if(bottom_diff < 0) top += bottom_diff; //+= b/c we calculated bottom_diff assuming it was already offset by the previous 'top' value.
     search_content.style.top = top + "px";
@@ -366,8 +379,8 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
         case "Cliffside Grove": center = {x:0.5, y:0.5}; break;
         case "Bear Den": center = {x:0.5, y:1}; break;
         case "Redhill": center = {x:0.5, y:0.5};break;
-        case "Fern Haven": center = {x:0.5, y:0.75}; break;
-        case "Thicket of Secrets": center = {x:0.5, y:1}; break;
+        case "Fern Haven": center = {x:0.5, y:1}; break;
+        case "Thicket of Secrets": center = {x:0.5, y:0.75}; break;
         case "Sunlit Stand": center = {x:0.5, y:0.75}; break;
         case "Path": center = {x:0.5, y:0.5}; break;
         case "Middle": center = {x:0.5, y:0.5}; break;
@@ -384,7 +397,6 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
         x: Math.min(max_x_offset, target_x_offset),
         y: Math.min(max_y_offset, target_y_offset)
       }
-      console.log(max_x_offset, max_y_offset, offset);
       ctx.drawImage(img, -offset.x, -offset.y, draw_width, draw_height);
       $(img).remove();
 
@@ -639,10 +651,10 @@ function initGameDisplay(game){
   }
 
   //search_canvas
-  let search_aspect_ratio = 0.8 * Number(getComputedStyle(document.documentElement).getPropertyValue("--aspect_ratio")); //see game.scss
+  let search_aspect_ratio = search_div_width_fraction * Number(getComputedStyle(document.documentElement).getPropertyValue("--aspect_ratio")); //see game.scss
   search_aspect_ratio = Number(search_aspect_ratio.toFixed(3)); //3 decimals, to fix floating point
-  search_canvas.width = 1536; //=1920*0.8, search_div size in fullscreen on my monitor
-  search_canvas.height = 1536 / search_aspect_ratio;
+  search_canvas.width = 1920 * search_div_width_fraction; //1920 is my monitor width, so search_div width in my monitor fullscreen
+  search_canvas.height = search_canvas.width / search_aspect_ratio;
 
   //flashlight canvas
   let fc = flashlight_canvas; //alias
