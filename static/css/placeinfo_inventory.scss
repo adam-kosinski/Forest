@@ -339,6 +339,7 @@ div.item-container > p, div.thing-container > p { /*select p elements that are d
 	left: 50%;
 	transform: translate(-50%, 0);
 	border: 1px solid #968236;
+	background-color: #968236; /*In theory not needed, but sometimes helps in practice to avoid a transparent line down the middle*/
 }
 
 #weight_bar {
