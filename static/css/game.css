@@ -109,7 +109,7 @@
   0% {
     opacity: 0;
   }
-  50% {
+  20% {
     opacity: 0;
   }
   100% {
@@ -124,7 +124,7 @@
   transform: translate(-50%, -50%);
   /*so it's centered with the position coordinates of the search object div*/
   animation-name: breathe;
-  animation-duration: 3s;
+  animation-duration: 2.5s;
   animation-iteration-count: infinite;
   animation-direction: alternate;
   /*default values that should be overwritten by js*/

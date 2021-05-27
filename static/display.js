@@ -287,7 +287,7 @@ function makeSearchObject(object){
   let size = "calc(" + object.search_target_size + " * var(--gw))";
   search_target.style.height = size;
   search_target.style.width = size;
-  search_target.style.animationDelay = 6*Math.random() + "s";
+  search_target.style.animationDelay = 5*Math.random() + "s";
 
   //set glow color based on background
   let ctx = search_canvas.getContext("2d");
@@ -297,17 +297,22 @@ function makeSearchObject(object){
   let px_size = object.search_target_size * canvas_px_per_gw * 0.5;
   let image_data = ctx.getImageData(sx-0.5*px_size, sy-0.5*px_size, px_size, px_size); //note: this includes around the glowy bit, since only the center of the search target glows
 
-  let avg_color = processImageData(image_data).average;
+  let processed_data = processImageData(image_data);
+  let avg_color = processed_data.average;
   let glow_color = avg_color.copy();
+  let min_contrast = Math.min(21, 1.5 + 10*(processed_data.median_contrast-1)); //-1 b/c min contrast is 1
+
   let white_contrast = avg_color.contrastRatioWith(new RGBA(255, 255, 255, 1));
-  console.log("white_contrast", white_contrast);
-  if(white_contrast > 2.5){ //if brightening will help increase contrast enough
-    while(glow_color.contrastRatioWith(avg_color) < 2){
-      glow_color = glow_color.scaleBrightness(2);
+  if(glow_color.contrastRatioWith(avg_color) < min_contrast && white_contrast > min_contrast + 0.1){ //if brightening will help increase contrast enough
+    glow_color.r += 1; //avoid infinite loop with scaling if channel was 0
+    glow_color.g += 1;
+    glow_color.b += 1;
+    while(glow_color.contrastRatioWith(avg_color) < min_contrast){
+      glow_color = glow_color.scaleBrightness(1.5);
     }
   }
   else {
-    glow_color = new RGBA(255, 255, 255, 1);
+    glow_color = new RGBA(255, 180, 0, 1);
     //TODO: do something else, the whole point of checking white contrast was to see if going whiter would help
   }
 
@@ -319,7 +324,10 @@ function makeSearchObject(object){
     search_content.style.top = "0px"; //reset so we can recalculate the offsets
     search_content.style.left = "0px";
 
-    console.log("contrast", glow_color.contrastRatioWith(avg_color), white_contrast);
+    console.log("glow color", glow_color);
+    console.log("glow_contrast", glow_color.contrastRatioWith(avg_color));
+    console.log("med_pair_contrast", processed_data.median_contrast);
+    console.log("min_contrast", min_contrast, min_contrast - 10*(processed_data.median_contrast-1)**2);
 
     //calculate top and left offsets of search_content to not go offscreen, ideally centering on the search_object's coords
     //doing this on every click in case the window was resized since the search_object was generated or last clicked on

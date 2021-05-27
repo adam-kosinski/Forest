@@ -263,13 +263,23 @@ class RGBA {
   copy(){
     return new RGBA(this.r, this.g, this.b, this.a);
   }
+  clamp(){
+    //clamp to 0-255 for rgb, 0-1 for a
+    let out = this.copy();
+    out.r = Math.min(255, Math.max(0, out.r));
+    out.g = Math.min(255, Math.max(0, out.g));
+    out.b = Math.min(255, Math.max(0, out.b));
+    out.a = Math.min(1, Math.max(0, out.a));
+    return out;
+  }
   relativeLuminance(){
     //The formula used to convert to black/white, where relative luminance for black is 0 and for white is 1
     //From https://www.w3.org/WAI/GL/wiki/Relative_luminance
+    //Details on gamma correction (the weird math bit): https://www.cambridgeincolour.com/tutorials/gamma-correction.htm
     let Rs = this.r/255;
     let Gs = this.g/255;
     let Bs = this.b/255;
-    let R = Rs <= 0.04045 ? Rs/12.92 : ((Rs+0.055)/1.055)**2.4;
+    let R = Rs <= 0.04045 ? Rs/12.92 : ((Rs+0.055)/1.055)**2.4; //this stuff is called gamma correction
     let G = Gs <= 0.04045 ? Gs/12.92 : ((Gs+0.055)/1.055)**2.4;
     let B = Bs <= 0.04045 ? Bs/12.92 : ((Bs+0.055)/1.055)**2.4;
     return 0.2126*R + 0.7152*G + 0.0722*B;
@@ -286,9 +296,8 @@ class RGBA {
     if(scalar < 0) return;
 
     let out = this.copy();
-    if(channel == "a") {out[channel] = Math.round(Math.min(1, Math.sqrt(this[channel]**2 * scalar)));}
-    else {out[channel] = Math.round(Math.min(255, Math.sqrt(this[channel]**2 * scalar)));}
-    return out;
+    out[channel] = (this[channel]**2.2 * scalar)**(1/2.2); //note: DON'T ROUND - creates infinite loops
+    return out.clamp();
   }
   scaleBrightness(scalar){
     return this.scale("r", scalar).scale("g", scalar).scale("b", scalar);
@@ -302,21 +311,35 @@ function processImageData(image_data){
   let out = {};
   let data = image_data.data;
 
-  //Average the colors by averaging their squares then taking the square root
+  //Average the colors by averaging their "squares" then taking the "square root"
+  //(actually use power of 2.2 aka gamma)
   //Referenced this for correct color averaging: https://sighack.com/post/averaging-rgb-colors-the-right-way
   let avg = new RGBA();
   let n_pixels = data.length / 4;
   for(let i=0; i<data.length; i+=4){
-    avg.r += data[i]**2 / n_pixels;
-    avg.g += data[i+1]**2 / n_pixels;
-    avg.b += data[i+2]**2 / n_pixels;
-    avg.a += (data[i+3]/255)**2 / n_pixels;
+    avg.r += data[i]**2.2 / n_pixels;
+    avg.g += data[i+1]**2.2 / n_pixels;
+    avg.b += data[i+2]**2.2 / n_pixels;
+    avg.a += (data[i+3]/255)**2.2 / n_pixels;
   }
-  avg.r = Math.round(Math.sqrt(avg.r));
-  avg.g = Math.round(Math.sqrt(avg.g));
-  avg.b = Math.round(Math.sqrt(avg.b));
-  avg.a = Math.round(Math.sqrt(avg.a));
-  out.average = avg;
+  avg.r = Math.round(avg.r**(1/2.2)); //rounding not necessary, just for my easier reading
+  avg.g = Math.round(avg.g**(1/2.2));
+  avg.b = Math.round(avg.b**(1/2.2));
+  avg.a = Math.round(avg.a**(1/2.2));
+  out.average = avg.clamp(); //clamp to 0-255 / 0-1 just in case we went over
+
+  //Calculate median contrast among each pair of pixels
+  let pair_contrasts = [];
+  for(let i=0; i<data.length; i+=4){
+    for(let j=i+4; j<data.length; j+=4){
+      let pixel_1 = new RGBA(data[i], data[i+1], data[i+2], data[i+3]);
+      let pixel_2 = new RGBA(data[j], data[j+1], data[j+2], data[j+3]);
+      let contrast = pixel_1.contrastRatioWith(pixel_2);
+      pair_contrasts.push(contrast);
+    }
+  }
+  pair_contrasts.sort();
+  out.median_contrast = pair_contrasts[Math.floor(pair_contrasts.length/2)];
 
   return out;
 }

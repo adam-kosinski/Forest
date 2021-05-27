@@ -53,7 +53,7 @@ class Item {
 
 		//these properties sometimes overridden in child constructors -----------------------------
 		this.const_name = undefined; //used for images if defined (in the case when this.name can change)
-		this.search_target_size = 1; //in gw units (1/100 of game div width) - width and height styling for this Item's search target div, when hidden
+		this.search_target_size = 1 + Math.random()**3; //in gw units (1/100 of game div width) - width and height styling for this Item's search target div, when hidden
 		this.coords = {  //where this Item is located in the search_div, if hidden. 0-100 (percent) for x and y
 			x: 2+Math.floor(Math.random()*96),
 			y: 2+Math.floor(Math.random()*96)
@@ -199,7 +199,7 @@ class Pinecone extends Item {
     this.name = "Pinecone";
     this.categories = ["Seed"];
     this.weight = 3;
-		this.visible = Math.random() < 0.3;
+		this.visible = Math.random() < 0.2;
   }
 }
 
