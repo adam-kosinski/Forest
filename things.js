@@ -102,6 +102,12 @@ class Tree extends Thing {
         for(let i=0; i<n_green_needles; i++) this.items.push(new items.Leaf("Pine", true, "Green"));
       }
     }
+
+    //twigs/sticks
+    let n_twigs = 3 + 10*Math.random();
+    for(let i=0; i<n_twigs; i++){
+      this.items.push(new items.Stick("Twig"));
+    }
   }
   getInteractions(player){
     let out = {actions:[], messages:[]};

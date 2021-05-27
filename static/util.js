@@ -313,7 +313,7 @@ function processImageData(image_data){
 
   //Average the colors by averaging their "squares" then taking the "square root"
   //(actually use power of 2.2 aka gamma)
-  //Referenced this for correct color averaging: https://sighack.com/post/averaging-rgb-colors-the-right-way
+  //Referenced this originally for correct color averaging: https://sighack.com/post/averaging-rgb-colors-the-right-way
   let avg = new RGBA();
   let n_pixels = data.length / 4;
   for(let i=0; i<data.length; i+=4){

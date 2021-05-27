@@ -244,8 +244,8 @@ class Stick extends Item {
 	constructor(size){
 		//size can be "Twig", nothing for average stick, or "Branch"
 		super();
-		this.name = "Stick";
 		if(size) this.name = size;
+		else this.name = "Stick";
 		this.categories = ["Stick"];
 		switch(size){
 			case "Twig": this.weight = 1; this.visible = Math.random() < 0.3; break;
