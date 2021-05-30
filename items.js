@@ -74,7 +74,8 @@ class Item {
 	//methods sometimes overridden ---------------------------
 	canTake(player){
 		//Returns "yes" if the player can take this item, otherwise returns a string explaining why they can't
-		return "yes"; //default
+		if(player.getTotalWeight() + this.weight <= player.getMaxWeight()) return "yes";
+		return "Taking would exceed weight limit.";
 	}
 	canFind(player){
 		//Returns "yes" if the player can find this item, otherwise returns something else - explanation not necessary
@@ -204,7 +205,7 @@ class Pinecone extends Item {
     this.name = "Pinecone";
     this.categories = ["Seed"];
     this.weight = 3;
-		this.visible = Math.random() < 0.1;
+		this.visible = Math.random() < 0.2;
   }
 	getInteractions(player){
 		let out = Item.prototype.getInteractions.call(this, player);
@@ -234,7 +235,7 @@ class Rock extends Item {
 		this.categories = ["Rock"];
 		if(type.length > 0) this.categories.push(type);
 		this.weight = 5;
-		this.visible = Math.random() < 0.2;
+		this.visible = false;
 		this.search_target_size = 1;
 	}
 	getInteractions(player){
@@ -341,6 +342,9 @@ class Dirt extends Item {
 		this.needs_container = true;
 	}
 	canTake(player){
+		let base_result = Item.prototype.canTake.call(this, player);
+		if(base_result != "yes") return base_result;
+
 		for(let i=0; i<player.items.length; i++){
 			let item = player.items[i];
 			if(item.is_container && !item.isFull()) return "yes";

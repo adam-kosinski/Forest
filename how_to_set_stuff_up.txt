@@ -29,7 +29,7 @@ Change the title in the index.html file to reflect the game's name
 
 
 git push
-  Get all these changes into git (technically not necessary to store on GitHub, but good idea)
+  Get all these changes into git
 
 
 heroku local

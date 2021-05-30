@@ -29,6 +29,9 @@ class Player {
     //the more an animal trusts you, the more they will tell you / the more quests they will give. Keys are NPC animal names, values are trust level
     this.trust = {};
   }
+  getMaxWeight(){
+    return this.weight_thresholds.reduce((accum, thresh) => accum + thresh.weight_range, 0);
+  }
   getTotalWeight(){
     let total_weight = 0;
     for(let i=0; i<this.items.length; i++){

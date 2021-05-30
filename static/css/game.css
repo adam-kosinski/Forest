@@ -120,7 +120,6 @@
   opacity: 0;
   /*so they start off invisible before the animation kicks in*/
   border-radius: 5px;
-  cursor: pointer;
   transform: translate(-50%, -50%);
   /*so it's centered with the position coordinates of the search object div*/
   animation-name: breathe;
@@ -142,7 +141,6 @@
   /*for debugging only*/
   border-radius: 5px;
   background-image: radial-gradient(closest-side, yellow, transparent 50%);
-  cursor: pointer;
   transform: translate(-50%, -50%);
   border: 3px solid orange;
   width: calc(1 * var(--gw));
