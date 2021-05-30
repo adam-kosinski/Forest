@@ -48,8 +48,6 @@ class Game {
     for(let place_name in this.map.places){
       let place = this.map.places[place_name];
 
-      place.items.push(new items.Container("Basket", "normal", 3));
-
       //rocks
       if(Math.random() < 0.6){
         let n_rocks = Math.floor(Math.random()*5);
@@ -80,10 +78,12 @@ class Game {
         break;
         case "Roaring Rapids":
           //pebbles
+          /*
           let n_pebbles = 15 + Math.floor(Math.random()*10);
           for(let i=0; i<n_pebbles; i++){
             place.items.push(new items.Pebble());
           }
+          */
         break;
       }
     }

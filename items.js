@@ -20,8 +20,6 @@ function deepCopy(object){
 }
 
 
-//TODO: FIX IMAGE SRC TO MAKE IT BASED ON TAGS - currently the first img src for given tags will stay
-
 
 /* Info on Items ---------------------------------
 
@@ -53,7 +51,7 @@ class Item {
 
 		//these properties sometimes overridden in child constructors -----------------------------
 		this.const_name = undefined; //used for images if defined (in the case when this.name can change)
-		this.search_target_size = 1 + Math.random()**3; //in gw units (1/100 of game div width) - width and height styling for this Item's search target div, when hidden
+		this.search_target_size = 1.5; //in gw units (1/100 of game div width) - width and height styling for this Item's search target div, when hidden
 		this.coords = {  //where this Item is located in the search_div, if hidden. 0-100 (percent) for x and y
 			x: 2+Math.floor(Math.random()*96),
 			y: 2+Math.floor(Math.random()*96)
@@ -189,7 +187,14 @@ class Leaf extends Item {
     ];
     this.weight = 1;
 		this.visible = alive ? Math.random() > 0.4 : true;
+
+		this.search_target_size = 2;
   }
+	getInteractions(player){
+		let out = Item.prototype.getInteractions.call(this, player);
+		if(this.alive) out.messages.push("1 point");
+		return out;
+	}
 }
 
 
@@ -199,8 +204,13 @@ class Pinecone extends Item {
     this.name = "Pinecone";
     this.categories = ["Seed"];
     this.weight = 3;
-		this.visible = Math.random() < 0.2;
+		this.visible = Math.random() < 0.1;
   }
+	getInteractions(player){
+		let out = Item.prototype.getInteractions.call(this, player);
+		out.messages.push("4 points");
+		return out;
+	}
 }
 
 
@@ -225,6 +235,12 @@ class Rock extends Item {
 		if(type.length > 0) this.categories.push(type);
 		this.weight = 5;
 		this.visible = type != "Rock" ? Math.random() < 0.2 : Math.random() < 0.5; //special types of rock are rarer
+		this.search_target_size = 1;
+	}
+	getInteractions(player){
+		let out = Item.prototype.getInteractions.call(this, player);
+		out.messages.push("10 points");
+		return out;
 	}
 }
 
@@ -248,10 +264,15 @@ class Stick extends Item {
 		else this.name = "Stick";
 		this.categories = ["Stick"];
 		switch(size){
-			case "Twig": this.weight = 1; this.visible = Math.random() < 0.3; break;
+			case "Twig": this.weight = 0.5; this.visible = Math.random() < 0.3; break;
 			case "Branch": this.weight = 4; this.visible = Math.random() < 0.7; break;
-			default: this.weight = 2; this.visible = Math.random() < 0.5
+			default: this.weight = 1; this.visible = Math.random() < 0.5
 		}
+	}
+	getInteractions(player){
+		let out = Item.prototype.getInteractions.call(this, player);
+		out.messages.push("0.5 points");
+		return out;
 	}
 }
 
