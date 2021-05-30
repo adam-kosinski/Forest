@@ -185,14 +185,14 @@ class Leaf extends Item {
       (alive ? "Alive" : "Dead") + " Leaf",
       "Leaf"
     ];
-    this.weight = 1;
+    this.weight = 2;
 		this.visible = alive ? Math.random() > 0.4 : true;
 
 		this.search_target_size = 2;
   }
 	getInteractions(player){
 		let out = Item.prototype.getInteractions.call(this, player);
-		if(this.alive) out.messages.push("1 point");
+		if(this.alive) out.messages.push("2 points");
 		return out;
 	}
 }
@@ -264,14 +264,14 @@ class Stick extends Item {
 		else this.name = "Stick";
 		this.categories = ["Stick"];
 		switch(size){
-			case "Twig": this.weight = 0.5; this.visible = Math.random() < 0.3; break;
+			case "Twig": this.weight = 1; this.visible = Math.random() < 0.3; break;
 			case "Branch": this.weight = 4; this.visible = Math.random() < 0.7; break;
 			default: this.weight = 1; this.visible = Math.random() < 0.5
 		}
 	}
 	getInteractions(player){
 		let out = Item.prototype.getInteractions.call(this, player);
-		out.messages.push("0.5 points");
+		out.messages.push("1 point");
 		return out;
 	}
 }
