@@ -29,7 +29,7 @@ Change the title in the index.html file to reflect the game's name
 
 
 git push
-  Get all these changes into git
+  Get all these changes into git (technically not necessary to store on GitHub, but good idea)
 
 
 heroku local
@@ -40,7 +40,8 @@ To deploy to the internet:
 
 heroku create name-of-app
   creates a new app on heroku (run only once)
+  note: if app already created, to add the heroku remote to the directory on this computer, do: heroku git:remote -a [app-name]
 
 
-git push heroku master
+git push heroku main
   updates web app to match local one (run whenever want to update changes)

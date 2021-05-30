@@ -234,7 +234,7 @@ class Rock extends Item {
 		this.categories = ["Rock"];
 		if(type.length > 0) this.categories.push(type);
 		this.weight = 5;
-		this.visible = type != "Rock" ? Math.random() < 0.2 : Math.random() < 0.5; //special types of rock are rarer
+		this.visible = Math.random() < 0.2;
 		this.search_target_size = 1;
 	}
 	getInteractions(player){
