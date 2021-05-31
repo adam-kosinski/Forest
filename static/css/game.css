@@ -105,6 +105,21 @@
   height: 100%;
 }
 
+#timer {
+  width: calc(4 * var(--gw));
+  height: calc(4 * var(--gh));
+  right: calc(0.5 * var(--gw));
+  bottom: calc(0.5 * var(--gh));
+  font-size: calc(2.5 * var(--gh));
+  font-family: Inconsolata;
+  /*monospace, so seconds changing doesn't impact text width*/
+  border-radius: calc(1 * var(--gh));
+  background-color: #fffa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @keyframes breathe {
   0% {
     opacity: 0;

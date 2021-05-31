@@ -46,6 +46,7 @@ let me; //stores a copy of my player state object that the server has
 let here; //stores a copy of the place we're in
 let my_token; //DOM reference
 let adj_places = []; //list of place names adjacent to my location, redefined each time we start dragging my token
+let timer_interval_id; //used in updateSearchDiv(), display.js
 
 //debug
 let disable_contextmenu = true;

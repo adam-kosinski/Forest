@@ -11,7 +11,7 @@ let Place = classes.Place;
 let items = require("./items");
 let things = require("./things");
 let animals = require("./animals");
-
+const {performance} = require("perf_hooks");
 
 
 class Game {
@@ -22,6 +22,12 @@ class Game {
     this.map = new Map();
     this.animals = {}; //animal_name: animal_object - filled below
 
+    this.duration = 420; //sec
+    this.start_time = performance.now() / 1000; //sec
+    this.time_left = this.duration;
+    setInterval(function(){
+      this.time_left = Math.max(0, this.duration - (performance.now()/1000 - this.start_time));
+    }.bind(this), 100);
 
     //add player objects
     for(let i=0; i<player_names.length; i++){

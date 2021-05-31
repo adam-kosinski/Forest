@@ -314,7 +314,7 @@ function makeSearchObject(object){
       }
     }
     else {
-      console.warn("Brightening the search_target couldn't achieve the necessary contrast, setting to white.", search_target);
+      //console.warn("Brightening the search_target couldn't achieve the necessary contrast, setting to white.", search_target);
       glow_color = new RGBA(255, 255, 255, 1);
     }
   }
@@ -375,6 +375,30 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     return;
   }
   $(search_div).fadeIn(500);
+
+
+  //timer
+  let time_left_on_update = game_obj.time_left; //sec
+  let sec_past_update = 1;
+    //normally the client lags behind the server a little, but better experience for client to be ahead, e.g. so player not upset about things failing at 1s left
+    //also this compensates for server-client communication lag time, may better match actual server time
+
+  let showTime = function(){
+    let time_left = Math.max(0, Math.round(time_left_on_update - sec_past_update));
+    let min = Math.floor(time_left/60);
+    let sec = time_left % 60;
+    document.getElementById("timer").textContent = min + ":" + (sec < 10 ? "0" : "") + sec;
+  }
+  showTime();
+
+  if(timer_interval_id !== undefined) clearInterval(timer_interval_id);
+  timer_interval_id = setInterval(function(){
+    sec_past_update++;
+    showTime();
+  }, 1000);
+
+
+  //background, items, things
 
   let place = game_obj.map.places[me.location];
   let prev_place = prev_game_obj.map.places[me.location];
