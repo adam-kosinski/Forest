@@ -1,4 +1,5 @@
 //Custom prompt and alert popups -------------------------------------------
+//To copy to another project - need jquery, the popup HTML inside the body (which should be positioned), and the popup css copy-pasted
 
 let prompt_callback = function(){};
 let alert_callback = function(){};

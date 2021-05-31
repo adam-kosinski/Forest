@@ -45,8 +45,7 @@ function makeThingOrItem(object, display_quantity=0){
 
 function updatePlaceInfo(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
   if(am_spectator){
-    place_info.style.display = "none"; //TODO: change this to let them see, just don't let the spectator interact
-    return;
+    return; //TODO: fix everything
   }
 
   //check if traveling
@@ -633,7 +632,6 @@ function initGameDisplay(game){
   here = game.map.places[me.location];
 
   game_div.style.display = "block";
-  place_info.style.display = "block"; //in case we were a spectator last round and this is hidden
 
   let map_overlay = document.getElementById("map_overlay");
   let map_image = document.getElementById("map_image");

@@ -127,6 +127,15 @@ io.on("connection", function(socket) {
   });
 
 
+  socket.on("clear_game", function(){
+    if(game) game.end();
+    game = undefined;
+    //the only other server state we could reset is item/thing ids, but it's really not necessary
+    io.emit("clear_game");
+    console.log("Game ended");
+  });
+
+
   socket.on("update_server_element", function(data){
     if(!game){return;} //element storage only occurs during a game
 

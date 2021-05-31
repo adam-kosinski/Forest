@@ -25,9 +25,12 @@ class Game {
     this.duration = 420; //sec
     this.start_time = performance.now() / 1000; //sec
     this.time_left = this.duration;
-    setInterval(function(){
+    let timer_id = setInterval(function(){
       this.time_left = Math.max(0, this.duration - (performance.now()/1000 - this.start_time));
+      console.log(this.time_left);
     }.bind(this), 100);
+
+    this.clearTimerInterval = function(){clearInterval(timer_id);}
 
     //add player objects
     for(let i=0; i<player_names.length; i++){
@@ -95,6 +98,9 @@ class Game {
     }
 
 
+  }
+  end(){
+    this.clearTimerInterval(); //method defined in the constructor, where the timer interval was set up
   }
 }
 

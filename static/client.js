@@ -104,8 +104,6 @@ function getState(){
 
 
 
-
-
 // SOCKET EVENT HANDLERS ---------------------------------
 
 socket.on("player_connection", function(player_statuses){
@@ -142,27 +140,23 @@ socket.on("start_game", function(game){
 	game_active = true;
 
 	//fade to dark slowly and then back to light to start the game
-	dark_fade.style.display = "block";
-	let opacity = 0;
-	let sign = 1; //increase opacity at first
+	//TODO: change all times back to 1000
+	$(dark_fade).fadeIn(100, function(){
+		home_screen.style.display = "none";
+		initGameDisplay(game); //display.js
+		setTimeout(function(){
+			$(dark_fade).fadeOut(100);
+		}, 100);
+	});
 
-	let interval = setInterval(function(){
-		opacity += sign*0.05;
-		dark_fade.style.opacity = opacity;
-
-		if(opacity >= 1.5){ //if the opacity is > 1, element rendered fully opaque. This is a hack to get it to stay dark for a second before lightening up again
-			home_screen.style.display = "none";
-			initGameDisplay(game); //display.js
-			sign = -1;
-		}
-		if(opacity <= 0){
-			dark_fade.style.display = "none";
-			clearInterval(interval);
-		}
-	}, 5); //TODO change it back to 50ms
 });
 
+
 socket.on("clear_game", function(){
+	console.log("Clearing game");
+
+	if(timer_interval_id != undefined) clearInterval(timer_interval_id);
+
 	//global vars
 	game_active = false;
 	am_spectator = false;
@@ -174,7 +168,27 @@ socket.on("clear_game", function(){
 	my_token = undefined;
 	adj_places = [];
 	timer_interval_id = undefined;
+
+	//HTML reset
+	closePopup(true); //force all popups in queue to close as well - some may have callbacks attached to the game
+	$("#map_overlay").html("");
+	$("#search_div .search_object").remove();
+	$("#thing_display").html("");
+	$("#item_display").html("");
+	$("#inventory_items").html("");
+	$("#weight_bar").html("");
+	$("#contextmenu").html("");
+
+	//dark fade back to home screen - basically a copy paste from the start game code above
+	$(dark_fade).fadeIn(1000, function(){
+		game_div.style.display = "none";
+		home_screen.style.display = "block";
+		setTimeout(function(){
+			$(dark_fade).fadeOut(1000);
+		}, 1000);
+	});
 });
+
 
 
 socket.on("update_client_element", function(data){

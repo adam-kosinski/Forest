@@ -61,6 +61,7 @@
 			<div id="search_div">
 				<canvas id="search_canvas"></canvas>
 				<div id="timer"></div>
+																				<!--reset all .search_object divs-->
 			</div>
 
 			<canvas id="flashlight_canvas"></canvas>
@@ -74,9 +75,9 @@
 					<p id="region_name_display"></p>
 				</div>
 				<div id="place_scroll_container">
-					<div id="thing_display"></div>
+					<div id="thing_display"></div>								<!-- reset -->
 					<p id="item_display_title">Visible Items</p>
-					<div id="item_display"></div>
+					<div id="item_display"></div>									<!-- reset -->
 				</div>
 				<div id="top_line"></div>
 			</div>
@@ -96,15 +97,16 @@
 								<td></td>
 								<td></td>
 								<td colspan="3">
-									<div id="inventory_items"></div>
+									<div id="inventory_items"></div>								<!-- reset -->
 									<div id="total_weight_inventory">
 										<div id="weight_bar_left_labels">
 											<p>Action Speed:</p>
 											<p>Total Weight:</p>
 										</div>
 										<div id="weight_bar_container">
-											<div id="weight_bar_marker">5</div>
+											<div id="weight_bar_marker">?</div>
 											<div id="weight_bar"></div> <!--filled in updateInventory()'s first run, display.js-->
+																														<!-- reset weight_bar -->
 										</div>
 									</div>
 								</td>
@@ -127,7 +129,7 @@
 
 		</div>
 
-		<div id="contextmenu"></div>
+		<div id="contextmenu"></div>								<!-- reset -->
 		<div id="dark_fade"></div>
 
 		<!--note: element highlighter divs can't have a parent or else you wouldn't be able to interact with the highlighted element-->

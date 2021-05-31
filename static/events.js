@@ -10,7 +10,7 @@ document.addEventListener("keydown", handleKeydown);
 window.addEventListener("resize", handleWindowResize);
 
 
-//note: custom prompt/alert events are handled in util.js, where the rest of the prompt/alert code is
+//note: custom prompt/alert events are handled in popup.js
 
 
 let drag_element; //undefined means not currently dragging (same for next two)

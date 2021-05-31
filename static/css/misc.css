@@ -43,6 +43,8 @@ p {
 
 /* custom prompt and alert implementation ----------------------------- */
 #disable_page_div {
+  position: absolute;
+  /*redundant, but here if copying custom popup to another file*/
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.25);
@@ -51,6 +53,8 @@ p {
 }
 
 .popup {
+  position: absolute;
+  /*redundant, but here if copying custom popup to another file*/
   width: 300px;
   left: 0;
   right: 0;
@@ -225,7 +229,6 @@ p {
   width: 100%;
   height: 100%;
   background-color: black;
-  opacity: 0;
   display: none;
   z-index: 50;
 }

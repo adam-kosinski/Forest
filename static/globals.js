@@ -23,6 +23,7 @@ let inventory_items = document.getElementById("inventory_items");
 let search_div = document.getElementById("search_div");
 let search_canvas = document.getElementById("search_canvas");
 let flashlight_canvas = document.getElementById("flashlight_canvas");
+
 let progress_div = document.getElementById("progress_div");
 
 
