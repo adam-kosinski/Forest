@@ -4,20 +4,17 @@ BUG - expanding animation in inventory some time after the taking action (I thou
 
 Get rid of map, just have game.place_def and game.places
 
-Implement weight affecting time it takes to do actions, uniformly across actions somehow
-- maybe through a Player method on the server?
-
 remove game_active variable for the client?
 
 update server client connection to better version from JumpShootOnline
 
-Make spectators be able to walk around, see things/items, and do the search game,
+Make spectators be able to walk around, see things/items (including hidden ones)
 just can't interact with anything (disable the contextmenu / only have one thing
 in the contextmenu saying you're a spectator)
 - CURRENTLY SPECTATOR IS VERY BROKEN - issue with name for spectator socket not being registered in id_to_name,
   error in server's "cannotFind" socket handler on line 230 b/c player not defined as a result
 
-Ditch server tracked elements - we don't really need to see where everyone is,
+Ditch server tracked elements? - we don't really need to see where everyone is,
 and in reality you'd only know someone was somewhere if they were where you are
 - ... unless knowing where everyone is promotes player interaction?
 - note: planning to have PlayerDisplay as a Thing, so you know who else is where you are
