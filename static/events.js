@@ -294,7 +294,7 @@ function handleContextmenu(e){
 
 
 function handleKeypress(e){
-  if(isPopupOpen()) return;
+  if(isPopupVisible()) return;
 
   if(e.key == "~"){
     disable_contextmenu = !disable_contextmenu;
@@ -313,7 +313,7 @@ function handleKeypress(e){
 
 
 function handleKeydown(e){
-  if(isPopupOpen()) return;
+  if(isPopupVisible()) return;
 
   if(e.key == "Escape"){
     hide(contextmenu);

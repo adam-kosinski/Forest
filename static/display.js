@@ -396,6 +396,7 @@ function updateSearchDiv(cannotFind={thingIds:[],itemIds:[]}, first_time=false){
     sec_past_update++;
     showTime();
   }, 1000);
+  //note: this interval will get paused if we ever call window.alert() etc. - in theory we never do this during the game so it's fine
 
 
   //background, items, things

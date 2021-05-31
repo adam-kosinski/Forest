@@ -162,6 +162,20 @@ socket.on("start_game", function(game){
 	}, 5); //TODO change it back to 50ms
 });
 
+socket.on("clear_game", function(){
+	//global vars
+	game_active = false;
+	am_spectator = false;
+	game_obj = undefined;
+	prev_game_obj = undefined;
+	prevCannotFind = undefined;
+	me = undefined;
+	here = undefined;
+	my_token = undefined;
+	adj_places = [];
+	timer_interval_id = undefined;
+});
+
 
 socket.on("update_client_element", function(data){
 	updateClientElement(data);
