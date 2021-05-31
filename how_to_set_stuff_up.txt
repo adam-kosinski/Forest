@@ -45,3 +45,8 @@ heroku create name-of-app
 
 git push heroku main
   updates web app to match local one (run whenever want to update changes)
+
+---------------------------------------------
+
+To allow computers on home network LAN to access localhost:5000, see this article:
+https://www.devopinion.com/access-localhost-from-another-computer-on-the-same-network/

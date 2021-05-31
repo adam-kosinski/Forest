@@ -1,4 +1,3 @@
-BUG - contextmenu occasionally rendering part offscreen
 BUG - weird thing where a twig didn't contract in search_div, likely something to do w/ Mommy picking it up
 BUG - expanding animation in inventory some time after the taking action (I thought I got rid of this?)
 

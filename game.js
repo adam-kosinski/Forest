@@ -27,7 +27,6 @@ class Game {
     this.time_left = this.duration;
     let timer_id = setInterval(function(){
       this.time_left = Math.max(0, this.duration - (performance.now()/1000 - this.start_time));
-      console.log(this.time_left);
     }.bind(this), 100);
 
     this.clearTimerInterval = function(){clearInterval(timer_id);}

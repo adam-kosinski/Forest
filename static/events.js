@@ -279,16 +279,23 @@ function handleContextmenu(e){
 
   //show the contextmenu, making sure it doesn't go offscreen
 
-  //for some reason jquery can tell the width/height immediately (unlike getComputedStyle), but weirdly it only works if inside a setTimeout with 0 delay
-  let size_timeout = setTimeout(function(){
-    let left_offset = Math.min(0, window.innerWidth - ($(contextmenu).width() + e.pageX));
-    contextmenu.style.left = e.pageX + left_offset + "px";
+  //hacky trick to get computed width (can't get computed width while display is none)
+  contextmenu.style.opacity = 0;
+  contextmenu.style.display = "block";
 
+  //wait 10ms for the div to get its width/height
+  let size_timeout = setTimeout(function(){
+
+    let left_offset = Math.min(0, window.innerWidth - ($(contextmenu).width() + e.pageX));
     let top_offset = Math.min(0, window.innerHeight - ($(contextmenu).height() + e.pageY));
+    contextmenu.style.left = e.pageX + left_offset + "px";
     contextmenu.style.top = e.pageY + top_offset + "px";
 
+    //reset to hidden and full opacity so that show() works
+    contextmenu.style.display = "none";
+    contextmenu.style.opacity = 1;
     show(contextmenu);
-  }, 0);
+  }, 10);
 
 }
 
