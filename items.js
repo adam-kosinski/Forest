@@ -74,8 +74,10 @@ class Item {
 	//methods sometimes overridden ---------------------------
 	canTake(player){
 		//Returns "yes" if the player can take this item, otherwise returns a string explaining why they can't
+		if(server.getGame().time_left == 0) return "Can't take - no time left";
+
 		if(player.getTotalWeight() + this.weight <= player.getMaxWeight()) return "yes";
-		return "Taking would exceed weight limit.";
+		else return "Taking would exceed weight limit";
 	}
 	canFind(player){
 		//Returns "yes" if the player can find this item, otherwise returns something else - explanation not necessary
@@ -205,7 +207,7 @@ class Pinecone extends Item {
     this.name = "Pinecone";
     this.categories = ["Seed"];
     this.weight = 3;
-		this.visible = Math.random() < 0.2;
+		this.visible = false;
   }
 	getInteractions(player){
 		let out = Item.prototype.getInteractions.call(this, player);

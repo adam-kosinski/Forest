@@ -33,7 +33,7 @@ class Game {
 
     //add player objects
     for(let i=0; i<player_names.length; i++){
-      let player = new Player(player_names[i], "squirrel", "Clearing");
+      let player = new Player(player_names[i], "squirrel", "Path");
       this.players[player.name] = player;
 
       let pos = this.map.places[player.location].pos;
@@ -58,7 +58,7 @@ class Game {
 
       //rocks
       if(Math.random() < 0.75){
-        let n_rocks = Math.floor(Math.random()*5);
+        let n_rocks = Math.ceil(Math.random()*5);
         for(let i=0; i<n_rocks; i++){
           place.items.push(new items.Rock());
         }

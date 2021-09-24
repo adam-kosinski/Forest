@@ -1,5 +1,8 @@
 BUG - weird thing where a twig didn't contract in search_div, likely something to do w/ Mommy picking it up
 BUG - expanding animation in inventory some time after the taking action (I thought I got rid of this?)
+BUG - can't find items on server that came from emptying a hole
+BUG - if reload during game then go back to main menu, circletype is messed up (home screen wasn't
+showing when the CircleType objects were created on player connection - client.js)
 
 Get rid of map, just have game.place_def and game.places
 

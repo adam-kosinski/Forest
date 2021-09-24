@@ -220,29 +220,79 @@ function processImageData(image_data){
   let avg = new RGBA();
   let n_pixels = data.length / 4;
   for(let i=0; i<data.length; i+=4){
+    if(data[i+3] < 1) continue; //only use opaque pixels
+
     avg.r += data[i]**2.2 / n_pixels;
     avg.g += data[i+1]**2.2 / n_pixels;
     avg.b += data[i+2]**2.2 / n_pixels;
-    avg.a += (data[i+3]/255)**2.2 / n_pixels;
   }
   avg.r = Math.round(avg.r**(1/2.2)); //rounding not necessary, just for my easier reading
   avg.g = Math.round(avg.g**(1/2.2));
   avg.b = Math.round(avg.b**(1/2.2));
-  avg.a = Math.round(avg.a**(1/2.2));
+  avg.a = 1;
   out.average = avg.clamp(); //clamp to 0-255 / 0-1 just in case we went over
 
-  //Calculate median contrast among each pair of pixels
+  //Calculate median contrast among random pairs of pixels
   let pair_contrasts = [];
-  for(let i=0; i<data.length; i+=4){
-    for(let j=i+4; j<data.length; j+=4){
-      let pixel_1 = new RGBA(data[i], data[i+1], data[i+2], data[i+3]);
-      let pixel_2 = new RGBA(data[j], data[j+1], data[j+2], data[j+3]);
-      let contrast = pixel_1.contrastRatioWith(pixel_2);
-      pair_contrasts.push(contrast);
-    }
+  for(let n=0; n<n_pixels/10; n++){
+    let i1 = 4*Math.floor(Math.random()*n_pixels);
+    let i2 = 4*Math.floor(Math.random()*n_pixels);
+    let pixel_1 = new RGBA(data[i1], data[i1+1], data[i1+2], data[i1+3]);
+    let pixel_2 = new RGBA(data[i2], data[i2+1], data[i2+2], data[i2+3]);
+    let contrast = pixel_1.contrastRatioWith(pixel_2);
+    pair_contrasts.push(contrast);
   }
   pair_contrasts.sort();
   out.median_contrast = pair_contrasts[Math.floor(pair_contrasts.length/2)];
+
+
+  //try to calculate noise
+  /*let noise_contrasts = [];
+  for(let i=0; i<n_pixels/20; i++){
+    let x0 = Math.floor(Math.random()*image_data.width);
+    let y0 = Math.floor(Math.random()*image_data.height);
+    let idx0 = y0*image_data.width + x0;
+    let p0 = new RGBA(data[idx0], data[idx0+1], data[idx0+2], data[idx0+3]);
+    if(p0.a < 1) continue;
+    let avg_contrast = 0;
+
+    for(let j=0; j<20; j++){
+      let theta = Math.random()*2*Math.PI;
+      let r = 10*Math.random();
+      let x = Math.round(x0 + r*Math.cos(theta));
+      let y = Math.round(y0 + r*Math.sin(theta));
+      let idx = y*image_data.width + x;
+      let p = new RGBA(data[idx], data[idx+1], data[idx+2], data[idx+3]);
+      avg_contrast += p.contrastRatioWith(p0) / 20;
+    }
+    noise_contrasts.push(avg_contrast);
+  }
+  noise_contrasts.sort();
+  out.noise_contrast = noise_contrasts[Math.floor(noise_contrasts.length/2)];*/
+
+  out.noise_contrast = 0;
+  let x = 0;
+  let y = 0;
+  let prev_px;
+  for(let i=1; i<=n_pixels; i++){
+    let idx = y*image_data.width + x;
+    let px = new RGBA(data[idx], data[idx+1], data[idx+2], data[idx+3]);
+    if(prev_px){
+      let contrast = px.contrastRatioWith(prev_px);
+      if(contrast > 1.5) out.noise_contrast++;
+    }
+    prev_px = px;
+
+    //increment coords
+    if(i % image_data.width == 0) y++
+    else {
+      if(y%2 == 0) x++;
+      else x--;
+    }
+  }
+  out.noise_contrast /= n_pixels;
+
+
 
   return out;
 }

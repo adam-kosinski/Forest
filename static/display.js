@@ -293,13 +293,22 @@ function makeSearchObject(object){
   let sx = search_canvas.width * object.coords.x / 100;
   let sy = search_canvas.height * object.coords.y / 100;
   let canvas_px_per_gw = search_canvas.width / (100 * search_div_width_fraction);
-  let px_size = object.search_target_size * canvas_px_per_gw * 0.5;
-  let image_data = ctx.getImageData(sx-0.5*px_size, sy-0.5*px_size, px_size, px_size); //note: this includes around the glowy bit, since only the center of the search target glows
+  let square_size = object.search_target_size * canvas_px_per_gw;
+  let image_data = ctx.getImageData(sx-0.5*square_size, sy-0.5*square_size, square_size, square_size); //note: this includes around the glowy bit, since only the center of the search target glows
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.rect(sx-0.5*square_size, sy-0.5*square_size, square_size, square_size);
+  ctx.stroke();
 
   let processed_data = processImageData(image_data);
   let avg_color = processed_data.average;
   let glow_color = avg_color.copy();
-  let min_contrast = Math.min(5.5, 1.2 + 10*(processed_data.median_contrast-1)); //-1 b/c min contrast is 1
+
+  let med_contrast = processed_data.median_contrast < 1.02 ? 1 : processed_data.median_contrast;
+  let add_contrast = ( 0.1 + 10*(med_contrast-1)**2 ) / Math.sqrt(object.search_target_size);
+  let min_contrast = Math.min(10, 1 + add_contrast);
+
+  console.log(processed_data.median_contrast, processed_data.noise_contrast);
 
   if(glow_color.contrastRatioWith(avg_color) < min_contrast){
     let white_contrast = avg_color.contrastRatioWith(new RGBA(255, 255, 255, 1));
@@ -309,15 +318,14 @@ function makeSearchObject(object){
       glow_color.g += 1;
       glow_color.b += 1;
       while(glow_color.contrastRatioWith(avg_color) < min_contrast){
-        glow_color = glow_color.scaleBrightness(1.5);
+        glow_color = glow_color.scaleBrightness(1.2);
       }
     }
     else {
-      //console.warn("Brightening the search_target couldn't achieve the necessary contrast, setting to white.", search_target);
+      console.warn("Brightening the search_target couldn't achieve the necessary contrast, setting to white.", search_target);
       glow_color = new RGBA(255, 255, 255, 1);
     }
   }
-
   search_target.style.backgroundImage = "radial-gradient(closest-side, " + glow_color.toString() + ", transparent 50%)";
   //search_target.style.backgroundColor = glow_color.toString();
 
@@ -326,11 +334,14 @@ function makeSearchObject(object){
     search_content.style.top = "0px"; //reset so we can recalculate the offsets
     search_content.style.left = "0px";
 
-    console.log("glow color", glow_color);
-    console.log("avg color", avg_color);
+
+    //console.log("glow color", glow_color);
+    //console.log("avg color", avg_color);
     console.log("glow_contrast", glow_color.contrastRatioWith(avg_color));
-    console.log("med_pair_contrast", processed_data.median_contrast);
+    console.log("med_contrast", processed_data.median_contrast);
+    console.log("noise_contrast", processed_data.noise_contrast);
     console.log("min_contrast", min_contrast);
+    console.log("");
 
     //calculate top and left offsets of search_content to not go offscreen, ideally centering on the search_object's coords
     //doing this on every click in case the window was resized since the search_object was generated or last clicked on
